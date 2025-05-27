@@ -1,0 +1,6 @@
+export const STORAGE_KEYS = {
+  TOKEN_CREATED_TIME: "TOKEN_CREATED_TIME",
+  AUTHENTICATION: "access_token",
+  USER_SESSION: "user_session",
+  RETURN_URL: "RETURN_URL",
+};

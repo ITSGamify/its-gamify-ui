@@ -1,0 +1,26 @@
+{
+  "title": "Đăng nhập",
+  "subtitle": "Nhập thông tin đăng nhập của bạn để tiếp tục",
+  "welcomeBack": "Chào mừng đến với Its-Gamify",
+  "description": "Nền tảng học tập tương tác giúp bạn học hiệu quả hơn thông qua gamification",
+  "form": {
+    "email": "Email",
+    "emailPlaceholder": "Nhập email của bạn",
+    "passwordPlaceholder": "Nhập mật khẩu của bạn",
+    "password": "Mật khẩu",
+    "rememberMe": "Ghi nhớ đăng nhập",
+    "forgotPassword": "Quên mật khẩu?",
+    "loginButton": "Đăng nhập",
+    "loading": "Đang đăng nhập..."
+  },
+  "validation": {
+    "emailRequired": "Vui lòng nhập email",
+    "emailInvalid": "Vui lòng nhập email hợp lệ",
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự"
+  },
+  "error": {
+    "invalidCredentials": "Email hoặc mật khẩu không đúng",
+    "serverError": "Lỗi máy chủ. Vui lòng thử lại sau"
+  }
+}

@@ -120,16 +120,15 @@ const HomePage: React.FC = () => {
         "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
       title: "Thiết kế UI/UX với Figma",
       category: "Design",
-      categoryColor: "primary",
       description:
         "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
       duration: "12 giờ",
-      students: 1240,
       instructor: {
         name: "Nguyễn Văn A",
         avatar: "/avatars/instructor1.jpg",
       },
       progress: 65,
+      lessons: 785,
     },
     {
       id: 2,
@@ -137,16 +136,15 @@ const HomePage: React.FC = () => {
         "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
       title: "React JS - Từ cơ bản đến thành thạo",
       category: "Development",
-      categoryColor: "info",
       description:
         "Khóa học toàn diện về React, giúp bạn xây dựng ứng dụng web hiện đại với hiệu suất cao",
       duration: "18 giờ",
-      students: 2150,
       instructor: {
         name: "Trần Thị B",
         avatar: "/avatars/instructor2.jpg",
       },
       progress: 32,
+      lessons: 72,
     },
     {
       id: 3,
@@ -154,16 +152,15 @@ const HomePage: React.FC = () => {
         "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
       title: "Quản lý dự án chuyên nghiệp",
       category: "Business",
-      categoryColor: "warning",
       description:
         "Học các kỹ năng và phương pháp quản lý dự án hiệu quả trong môi trường doanh nghiệp",
       duration: "15 giờ",
-      students: 980,
       instructor: {
         name: "Lê Văn C",
         avatar: "/avatars/instructor3.jpg",
       },
       progress: 78,
+      lessons: 135,
     },
   ];
 
@@ -200,15 +197,10 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ pt: 0, pb: 3 }}>
       {/* Header */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={4}
-      >
-        <PageTitle variant="h4">Dashboard</PageTitle>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <PageTitle variant="h2">Khóa học của tôi</PageTitle>
         <Box>
           <Button
             variant="contained"
@@ -234,7 +226,7 @@ const HomePage: React.FC = () => {
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 8 }}>
               <Typography variant="h5" fontWeight={600} gutterBottom>
-                Chào buổi sáng, Minh Tuấn!
+                Chào buổi sáng, AbcXyz!
               </Typography>
               <Typography variant="body1" sx={{ mb: 2, opacity: 0.9 }}>
                 Bạn đã hoàn thành 65% mục tiêu học tập trong tuần này. Tiếp tục
@@ -253,17 +245,6 @@ const HomePage: React.FC = () => {
                 Tiếp tục học tập
               </Button>
             </Grid>
-            {/* <Grid
-              size={{ xs: 12, md: 4 }}
-              sx={{ display: { xs: "none", md: "block" } }}
-            >
-              <Box
-                component="img"
-                src="src\assets\svgs\learning-illustration.svg"
-                alt="Learning"
-                sx={{ maxWidth: "30%", height: "auto" }}
-              />
-            </Grid> */}
           </Grid>
         </CardContent>
       </WelcomeCard>
@@ -295,10 +276,12 @@ const HomePage: React.FC = () => {
               alignItems="center"
               mb={2}
             >
-              <Typography variant="h6" fontWeight={600}>
+              <Typography variant="h4" fontWeight={600}>
                 Khóa học của bạn
               </Typography>
-              <Button color="primary">Xem tất cả</Button>
+              <Button sx={{ fontSize: "1.1rem" }} color="primary">
+                Xem tất cả
+              </Button>
             </Box>
             <StyledTabs
               value={tabValue}
@@ -334,7 +317,7 @@ const HomePage: React.FC = () => {
           </Box>
 
           {/* Upcoming Deadlines */}
-          <Card sx={{ borderRadius: theme.shape.borderRadius, mb: 4 }}>
+          <Card sx={{ borderRadius: "15px", mb: 4 }}>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Sắp đến hạn
@@ -415,7 +398,7 @@ const HomePage: React.FC = () => {
           </Card>
 
           {/* Learning Statistics */}
-          <Card sx={{ borderRadius: theme.shape.borderRadius }}>
+          <Card sx={{ borderRadius: "15px" }}>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Thống kê học tập

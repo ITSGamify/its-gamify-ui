@@ -6,6 +6,9 @@ import userSession from "@utils/user-session";
 import LoginPage from "@pages/Login";
 import HomePage from "@pages/Home";
 import CoursePage from "@pages/Course";
+import CourseOverviewPage from "@pages/Course/Overview";
+import QuizPage from "@pages/Quiz";
+import ChallengePage from "@pages/Challenge";
 import NotFound404 from "@pages/NotFound404";
 import ServerError500 from "@pages/ServerError500";
 import Forbidden403 from "@pages/Forbidden403";
@@ -87,12 +90,20 @@ const router = createBrowserRouter(
           element: <CoursePage />,
         },
         {
-          path: PATH.QUIZ,
-          element: <HomePage />,
+          path: PATH.COURSES_OVERVIEWS,
+          element: <CourseOverviewPage />,
         },
         {
-          path: PATH.TOURNAMENT,
-          element: <HomePage />,
+          path: PATH.COURSES_OVERVIEWS,
+          element: <CoursePage />,
+        },
+        {
+          path: PATH.QUIZ,
+          element: <QuizPage />,
+        },
+        {
+          path: PATH.CHALLENGE,
+          element: <ChallengePage />,
         },
       ],
     },

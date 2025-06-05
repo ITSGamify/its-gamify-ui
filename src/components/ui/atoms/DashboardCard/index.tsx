@@ -15,7 +15,7 @@ const StyledCard = styled(Card, {
   shouldForwardProp: (prop) => prop !== "color",
 })<{ color?: string }>(({ theme, color = "primary" }) => ({
   borderRadius: theme.shape.borderRadius, // 12px theo theme
-  boxShadow: theme.shadows[12],
+  boxShadow: theme.shadows[2],
   height: "100%",
   transition: "transform 0.3s ease",
   "&:hover": {

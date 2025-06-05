@@ -135,6 +135,7 @@ const LearningProgress: React.FC = () => {
   return (
     <StyledCard>
       <CardHeader
+        sx={{ py: "1.2rem" }}
         title="Tiến độ học tập"
         action={
           <IconButton>
@@ -143,7 +144,7 @@ const LearningProgress: React.FC = () => {
         }
       />
 
-      <CardContent>
+      <CardContent sx={{ py: "0px" }}>
         <Box mb={3}>
           <Typography variant="h6" gutterBottom>
             {courseProgress.title}

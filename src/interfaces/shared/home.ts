@@ -37,13 +37,16 @@ export interface CourseCardProps {
   image: string;
   title: string;
   category: string;
-  categoryColor?: ColorType;
   description: string;
   duration: string;
-  students: number;
   instructor: InstructorType;
-  price?: string;
   progress?: number;
+  level?: string;
+  rating?: number;
+  reviews?: number;
+  lessons?: number;
+  students?: number;
+  lastUpdated?: string;
 }
 
 // Task types

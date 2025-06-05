@@ -1,5 +1,5 @@
 // src/components/CourseCard.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardMedia,
@@ -10,15 +10,32 @@ import {
   Avatar,
   Button,
   styled,
+  useTheme,
+  IconButton,
+  alpha,
+  Rating,
 } from "@mui/material";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {
+  Search as SearchIcon,
+  FilterList as FilterListIcon,
+  AccessTime as AccessTimeIcon,
+  Person as PersonIcon,
+  Bookmark as BookmarkIcon,
+  BookmarkBorder as BookmarkBorderIcon,
+  Star as StarIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
+} from "@mui/icons-material";
+
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { CourseCardProps } from "@interfaces/shared/home";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@constants/path";
 const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[1],
   height: "100%",
   display: "flex",
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[1],
   flexDirection: "column",
   overflow: "hidden",
   transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -28,44 +45,118 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const CategoryChip = styled(Chip, {
-  shouldForwardProp: (prop) => prop !== "color",
-})<{ color?: string }>(({ theme, color = "primary" }) => ({
-  position: "absolute",
-  top: theme.spacing(2),
-  left: theme.spacing(2),
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
+const CategoryChip = styled(Chip)(({ theme }) => ({
+  borderRadius: "16px",
   fontWeight: 600,
-  fontSize: 12,
+  fontSize: "0.75rem",
+  height: "24px",
+}));
+
+const LevelChip = styled(Chip)(({ theme }) => ({
+  borderRadius: "16px",
+  fontWeight: 600,
+  fontSize: "0.75rem",
+  height: "24px",
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  color: theme.palette.primary.main,
 }));
 
 const CourseCard: React.FC<CourseCardProps> = ({
+  id,
   image,
   title,
   category,
-  categoryColor = "primary",
   description,
   duration,
-  students,
   instructor,
-  price,
   progress,
+  level,
+  rating,
+  reviews,
+  lessons,
 }) => {
+  const theme = useTheme();
+  const [bookmarked, setBookmarked] = useState<number[]>([2, 5]);
+  const toggleBookmark = (courseId: number) => {
+    if (bookmarked.includes(courseId)) {
+      setBookmarked(bookmarked.filter((id) => id !== courseId));
+    } else {
+      setBookmarked([...bookmarked, courseId]);
+    }
+  };
+
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(PATH.COURSES_OVERVIEWS);
+  };
   return (
-    <StyledCard>
+    <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
       <Box sx={{ position: "relative" }}>
         <CardMedia component="img" height="200" image={image} alt={title} />
-        <CategoryChip
-          label={category}
-          size="small"
-          color={categoryColor as any}
-        />
+        <Box
+          sx={{
+            position: "absolute",
+            top: 8,
+            left: 8,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <CategoryChip
+            label={category}
+            size="small"
+            // color="primary"
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: "0.75rem",
+              height: "24px",
+              borderRadius: "16px",
+            }}
+          />
+          {progress !== undefined && (
+            <Chip
+              label="Đã tham gia"
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.warning.main,
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                height: "24px",
+                borderRadius: "16px",
+                width: "fit-content",
+              }}
+            />
+          )}
+        </Box>
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+            },
+          }}
+          onClick={() => toggleBookmark(id)}
+        >
+          {bookmarked.includes(id) ? (
+            <BookmarkIcon color="primary" />
+          ) : (
+            <BookmarkBorderIcon />
+          )}
+        </IconButton>
       </Box>
 
-      <CardContent
-        sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
-      >
+      <CardContent sx={{ flexGrow: 1, p: 1, paddingBottom: "10px !important" }}>
+        <Box sx={{ mb: 1 }}>
+          <LevelChip label={level || "Cơ bản"} size="small" />
+        </Box>
         <Typography variant="h6" component="div" gutterBottom noWrap>
           {title}
         </Typography>
@@ -74,7 +165,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
           variant="body2"
           color="text.secondary"
           sx={{
-            mb: 2,
+            mb: 1,
             overflow: "hidden",
             textOverflow: "ellipsis",
             display: "-webkit-box",
@@ -85,28 +176,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
           {description}
         </Typography>
 
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={2}
-        >
-          <Box display="flex" alignItems="center">
-            <AccessTimeIcon fontSize="small" color="action" />
-            <Typography variant="caption" color="text.secondary" ml={0.5}>
-              {duration}
-            </Typography>
-          </Box>
-
-          <Box display="flex" alignItems="center">
-            <PeopleAltIcon fontSize="small" color="action" />
-            <Typography variant="caption" color="text.secondary" ml={0.5}>
-              {students} học viên
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box display="flex" alignItems="center" mb={2} mt="auto">
+        {/*Auhtor */}
+        <Box display="flex" alignItems="center" mb={1} mt="auto">
           <Avatar
             src={instructor.avatar}
             alt={instructor.name}
@@ -115,23 +186,65 @@ const CourseCard: React.FC<CourseCardProps> = ({
           <Typography variant="subtitle2">{instructor.name}</Typography>
         </Box>
 
-        {progress !== undefined ? (
-          <Button variant="contained" color="primary" fullWidth>
+        {/* Rating*/}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: 1,
+          }}
+        >
+          <Rating
+            value={rating || 3}
+            precision={0.1}
+            readOnly
+            size="small"
+            sx={{ mr: 1 }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            ({rating || 3}) • {reviews || 145} đánh giá
+          </Typography>
+        </Box>
+
+        {/* Duration and Students */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <AccessTimeIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
+            <Typography variant="body2" color="text.secondary">
+              {duration} • {lessons} bài học
+            </Typography>
+          </Box>
+          <Button
+            variant="text"
+            sx={{ width: "fit-content" }}
+            color="primary"
+            fullWidth
+          >
+            {progress !== undefined ? "Tiếp tục học" : "Xem chi tiết"}
+          </Button>
+        </Box>
+
+        {progress !== undefined && (
+          <Button
+            sx={{ marginBottom: "10px" }}
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleCardClick}
+          >
             Tiếp tục học ({progress}%)
           </Button>
-        ) : (
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6" color="primary.main">
-              {price}
-            </Typography>
-            <Button variant="contained" color="primary">
-              Đăng ký
-            </Button>
-          </Box>
         )}
       </CardContent>
     </StyledCard>

@@ -7,6 +7,7 @@ import LoginPage from "@pages/Login";
 import HomePage from "@pages/Home";
 import CoursePage from "@pages/Course";
 import CourseOverviewPage from "@pages/Course/Overview";
+import CourseDetailPage from "@pages/Course/Detail";
 import QuizPage from "@pages/Quiz";
 import ChallengePage from "@pages/Challenge";
 import NotFound404 from "@pages/NotFound404";
@@ -90,12 +91,12 @@ const router = createBrowserRouter(
           element: <CoursePage />,
         },
         {
-          path: PATH.COURSES_OVERVIEWS,
+          path: PATH.COURSES_OVERVIEW,
           element: <CourseOverviewPage />,
         },
         {
-          path: PATH.COURSES_OVERVIEWS,
-          element: <CoursePage />,
+          path: PATH.COURSES_DETAIL,
+          element: <CourseDetailPage />,
         },
         {
           path: PATH.QUIZ,

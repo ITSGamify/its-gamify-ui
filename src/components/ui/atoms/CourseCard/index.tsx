@@ -88,7 +88,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(PATH.COURSES_OVERVIEWS);
+    navigate(PATH.COURSES_OVERVIEW);
   };
   return (
     <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
@@ -231,7 +231,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
             color="primary"
             fullWidth
           >
-            {progress !== undefined ? "Tiếp tục học" : "Xem chi tiết"}
+            {progress === undefined ? "Tiếp tục học" : "Xem chi tiết"}
           </Button>
         </Box>
 

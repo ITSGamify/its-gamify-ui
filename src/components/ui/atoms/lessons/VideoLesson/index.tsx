@@ -14,7 +14,6 @@ import {
 } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { LessonProps } from "@components/ui/molecules/course-detail/CourseDetailMainContent";
-import { time } from "framer-motion";
 
 const VideoContainer = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -56,7 +55,7 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(10); // Đặt giá trị mặc định là 10
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
@@ -65,11 +64,21 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
       videoRef.current.volume = volume / 100;
     }
   }, [volume]);
+
+  useEffect(() => {
+    // Set default time to 10 seconds when video is loaded
+    if (videoRef.current) {
+      videoRef.current.currentTime = 10;
+    }
+  }, []);
+
   const handlePlayPause = () => {
     if (videoRef.current) {
       if (playing) {
         videoRef.current.pause();
       } else {
+        // Đặt thời gian hiện tại là 10 giây trước khi phát
+        videoRef.current.currentTime = 10;
         videoRef.current.play();
       }
       setPlaying(!playing);
@@ -103,6 +112,7 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
+      videoRef.current.currentTime = 10; // Đặt thời gian hiện tại là 10 giây
     }
   };
 

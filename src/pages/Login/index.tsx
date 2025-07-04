@@ -1,5 +1,5 @@
 // src/pages/Login/index.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -12,70 +12,28 @@ import {
   Alert,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import useCustomTranslation from "@hooks/shared/useTranslation";
 import LoginButton from "@components/ui/atoms/LoginButton";
 import LoginInput from "@components/ui/atoms/LoginInput";
-import { useAuth } from "@hooks/shared/useAuth";
 import logoImage from "@assets/images/its-gamify-logo.png";
 import bannerImage from "@assets/images/its_gamify_banner.png";
 // import bannerImage from "@assets/images/its-gamify-login-banner.png";
 import { TRANSLATION_NAME_SPACES } from "@i18n/config";
+import { useLoginPage } from "@hooks/data/useLoginPage";
+import { Controller } from "react-hook-form";
 const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-
   const { t } = useCustomTranslation(TRANSLATION_NAME_SPACES.LOGIN);
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "rememberMe" ? checked : value,
-    }));
-  };
-
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    // Validation cơ bản
-    if (!formData.email) {
-      setError(t("validation.emailRequired"));
-      return;
-    }
-
-    if (!formData.password) {
-      setError(t("validation.passwordRequired"));
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      // Giả định có hàm login từ useAuth hook
-      await login(formData.email, formData.password, formData.rememberMe);
-      navigate("/dashboard");
-    } catch (err) {
-      console.log(err);
-      setError(t("error.invalidCredentials"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    control,
+    isLoading,
+    handleSubmit,
+    error,
+    showPassword,
+    handleTogglePasswordVisibility,
+    rememberMe,
+    handleRememberMe,
+  } = useLoginPage();
 
   return (
     <Box
@@ -203,38 +161,52 @@ const LoginPage: React.FC = () => {
             )}
 
             <form onSubmit={handleSubmit}>
-              <LoginInput
-                label={t("form.email")}
+              <Controller
                 name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder={t("form.emailPlaceholder")}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                }}
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <LoginInput
+                    label={t("form.email")}
+                    name="email"
+                    type="email"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t("form.emailPlaceholder")}
+                    InputProps={{
+                      sx: { borderRadius: 2 },
+                    }}
+                  />
+                )}
               />
 
-              <LoginInput
-                label={t("form.password")}
+              <Controller
                 name="password"
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={handleChange}
-                placeholder={t("form.passwordPlaceholder")}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleTogglePasswordVisibility}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <LoginInput
+                    label={t("form.password")}
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t("form.passwordPlaceholder")}
+                    InputProps={{
+                      sx: { borderRadius: 2 },
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
               />
 
               <Box
@@ -249,8 +221,8 @@ const LoginPage: React.FC = () => {
                   control={
                     <Checkbox
                       name="rememberMe"
-                      checked={formData.rememberMe}
-                      onChange={handleChange}
+                      checked={rememberMe}
+                      onChange={handleRememberMe}
                       color="primary"
                     />
                   }

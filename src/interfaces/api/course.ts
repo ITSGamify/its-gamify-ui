@@ -1,29 +1,53 @@
-// src/interfaces/dom/course.ts
-export interface CourseLesson {
+import { Department } from "./department";
+import { Module } from "./lesson";
+
+export interface Category {
+  name: string;
   id: string;
-  title: string;
-  duration: string;
-  isCompleted: boolean;
-  isQuiz?: boolean;
-  questionCount?: number;
 }
 
-export interface CourseChapter {
+export interface Course {
   id: string;
   title: string;
-  progress: number;
-  lessons: CourseLesson[];
+  sessions: number;
+  department_id: string;
+  deparment?: Department;
+  reviews: number;
+  category_id?: string;
+  category?: Category;
+  level?: string;
+  thumbnail_image_id?: string;
+  thumbnail_image?: string;
+  introduction_video_id?: string;
+  short_description?: string;
+  description?: string;
+  tags?: string[];
+  modules?: Module[];
+  file_ids: string[];
+  requirement: string;
+  targets: string[];
+  duration_in_hours: number;
+  classify: string;
+  status: string;
+  introduction_video?: string;
+  learning_materials?: Material[];
 }
 
-export interface CourseDetail {
+export interface Material {
   id: string;
-  title: string;
-  instructor: string;
-  instructorRole: string;
-  description: string;
-  chapters: CourseChapter[];
-  totalChapters: number;
-  totalLessons: number;
-  totalDuration: string;
-  coverImage: string;
+  url: string;
+  name: string;
+  file_id: string;
+  type: string;
+  size: number;
+  course_id: string;
+  created_date: string;
+}
+
+export interface Participation {
+  enrolled_Date: Date;
+  user_id: string;
+  course_id: string;
+  status: number;
+  course: Course;
 }

@@ -1,24 +1,24 @@
 import { STORAGE_KEYS } from "@constants/storage";
-import { User } from "@interfaces/shared/user";
+import { LoginResponse } from "@interfaces/api/auth";
 
 class UserSession {
   private storageKey = STORAGE_KEYS.USER_SESSION;
 
-  public storeUserProfile(profile: User | null) {
-    localStorage.setItem(this.storageKey, JSON.stringify(profile));
+  public storeUserProfile(profile: LoginResponse | null) {
+    sessionStorage.setItem(this.storageKey, JSON.stringify(profile));
   }
 
-  public getUserProfile(): User | null {
-    const storedProfile = localStorage.getItem(this.storageKey);
+  public getUserProfile(): LoginResponse | null {
+    const storedProfile = sessionStorage.getItem(this.storageKey);
     return storedProfile ? JSON.parse(storedProfile) : null;
   }
 
   public isAuthenticated(): boolean {
-    return localStorage.getItem(this.storageKey) !== null;
+    return sessionStorage.getItem(this.storageKey) !== null;
   }
 
   public clearUserProfile(): void {
-    localStorage.removeItem(this.storageKey);
+    sessionStorage.removeItem(this.storageKey);
   }
 }
 

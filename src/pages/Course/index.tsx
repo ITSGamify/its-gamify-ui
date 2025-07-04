@@ -40,6 +40,7 @@ import {
 } from "@mui/icons-material";
 import CourseCard from "@components/ui/atoms/CourseCard";
 import { CourseCardProps } from "@interfaces/shared/home";
+import { useCoursePage } from "@hooks/data/useCoursePage";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
@@ -66,181 +67,7 @@ const CoursePage: React.FC = () => {
     setTabValue(newValue);
   };
 
-  // Sample course data
-  const courses: CourseCardProps[] = [
-    {
-      id: 1,
-      title: "Thiết kế UI/UX với Figma từ cơ bản đến nâng cao",
-      instructor: {
-        name: "Nguyễn Văn A",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.8,
-      reviews: 245,
-      students: 1200,
-      duration: "15 giờ",
-      level: "Trung cấp",
-      category: "UI/UX Design",
-      // categoryColor: "primary",
-      lessons: 42,
-      lastUpdated: "Tháng 5, 2025",
-    },
-    {
-      id: 2,
-      title: "Lập trình React.js cho người mới bắt đầu",
-      instructor: {
-        name: "Trần Thị B",
-        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.7,
-      reviews: 189,
-      students: 980,
-      duration: "18 giờ",
-      level: "Cơ bản",
-      category: "Frontend Development",
-      // categoryColor: "primary",
-      lessons: 56,
-      lastUpdated: "Tháng 6, 2025",
-    },
-    {
-      id: 3,
-      title: "Xây dựng ứng dụng di động với Flutter",
-      instructor: {
-        name: "Lê Văn C",
-        avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.6,
-      reviews: 132,
-      students: 750,
-      duration: "20 giờ",
-      level: "Trung cấp",
-      category: "Mobile Development",
-      // categoryColor: "primary",
-      lessons: 48,
-      lastUpdated: "Tháng 4, 2025",
-    },
-    {
-      id: 4,
-      title: "Thiết kế đồ họa với Adobe Illustrator",
-      instructor: {
-        name: "Phạm Thị D",
-        avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.5,
-      reviews: 98,
-      students: 620,
-      duration: "12 giờ",
-      level: "Cơ bản",
-      category: "Graphic Design",
-      // categoryColor: "primary",
-      lessons: 35,
-      lastUpdated: "Tháng 3, 2025",
-    },
-    {
-      id: 5,
-      title: "Làm chủ Node.js và Express",
-      instructor: {
-        name: "Hoàng Văn E",
-        avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.9,
-      reviews: 215,
-      students: 1500,
-      duration: "22 giờ",
-      level: "Nâng cao",
-      category: "Backend Development",
-      lessons: 65,
-      lastUpdated: "Tháng 6, 2025",
-    },
-    {
-      id: 6,
-      title: "Học Python từ cơ bản đến nâng cao",
-      instructor: {
-        name: "Đỗ Thị F",
-        avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.7,
-      reviews: 178,
-      students: 1100,
-      duration: "25 giờ",
-      level: "Tất cả",
-      category: "Programming",
-      lessons: 72,
-      lastUpdated: "Tháng 5, 2025",
-    },
-    {
-      id: 7,
-      title: "Thiết kế web responsive với Bootstrap 5",
-      instructor: {
-        name: "Nguyễn Văn G",
-        avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.6,
-      reviews: 124,
-      students: 830,
-      duration: "10 giờ",
-      level: "Cơ bản",
-      category: "Frontend Development",
-      lessons: 28,
-      lastUpdated: "Tháng 4, 2025",
-    },
-    {
-      id: 8,
-      title: "Làm chủ Adobe Photoshop",
-      instructor: {
-        name: "Trần Văn H",
-        avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-      },
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao.",
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      rating: 4.8,
-      reviews: 156,
-      students: 950,
-      duration: "16 giờ",
-      level: "Trung cấp",
-      category: "Graphic Design",
-      lessons: 45,
-      lastUpdated: "Tháng 6, 2025",
-    },
-  ];
-
-  // Filter courses based on active tab
-  const filteredCourses =
-    tabValue === 0
-      ? courses
-      : tabValue === 1
-      ? courses.filter((course) => bookmarked.includes(course.id))
-      : courses;
+  const { courses, total_page_count, handlePageChange } = useCoursePage();
 
   // Categories for filter
   const categories = [
@@ -358,7 +185,7 @@ const CoursePage: React.FC = () => {
           <Tab label="Đã lưu" />
         </Tabs>
 
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* <Box sx={{ display: "flex", alignItems: "center" }}>
           <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
             Sắp xếp theo:
           </Typography>
@@ -376,21 +203,29 @@ const CoursePage: React.FC = () => {
               <MenuItem value="rating">Đánh giá cao nhất</MenuItem>
             </Select>
           </FormControl>
-        </Box>
+        </Box> */}
       </Box>
 
       {/* Course Grid */}
       <Grid container spacing={3} sx={{ mb: 6 }}>
-        {filteredCourses.map((course) => (
+        {courses.map((course) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={course.id}>
-            <CourseCard {...course} />
+            <CourseCard course={course} />
           </Grid>
         ))}
       </Grid>
 
       {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Pagination count={5} color="primary" size="large" />
+        <Pagination
+          count={total_page_count}
+          color="primary"
+          size="large"
+          onChange={(event, page) => {
+            console.log("Changed to page:", page);
+            handlePageChange(page);
+          }}
+        />
       </Box>
     </Container>
   );

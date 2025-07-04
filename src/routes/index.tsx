@@ -1,6 +1,4 @@
 import { PATH } from "@constants/path";
-import { USER_ROLES } from "@constants/user-role";
-import { RoleEnum } from "@interfaces/shared/user";
 import userSession from "@utils/user-session";
 
 import LoginPage from "@pages/Login";
@@ -18,7 +16,9 @@ import MainLayout from "@components/layout/MainLayout";
 import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import { JSX } from "react";
+import LandingPage from "@pages/Landing";
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
 
 type ProtectedRouteProps = {
@@ -38,6 +38,7 @@ const getRoutes = (routes: RouteObject[]) => {
   }));
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   fallbackUrl = PATH.LOGIN,
@@ -48,13 +49,27 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const isNotAllowedRole =
     userProfile &&
     allowedRoles?.length > 0 &&
-    !allowedRoles.includes(userProfile?.role);
+    !allowedRoles.includes(userProfile?.user.role);
   if (!isAuthenticated) {
     return <Navigate to={fallbackUrl} />;
   }
 
   if (isNotAllowedRole) {
     return <Navigate to="/403" />;
+  }
+
+  return children;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+const AuthenticationValidate: React.FC<{
+  children: JSX.Element;
+  redirectTo?: string;
+}> = ({ children, redirectTo = PATH.HOME }) => {
+  const isAuthenticated = userSession.isAuthenticated();
+
+  if (isAuthenticated) {
+    return <Navigate to={redirectTo} />;
   }
 
   return children;
@@ -76,12 +91,24 @@ const router = createBrowserRouter(
     },
     {
       path: PATH.LOGIN,
-      element: <LoginPage />,
+      element: (
+        <AuthenticationValidate>
+          <LoginPage />
+        </AuthenticationValidate>
+      ),
     },
     {
-      path: PATH.HOME,
-      element: <MainLayout />,
+      path: PATH.LANDING,
+      element: (
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
+      ),
       children: [
+        {
+          path: PATH.LANDING,
+          element: <LandingPage />,
+        },
         {
           path: PATH.HOME,
           element: <HomePage />,

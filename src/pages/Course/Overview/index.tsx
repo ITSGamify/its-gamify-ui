@@ -35,24 +35,22 @@ import {
   Assignment as AssignmentIcon,
   Language as LanguageIcon,
   Bookmark as BookmarkIcon,
-  Share as ShareIcon,
   ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
-import { TextField, InputAdornment, Paper, Stack } from "@mui/material";
+import { TextField, InputAdornment, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import ReplyIcon from "@mui/icons-material/Reply";
+// import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+// import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+// import ReplyIcon from "@mui/icons-material/Reply";
 
-// Import các component đã tạo
-import LearningProgress from "@components/ui/atoms/LearningProgress";
-import {
-  ModuleType,
-  LessonType,
-  InstructorType,
-} from "@interfaces/shared/home";
+// // Import các component đã tạo
+// import LearningProgress from "@components/ui/atoms/LearningProgress";
 
-// Styled components
+import { useCourseOverview } from "@hooks/data/useCourseOverview";
+import { formatToMB } from "@utils/file";
+import { formatDateToVietnamese } from "@utils/date";
+
+//#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(4, 0),
@@ -60,11 +58,10 @@ const PageHeader = styled(Box)(({ theme }) => ({
 }));
 
 const CourseImage = styled(CardMedia)(({ theme }) => ({
-  height: 240,
+  height: 300,
   borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[8],
+  boxShadow: theme.shadows[1],
 }));
-
 const StyledTabs = styled(Tabs)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   "& .MuiTab-root": {
@@ -101,6 +98,8 @@ const LessonItem = styled(ListItem, {
   }),
 }));
 
+//#endregion
+
 // Main Course Detail component
 const CourseOverviewPage: React.FC = () => {
   const theme = useTheme();
@@ -110,175 +109,7 @@ const CourseOverviewPage: React.FC = () => {
     setTabValue(newValue);
   };
 
-  // Dữ liệu mẫu
-  interface CourseType {
-    id: number;
-    title: string;
-    image: string;
-    category: string;
-    rating: number;
-    reviews: number;
-    students: number;
-    duration: string;
-    language: string;
-    lastUpdate: string;
-    progress: number;
-    description: string;
-    instructor: InstructorType;
-    modules: ModuleType[];
-  }
-
-  const course: CourseType = {
-    id: 1,
-    title: "Thiết kế UI/UX với Figma",
-    image:
-      "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-    category: "Design",
-    rating: 4.8,
-    reviews: 245,
-    students: 1240,
-    duration: "12 giờ",
-    language: "Tiếng Việt",
-    lastUpdate: "05/2025",
-    progress: 65,
-    description: `Khóa học này sẽ giúp bạn nắm vững các kỹ năng thiết kế giao diện người dùng chuyên nghiệp với Figma. Từ các nguyên tắc cơ bản của UI/UX đến các kỹ thuật thiết kế nâng cao, bạn sẽ học cách tạo ra các giao diện đẹp mắt, thân thiện với người dùng và đáp ứng các tiêu chuẩn hiện đại.
-
-    Nội dung khóa học bao gồm các nguyên tắc thiết kế, làm việc với màu sắc và typography, tạo prototype tương tác, thiết kế responsive, và nhiều chủ đề khác. Bạn sẽ hoàn thành một dự án thực tế từ đầu đến cuối, từ wireframing đến thiết kế chi tiết và prototype hoạt động đầy đủ.`,
-    instructor: {
-      id: 1,
-      name: "Nguyễn Văn A",
-      avatar: "/avatars/instructor1.jpg",
-      role: "Senior UI/UX Designer",
-      bio: "Nguyễn Văn A là một nhà thiết kế UI/UX với hơn 8 năm kinh nghiệm làm việc với các công ty công nghệ hàng đầu. Anh đã tham gia thiết kế cho nhiều sản phẩm được hàng triệu người sử dụng và có niềm đam mê chia sẻ kiến thức với cộng đồng.",
-      courses: 12,
-      students: 5400,
-      rating: 4.9,
-    },
-    modules: [
-      {
-        id: 1,
-        title: "Giới thiệu về UI/UX và Figma",
-        lessons: [
-          {
-            id: 1,
-            title: "Giới thiệu về khóa học",
-            duration: "10 phút",
-            completed: true,
-            hasAttachment: true,
-          },
-          {
-            id: 2,
-            title: "Nguyên tắc cơ bản của UI/UX",
-            duration: "25 phút",
-            completed: true,
-            hasAttachment: true,
-          },
-          {
-            id: 3,
-            title: "Làm quen với Figma",
-            duration: "30 phút",
-            completed: true,
-            hasAttachment: true,
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "Các công cụ cơ bản trong Figma",
-        lessons: [
-          {
-            id: 4,
-            title: "Làm việc với Frames và Layers",
-            duration: "20 phút",
-            completed: true,
-            hasAttachment: true,
-          },
-          {
-            id: 5,
-            title: "Sử dụng Shapes và Tools",
-            duration: "25 phút",
-            completed: true,
-            hasAttachment: false,
-          },
-          {
-            id: 6,
-            title: "Làm việc với Text và Typography",
-            duration: "15 phút",
-            completed: false,
-            current: true,
-            hasAttachment: true,
-          },
-          {
-            id: 7,
-            title: "Màu sắc và Styles",
-            duration: "20 phút",
-            completed: false,
-            hasAttachment: false,
-          },
-        ],
-      },
-      {
-        id: 3,
-        title: "Thiết kế Prototype",
-        lessons: [
-          {
-            id: 8,
-            title: "Tạo Wireframes",
-            duration: "30 phút",
-            completed: false,
-            locked: false,
-            hasAttachment: false,
-          },
-          {
-            id: 9,
-            title: "Thiết kế UI chi tiết",
-            duration: "45 phút",
-            completed: false,
-            locked: true,
-            hasAttachment: false,
-          },
-          {
-            id: 10,
-            title: "Tạo Prototype tương tác",
-            duration: "35 phút",
-            completed: false,
-            locked: true,
-            hasAttachment: false,
-          },
-        ],
-      },
-      {
-        id: 4,
-        title: "Components và Design Systems",
-        lessons: [
-          {
-            id: 11,
-            title: "Tạo và sử dụng Components",
-            duration: "25 phút",
-            completed: false,
-            locked: true,
-            hasAttachment: false,
-          },
-          {
-            id: 12,
-            title: "Xây dựng Design System",
-            duration: "40 phút",
-            completed: false,
-            locked: true,
-            hasAttachment: false,
-          },
-          {
-            id: 13,
-            title: "Auto Layout và Constraints",
-            duration: "35 phút",
-            completed: false,
-            locked: true,
-            hasAttachment: false,
-          },
-        ],
-      },
-    ],
-  };
+  const { course, isJoinedCourse, handleJoinCourse } = useCourseOverview();
 
   return (
     <Box>
@@ -295,26 +126,21 @@ const CourseOverviewPage: React.FC = () => {
           <Grid container spacing={4}>
             <Grid size={{ xs: 12, md: 8 }}>
               <Typography variant="h4" fontWeight={700} gutterBottom>
-                {course.title}
+                {course?.title}
               </Typography>
 
               <Box display="flex" alignItems="center" flexWrap="wrap" mb={2}>
                 <Chip
-                  label={course.category}
+                  label={course?.category?.name}
                   color="primary"
                   size="small"
                   sx={{ mr: 2, mb: 1 }}
                 />
 
                 <Box display="flex" alignItems="center" mr={3} mb={1}>
-                  <Rating
-                    value={course.rating}
-                    precision={0.1}
-                    readOnly
-                    size="small"
-                  />
+                  <Rating value={5} precision={0.1} readOnly size="small" />
                   <Typography variant="body2" color="text.secondary" ml={1}>
-                    ({course.rating}) • {course.reviews} đánh giá
+                    ({5}) • {20} đánh giá
                   </Typography>
                 </Box>
 
@@ -325,7 +151,7 @@ const CourseOverviewPage: React.FC = () => {
                     sx={{ mr: 0.5 }}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    {course.students} học viên
+                    {50} học viên
                   </Typography>
                 </Box>
 
@@ -336,71 +162,22 @@ const CourseOverviewPage: React.FC = () => {
                     sx={{ mr: 0.5 }}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    {course.duration}
-                  </Typography>
-                </Box>
-
-                <Box display="flex" alignItems="center" mb={1}>
-                  <LanguageIcon
-                    fontSize="small"
-                    color="action"
-                    sx={{ mr: 0.5 }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {course.language}
+                    {course?.duration_in_hours}
                   </Typography>
                 </Box>
               </Box>
 
               <Box display="flex" alignItems="center">
                 <Avatar
-                  src={course.instructor.avatar}
-                  alt={course.instructor.name}
+                  src={"/avatars/instructor1.jpg"}
+                  alt={"Nguyễn Văn A"}
                   sx={{ mr: 1 }}
                 />
                 <Typography variant="body2">
-                  Giảng viên: <strong>{course.instructor.name}</strong>
+                  Giảng viên: <strong>{"Nguyễn Văn A"}</strong>
                 </Typography>
               </Box>
             </Grid>
-
-            {/* <Grid
-              size={{ xs: 12, md: 4 }}
-              display="flex"
-              alignItems="center"
-              // justifyContent="flex-end"
-              justifyContent="flex-end"
-            >
-              <Box>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <Typography variant="body2" color="text.secondary" mr={1}>
-                    Tiến độ hoàn thành:
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                    color="primary.main"
-                  >
-                    {course.progress}%
-                  </Typography>
-                </Box>
-
-                <LinearProgress
-                  variant="determinate"
-                  value={course.progress}
-                  sx={{ height: 8, borderRadius: 4, mb: 2, width: 200 }}
-                />
-
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<PlayCircleOutlineIcon />}
-                  fullWidth
-                >
-                  Tiếp tục học
-                </Button>
-              </Box>
-            </Grid> */}
           </Grid>
         </Container>
       </PageHeader>
@@ -410,8 +187,11 @@ const CourseOverviewPage: React.FC = () => {
         <Grid container spacing={4}>
           {/* Left Column */}
           <Grid size={{ xs: 12, md: 8 }}>
-            <CourseImage image={course.image} title={course.title} />
-
+            <CourseImage
+              image={course?.thumbnail_image}
+              title={course?.title}
+              sx={{ objectFit: "contain", backgroundSize: "contain" }}
+            />
             <Box mt={4}>
               <StyledTabs
                 value={tabValue}
@@ -426,40 +206,40 @@ const CourseOverviewPage: React.FC = () => {
               </StyledTabs>
 
               {/* Tab Content */}
-              <Box sx={{ py: 2 }}>
+              <Box sx={{ py: 0 }}>
                 {tabValue === 0 && (
                   <Box>
                     <SectionTitle variant="h6">Mô tả khóa học</SectionTitle>
                     <Typography variant="body1" paragraph>
-                      {course.description}
+                      {course?.description}
                     </Typography>
 
-                    <Divider sx={{ my: 4 }} />
+                    <Divider sx={{ my: 2 }} />
 
                     <SectionTitle variant="h6">
                       Thông tin giảng viên
                     </SectionTitle>
                     <Box display="flex" mb={3}>
                       <Avatar
-                        src={course.instructor.avatar}
-                        alt={course.instructor.name}
+                        src={"/avatars/instructor1.jpg"}
+                        alt={"Nguyễn Văn A"}
                         sx={{ width: 80, height: 80, mr: 2 }}
                       />
                       <Box>
                         <Typography variant="h6" gutterBottom>
-                          {course.instructor.name}
+                          {"Nguyễn Văn A"}
                         </Typography>
                         <Typography
                           variant="body2"
                           color="text.secondary"
                           gutterBottom
                         >
-                          {course.instructor.role}
+                          {"Senior UI/UX Designer"}
                         </Typography>
                         <Box display="flex" alignItems="center" gap={2}>
                           <Box display="flex" alignItems="center">
                             <Rating
-                              value={course.instructor.rating}
+                              value={5}
                               precision={0.1}
                               readOnly
                               size="small"
@@ -469,20 +249,22 @@ const CourseOverviewPage: React.FC = () => {
                               color="text.secondary"
                               ml={0.5}
                             >
-                              ({course.instructor.rating})
+                              ({5})
                             </Typography>
                           </Box>
                           <Typography variant="body2" color="text.secondary">
-                            {course.instructor.courses} khóa học
+                            {10} khóa học
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {course.instructor.students} học viên
+                            {20} học viên
                           </Typography>
                         </Box>
                       </Box>
                     </Box>
                     <Typography variant="body2" paragraph>
-                      {course.instructor.bio}
+                      {
+                        "Nguyễn Văn A là một nhà thiết kế UI/UX với hơn 8 năm kinh nghiệm làm việc với các công ty công nghệ hàng đầu. Anh đã tham gia thiết kế cho nhiều sản phẩm được hàng triệu người sử dụng và có niềm đam mê chia sẻ kiến thức với cộng đồng."
+                      }
                     </Typography>
                   </Box>
                 )}
@@ -498,16 +280,16 @@ const CourseOverviewPage: React.FC = () => {
                         Nội dung khóa học
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {course.modules.reduce(
+                        {course?.modules?.reduce(
                           (acc, module) => acc + module.lessons.length,
                           0
                         )}{" "}
-                        bài học • {course.duration}
+                        bài học • {course?.duration_in_hours}
                       </Typography>
                     </Box>
 
                     <Box>
-                      {course.modules.map((module, index) => (
+                      {course?.modules?.map((module, index) => (
                         <Card
                           key={module.id}
                           sx={{
@@ -534,8 +316,8 @@ const CourseOverviewPage: React.FC = () => {
                               >
                                 {module.lessons.length} bài học •{" "}
                                 {module.lessons.reduce((acc, lesson) => {
-                                  const [min] = lesson.duration.split(" ");
-                                  return acc + parseInt(min);
+                                  const min = lesson.duration;
+                                  return acc + min;
                                 }, 0)}{" "}
                                 phút
                               </Typography>
@@ -545,21 +327,19 @@ const CourseOverviewPage: React.FC = () => {
                               {module.lessons.map((lesson) => (
                                 <LessonItem
                                   key={lesson.id}
-                                  //   button
-                                  completed={lesson.completed}
-                                  current={lesson.current}
-                                  //   disabled={lesson.locked}
+                                  completed={isJoinedCourse}
+                                  current={false}
                                   sx={{ px: 2 }}
                                 >
                                   <ListItemIcon>
-                                    {lesson.completed ? (
+                                    {!isJoinedCourse ? (
                                       <CheckCircleIcon color="success" />
-                                    ) : lesson.locked ? (
+                                    ) : isJoinedCourse ? (
                                       <LockIcon color="action" />
                                     ) : (
                                       <PlayCircleOutlineIcon
                                         color={
-                                          lesson.current ? "primary" : "action"
+                                          isJoinedCourse ? "primary" : "action"
                                         }
                                       />
                                     )}
@@ -570,20 +350,23 @@ const CourseOverviewPage: React.FC = () => {
                                     secondary={lesson.duration}
                                     primaryTypographyProps={{
                                       variant: "body2",
-                                      fontWeight: lesson.current ? 600 : 400,
-                                      color: lesson.locked
-                                        ? "text.disabled"
-                                        : "text.primary",
+                                      fontWeight: 600,
+                                      color: "text.disabled",
+
+                                      // color: lesson.locked
+                                      //   ? "text.disabled"
+                                      //   : "text.primary",
                                     }}
                                     secondaryTypographyProps={{
                                       variant: "caption",
-                                      color: lesson.locked
-                                        ? "text.disabled"
-                                        : "text.secondary",
+                                      color: "text.disabled",
+                                      // color: lesson.locked
+                                      //   ? "text.disabled"
+                                      //   : "text.secondary",
                                     }}
                                   />
 
-                                  <ListItemSecondaryAction>
+                                  {/* <ListItemSecondaryAction>
                                     {lesson.hasAttachment && (
                                       <IconButton
                                         edge="end"
@@ -593,7 +376,7 @@ const CourseOverviewPage: React.FC = () => {
                                         <DownloadIcon fontSize="small" />
                                       </IconButton>
                                     )}
-                                  </ListItemSecondaryAction>
+                                  </ListItemSecondaryAction> */}
                                 </LessonItem>
                               ))}
                             </List>
@@ -615,71 +398,36 @@ const CourseOverviewPage: React.FC = () => {
                     </Typography>
 
                     <List>
-                      <ListItem
-                        // button
-                        sx={{
-                          border: `1px solid ${theme.palette.divider}`,
-                          borderRadius: theme.shape.borderRadius,
-                          mb: 2,
-                        }}
-                      >
-                        <ListItemIcon>
-                          <AssignmentIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="Tài liệu hướng dẫn Figma.pdf"
-                          secondary="PDF • 2.5 MB • Cập nhật 05/2025"
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end">
-                            <DownloadIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-
-                      <ListItem
-                        // button
-                        sx={{
-                          border: `1px solid ${theme.palette.divider}`,
-                          borderRadius: theme.shape.borderRadius,
-                          mb: 2,
-                        }}
-                      >
-                        <ListItemIcon>
-                          <AssignmentIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="UI Components Library.fig"
-                          secondary="Figma File • 15 MB • Cập nhật 05/2025"
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end">
-                            <DownloadIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-
-                      <ListItem
-                        // button
-                        sx={{
-                          border: `1px solid ${theme.palette.divider}`,
-                          borderRadius: theme.shape.borderRadius,
-                          mb: 2,
-                        }}
-                      >
-                        <ListItemIcon>
-                          <AssignmentIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="Checklist thiết kế UI/UX.xlsx"
-                          secondary="Excel • 1.2 MB • Cập nhật 04/2025"
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end">
-                            <DownloadIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
+                      {course?.learning_materials &&
+                        course.learning_materials.map((material, index) => (
+                          <ListItem
+                            key={index}
+                            // button
+                            sx={{
+                              border: `1px solid ${theme.palette.divider}`,
+                              borderRadius: theme.shape.borderRadius,
+                              mb: 2,
+                            }}
+                          >
+                            <ListItemIcon>
+                              <AssignmentIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={material.name}
+                              // secondary="PDF • 2.5 MB • Cập nhật 05/2025"
+                              secondary={`${material.type.toUpperCase()} • ${formatToMB(
+                                material.size
+                              )} • Cập nhật ${formatDateToVietnamese(
+                                material.created_date
+                              )}`}
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton edge="end">
+                                <DownloadIcon />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
                     </List>
                   </Box>
                 )}
@@ -696,8 +444,7 @@ const CourseOverviewPage: React.FC = () => {
                           Đánh giá từ học viên
                         </SectionTitle>
                         <Typography variant="body2" color="text.secondary">
-                          {course.reviews} đánh giá • Xếp hạng trung bình{" "}
-                          {course.rating}/5
+                          {10} đánh giá • Xếp hạng trung bình {5}/5
                         </Typography>
                       </Box>
 
@@ -720,10 +467,10 @@ const CourseOverviewPage: React.FC = () => {
                               color="primary.main"
                               fontWeight={700}
                             >
-                              {course.rating}
+                              {5}
                             </Typography>
                             <Rating
-                              value={course.rating}
+                              value={5}
                               precision={0.1}
                               readOnly
                               size="large"
@@ -733,7 +480,7 @@ const CourseOverviewPage: React.FC = () => {
                               color="text.secondary"
                               mt={1}
                             >
-                              {course.reviews} đánh giá
+                              {10} đánh giá
                             </Typography>
                           </Box>
                         </Grid>
@@ -930,102 +677,105 @@ const CourseOverviewPage: React.FC = () => {
             {/* Course Progress */}
             <Card sx={{ borderRadius: "10px", mb: 4 }}>
               <CardContent sx={{ py: 1 }}>
-                <Typography variant="h4" fontWeight={600} gutterBottom>
-                  Tiến độ của bạn
-                </Typography>
-
-                <Box mb={2}>
-                  <Box display="flex" justifyContent="space-between" mb={1}>
-                    <Typography variant="body2">Hoàn thành</Typography>
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color="primary.main"
-                    >
-                      {course.progress}%
+                {isJoinedCourse && (
+                  <>
+                    <Typography variant="h4" fontWeight={600} gutterBottom>
+                      Tiến độ của bạn
                     </Typography>
-                  </Box>
-                  <LinearProgress
-                    variant="determinate"
-                    value={course.progress}
-                    sx={{ height: 8, borderRadius: 4 }}
-                  />
-                </Box>
 
-                <Box display="flex" justifyContent="space-between">
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Bài học đã hoàn thành
-                    </Typography>
-                    <Typography variant="h6">
-                      {course.modules.reduce(
+                    <Box mb={2}>
+                      <Box display="flex" justifyContent="space-between" mb={1}>
+                        <Typography variant="body2">Hoàn thành</Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight={600}
+                          color="primary.main"
+                        >
+                          {0}%
+                        </Typography>
+                      </Box>
+                      <LinearProgress
+                        variant="determinate"
+                        value={0}
+                        sx={{ height: 8, borderRadius: 4 }}
+                      />
+                    </Box>
+
+                    <Box display="flex" justifyContent="space-between">
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          Bài học đã hoàn thành
+                        </Typography>
+                        <Typography variant="h6">
+                          {/* {course?.modules?.reduce(
                         (acc, module) =>
                           acc +
                           module.lessons.filter((lesson) => lesson.completed)
                             .length,
                         0
-                      )}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Tổng số bài học
-                    </Typography>
-                    <Typography variant="h6">
-                      {course.modules.reduce(
-                        (acc, module) => acc + module.lessons.length,
-                        0
-                      )}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Thời gian còn lại
-                    </Typography>
-                    <Typography variant="h6">4.5h</Typography>
-                  </Box>
-                </Box>
+                      )} */}
+                          0
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          Tổng số bài học
+                        </Typography>
+                        <Typography variant="h6">
+                          {course?.modules?.reduce(
+                            (acc, module) => acc + module.lessons.length,
+                            0
+                          )}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          Thời gian còn lại
+                        </Typography>
+                        <Typography variant="h6">
+                          {isJoinedCourse
+                            ? `${course?.duration_in_hours}h`
+                            : "4.5h"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </>
+                )}
 
-                {/* <Button variant="contained" color="primary" fullWidth>
-                  Tiếp tục học
-                </Button> */}
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<PlayCircleOutlineIcon />}
+                  startIcon={
+                    isJoinedCourse ? <PlayCircleOutlineIcon /> : <PeopleIcon />
+                  }
+                  onClick={handleJoinCourse}
                   fullWidth
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 2, mt: isJoinedCourse ? 0 : 2 }}
                 >
-                  Tiếp tục học
+                  {isJoinedCourse ? "Tiếp tục học" : "Tham gia khóa học"}
                 </Button>
 
                 <Box display="flex" justifyContent="space-between">
                   <Button
                     startIcon={<BookmarkIcon />}
                     variant="outlined"
-                    sx={{ width: "calc(50% - 8px)" }}
+                    sx={{ width: "100%" }}
                   >
                     Lưu
-                  </Button>
-                  <Button
-                    startIcon={<ShareIcon />}
-                    variant="outlined"
-                    sx={{ width: "calc(50% - 8px)" }}
-                  >
-                    Chia sẻ
                   </Button>
                 </Box>
               </CardContent>
             </Card>
 
             {/* Current Lesson */}
-            <Card sx={{ borderRadius: "10px", mb: 4 }}>
-              <CardContent>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
-                  Bài học hiện tại
-                </Typography>
+            {isJoinedCourse && (
+              <Card sx={{ borderRadius: "10px", mb: 4 }}>
+                <CardContent>
+                  <Typography variant="h6" fontWeight={600} gutterBottom>
+                    Bài học hiện tại
+                  </Typography>
 
-                {course.modules
+                  {/* {course?.modules?
                   .map((module) =>
                     module.lessons.find((lesson) => lesson.current)
                   )
@@ -1056,9 +806,10 @@ const CourseOverviewPage: React.FC = () => {
                         Tiếp tục bài học
                       </Button>
                     </Box>
-                  ))}
-              </CardContent>
-            </Card>
+                  ))} */}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Course Info */}
             <Card sx={{ borderRadius: "10px" }}>
@@ -1074,7 +825,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Thời lượng"
-                      secondary={course.duration}
+                      secondary={course?.duration_in_hours}
                       primaryTypographyProps={{ variant: "body2" }}
                       secondaryTypographyProps={{
                         variant: "body2",
@@ -1089,7 +840,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Số bài học"
-                      secondary={course.modules.reduce(
+                      secondary={course?.modules?.reduce(
                         (acc, module) => acc + module.lessons.length,
                         0
                       )}
@@ -1107,7 +858,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Ngôn ngữ"
-                      secondary={course.language}
+                      secondary="Tiếng Việt"
                       primaryTypographyProps={{ variant: "body2" }}
                       secondaryTypographyProps={{
                         variant: "body2",
@@ -1122,7 +873,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Học viên"
-                      secondary={course.students}
+                      secondary={10}
                       primaryTypographyProps={{ variant: "body2" }}
                       secondaryTypographyProps={{
                         variant: "body2",
@@ -1137,7 +888,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Cập nhật lần cuối"
-                      secondary={course.lastUpdate}
+                      secondary={"05/2025"}
                       primaryTypographyProps={{ variant: "body2" }}
                       secondaryTypographyProps={{
                         variant: "body2",

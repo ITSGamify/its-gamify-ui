@@ -31,7 +31,8 @@ import DashboardCard from "@components/ui/atoms/DashboardCard";
 import CourseCard from "@components/ui/atoms/CourseCard";
 import TaskManagement from "@components/ui/atoms/TaskManagement";
 import LearningProgress from "@components/ui/atoms/LearningProgress";
-import { DashboardCardProps, CourseCardProps } from "@interfaces/shared/home";
+import { DashboardCardProps } from "@interfaces/shared/home";
+import { useHomePage } from "@hooks/data/useHomePage";
 
 // Styled components
 const PageTitle = styled(Typography)(({ theme }) => ({
@@ -113,57 +114,6 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const courses: CourseCardProps[] = [
-    {
-      id: 1,
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      title: "Thiết kế UI/UX với Figma",
-      category: "Design",
-      description:
-        "Học cách thiết kế giao diện người dùng chuyên nghiệp với Figma từ cơ bản đến nâng cao",
-      duration: "12 giờ",
-      instructor: {
-        name: "Nguyễn Văn A",
-        avatar: "/avatars/instructor1.jpg",
-      },
-      progress: 65,
-      lessons: 785,
-    },
-    {
-      id: 2,
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      title: "React JS - Từ cơ bản đến thành thạo",
-      category: "Development",
-      description:
-        "Khóa học toàn diện về React, giúp bạn xây dựng ứng dụng web hiện đại với hiệu suất cao",
-      duration: "18 giờ",
-      instructor: {
-        name: "Trần Thị B",
-        avatar: "/avatars/instructor2.jpg",
-      },
-      progress: 32,
-      lessons: 72,
-    },
-    {
-      id: 3,
-      image:
-        "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-      title: "Quản lý dự án chuyên nghiệp",
-      category: "Business",
-      description:
-        "Học các kỹ năng và phương pháp quản lý dự án hiệu quả trong môi trường doanh nghiệp",
-      duration: "15 giờ",
-      instructor: {
-        name: "Lê Văn C",
-        avatar: "/avatars/instructor3.jpg",
-      },
-      progress: 78,
-      lessons: 135,
-    },
-  ];
-
   interface UpcomingDeadline {
     id: number;
     title: string;
@@ -196,6 +146,7 @@ const HomePage: React.FC = () => {
     },
   ];
 
+  const { participations } = useHomePage();
   return (
     <Container maxWidth="xl" sx={{ pt: 0, pb: 3 }}>
       {/* Header */}
@@ -295,11 +246,15 @@ const HomePage: React.FC = () => {
             </StyledTabs>
 
             <Grid container spacing={3}>
-              {courses.map((course) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={course.id}>
-                  <CourseCard {...course} />
-                </Grid>
-              ))}
+              {participations &&
+                participations.map((participation) => (
+                  <Grid
+                    size={{ xs: 12, sm: 6, md: 4 }}
+                    key={participation.course.id}
+                  >
+                    <CourseCard course={participation.course} />
+                  </Grid>
+                ))}
             </Grid>
           </Box>
 

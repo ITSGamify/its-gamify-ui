@@ -28,9 +28,10 @@ import {
 } from "@mui/icons-material";
 
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { CourseCardProps } from "@interfaces/shared/home";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
+import { Course } from "@interfaces/api/course";
+import { getRoute } from "@utils/route";
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -45,7 +46,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const CategoryChip = styled(Chip)(({ theme }) => ({
+const CategoryChip = styled(Chip)(() => ({
   borderRadius: "16px",
   fontWeight: 600,
   fontSize: "0.75rem",
@@ -61,23 +62,14 @@ const LevelChip = styled(Chip)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-const CourseCard: React.FC<CourseCardProps> = ({
-  id,
-  image,
-  title,
-  category,
-  description,
-  duration,
-  instructor,
-  progress,
-  level,
-  rating,
-  reviews,
-  lessons,
-}) => {
+interface CourseCardProps {
+  course: Course;
+}
+
+const CourseCard = ({ course }: CourseCardProps) => {
   const theme = useTheme();
-  const [bookmarked, setBookmarked] = useState<number[]>([2, 5]);
-  const toggleBookmark = (courseId: number) => {
+  const [bookmarked, setBookmarked] = useState<string[]>([]);
+  const toggleBookmark = (courseId: string) => {
     if (bookmarked.includes(courseId)) {
       setBookmarked(bookmarked.filter((id) => id !== courseId));
     } else {
@@ -88,12 +80,20 @@ const CourseCard: React.FC<CourseCardProps> = ({
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(PATH.COURSES_OVERVIEW);
+    const route = getRoute(PATH.COURSES_OVERVIEW, {
+      courseId: course.id,
+    });
+    navigate(route);
   };
   return (
     <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
       <Box sx={{ position: "relative" }}>
-        <CardMedia component="img" height="200" image={image} alt={title} />
+        <CardMedia
+          component="img"
+          height="200"
+          image={course.thumbnail_image}
+          alt={course.title}
+        />
         <Box
           sx={{
             position: "absolute",
@@ -105,7 +105,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
           }}
         >
           <CategoryChip
-            label={category}
+            label={course.category?.name}
             size="small"
             // color="primary"
             sx={{
@@ -117,7 +117,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
               borderRadius: "16px",
             }}
           />
-          {progress !== undefined && (
+          {course && (
             <Chip
               label="Đã tham gia"
               size="small"
@@ -143,9 +143,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
               backgroundColor: "rgba(255, 255, 255, 0.9)",
             },
           }}
-          onClick={() => toggleBookmark(id)}
+          onClick={() => toggleBookmark(course.id)}
         >
-          {bookmarked.includes(id) ? (
+          {bookmarked.includes(course.id) ? (
             <BookmarkIcon color="primary" />
           ) : (
             <BookmarkBorderIcon />
@@ -155,10 +155,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
 
       <CardContent sx={{ flexGrow: 1, p: 1, paddingBottom: "10px !important" }}>
         <Box sx={{ mb: 1 }}>
-          <LevelChip label={level || "Cơ bản"} size="small" />
+          <LevelChip label={"Cơ bản"} size="small" />
         </Box>
         <Typography variant="h6" component="div" gutterBottom noWrap>
-          {title}
+          {course.title}
         </Typography>
 
         <Typography
@@ -173,18 +173,18 @@ const CourseCard: React.FC<CourseCardProps> = ({
             WebkitBoxOrient: "vertical",
           }}
         >
-          {description}
+          {course.short_description}
         </Typography>
 
         {/*Auhtor */}
-        <Box display="flex" alignItems="center" mb={1} mt="auto">
+        {/* <Box display="flex" alignItems="center" mb={1} mt="auto">
           <Avatar
             src={instructor.avatar}
             alt={instructor.name}
             sx={{ width: 32, height: 32, mr: 1 }}
           />
           <Typography variant="subtitle2">{instructor.name}</Typography>
-        </Box>
+        </Box> */}
 
         {/* Rating*/}
         <Box
@@ -195,14 +195,14 @@ const CourseCard: React.FC<CourseCardProps> = ({
           }}
         >
           <Rating
-            value={rating || 3}
+            value={3}
             precision={0.1}
             readOnly
             size="small"
             sx={{ mr: 1 }}
           />
           <Typography variant="body2" color="text.secondary">
-            ({rating || 3}) • {reviews || 145} đánh giá
+            ({3}) • {145} đánh giá
           </Typography>
         </Box>
 
@@ -222,30 +222,28 @@ const CourseCard: React.FC<CourseCardProps> = ({
           >
             <AccessTimeIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
             <Typography variant="body2" color="text.secondary">
-              {duration} • {lessons} bài học
+              {course.duration_in_hours} • {course.modules?.length} bài học
             </Typography>
           </Box>
-          <Button
+          {/* <Button
             variant="text"
             sx={{ width: "fit-content" }}
             color="primary"
             fullWidth
           >
             {progress === undefined ? "Tiếp tục học" : "Xem chi tiết"}
-          </Button>
+          </Button> */}
         </Box>
 
-        {progress !== undefined && (
-          <Button
-            sx={{ marginBottom: "10px" }}
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleCardClick}
-          >
-            Tiếp tục học ({progress}%)
-          </Button>
-        )}
+        <Button
+          sx={{ marginBottom: "10px" }}
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={handleCardClick}
+        >
+          Tiếp tục học ({10}%)
+        </Button>
       </CardContent>
     </StyledCard>
   );

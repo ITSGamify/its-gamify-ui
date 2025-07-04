@@ -32,6 +32,7 @@ export interface Course {
   introduction_video?: string;
   learning_materials?: Material[];
   course_participations?: Participation[];
+  created_date: Date;
 }
 
 export interface Material {
@@ -51,4 +52,5 @@ export interface Participation {
   course_id: string;
   status: number;
   course: Course;
+  created_date: Date;
 }

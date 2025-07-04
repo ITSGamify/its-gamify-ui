@@ -56,7 +56,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          px: 0,
+          py: 3,
           // width: { sm: `calc(100% - ${isDrawerOpen ? drawerWidth : 0}px)` },
           // ml: { sm: isDrawerOpen ? `${drawerWidth}px` : 0 },
           transition: theme.transitions.create(["margin", "width"], {

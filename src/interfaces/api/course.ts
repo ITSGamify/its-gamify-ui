@@ -31,6 +31,7 @@ export interface Course {
   status: string;
   introduction_video?: string;
   learning_materials?: Material[];
+  course_participations?: Participation[];
 }
 
 export interface Material {

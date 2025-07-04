@@ -11,9 +11,11 @@ export const useHomePage = () => {
     // })),
   };
 
-  const { data: courseParticipations } = useGetParticipations(getAccountsReq);
+  const { data: courseParticipations, isFetching: isLoadingParticipation } =
+    useGetParticipations(getAccountsReq);
 
   return {
     participations: courseParticipations?.data || [],
+    isLoadingParticipation,
   };
 };

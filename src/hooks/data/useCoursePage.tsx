@@ -24,7 +24,7 @@ export const useCoursePage = () => {
     setActivePage(page);
   };
 
-  const { data } = useGetCourses(getAccountsReq);
+  const { data, isFetching } = useGetCourses(getAccountsReq);
 
   const courses = data?.data || [];
   const pagination = data?.pagination;
@@ -38,5 +38,6 @@ export const useCoursePage = () => {
     total_page_count,
     page_size,
     handlePageChange,
+    isLoading: isFetching,
   };
 };

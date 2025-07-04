@@ -10,16 +10,17 @@ import {
   CardContent,
   Tab,
   Tabs,
-  Avatar,
+  // Avatar,
   styled,
   Divider,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import {
-  Dashboard as DashboardIcon,
+  // Dashboard as DashboardIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
-  People as PeopleIcon,
+  // People as PeopleIcon,
   TrendingUp as TrendingUpIcon,
   AccessTime as AccessTimeIcon,
   CheckCircle as CheckCircleIcon,
@@ -146,9 +147,9 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const { participations } = useHomePage();
+  const { participations, isLoadingParticipation } = useHomePage();
   return (
-    <Container maxWidth="xl" sx={{ pt: 0, pb: 3 }}>
+    <Container maxWidth="xl" sx={{ pt: 0, pb: 3, px: 3 }}>
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <PageTitle variant="h2">Khóa học của tôi</PageTitle>
@@ -246,15 +247,37 @@ const HomePage: React.FC = () => {
             </StyledTabs>
 
             <Grid container spacing={3}>
-              {participations &&
+              {isLoadingParticipation ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                    py: 4,
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : participations && participations.length > 0 ? (
                 participations.map((participation) => (
                   <Grid
                     size={{ xs: 12, sm: 6, md: 4 }}
                     key={participation.course.id}
                   >
-                    <CourseCard course={participation.course} />
+                    <CourseCard
+                      course={participation.course}
+                      isShowBtn={true}
+                      isJoined={true}
+                    />
                   </Grid>
-                ))}
+                ))
+              ) : (
+                <Box sx={{ width: "100%", textAlign: "center", py: 4 }}>
+                  <Typography variant="body1" color="text.secondary">
+                    Bạn chưa tham gia khóa học nào
+                  </Typography>
+                </Box>
+              )}
             </Grid>
           </Box>
 

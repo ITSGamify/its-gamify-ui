@@ -92,7 +92,7 @@ export const useLoginPage = () => {
         onSuccess: (data) => {
           userSession.storeUserProfile(data);
           reset();
-          const route = getRoute(PATH.HOME);
+          const route = getRoute(PATH.LANDING);
           navigate(route);
         },
       });

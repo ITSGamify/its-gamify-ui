@@ -5,41 +5,41 @@ import {
   Container,
   Typography,
   Grid,
-  Card,
-  CardContent,
-  CardMedia,
+  // Card,
+  // CardContent,
+  // CardMedia,
   Button,
-  Chip,
-  Rating,
+  // Chip,
+  // Rating,
   TextField,
   InputAdornment,
-  IconButton,
+  // IconButton,
   Tabs,
   Tab,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
+  // MenuItem,
+  // Select,
+  // FormControl,
+  // InputLabel,
   Pagination,
-  Stack,
-  Divider,
+  // Stack,
+  // Divider,
   styled,
-  useTheme,
-  alpha,
+  CircularProgress,
+  // useTheme,
+  // alpha,
 } from "@mui/material";
 import {
   Search as SearchIcon,
   FilterList as FilterListIcon,
-  AccessTime as AccessTimeIcon,
-  Person as PersonIcon,
-  Bookmark as BookmarkIcon,
-  BookmarkBorder as BookmarkBorderIcon,
-  Star as StarIcon,
+  // AccessTime as AccessTimeIcon,
+  // Person as PersonIcon,
+  // Bookmark as BookmarkIcon,
+  // BookmarkBorder as BookmarkBorderIcon,
+  // Star as StarIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
+  // RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
 } from "@mui/icons-material";
 import CourseCard from "@components/ui/atoms/CourseCard";
-import { CourseCardProps } from "@interfaces/shared/home";
 import { useCoursePage } from "@hooks/data/useCoursePage";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -58,16 +58,17 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const CoursePage: React.FC = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
-  const [sortBy, setSortBy] = useState("popular");
-  const [bookmarked, setBookmarked] = useState<number[]>([2, 5]);
+  // const [sortBy, setSortBy] = useState("popular");
+  // const [bookmarked, setBookmarked] = useState<number[]>([2, 5]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const { courses, total_page_count, handlePageChange } = useCoursePage();
+  const { courses, total_page_count, handlePageChange, isLoading } =
+    useCoursePage();
 
   // Categories for filter
   const categories = [
@@ -208,11 +209,30 @@ const CoursePage: React.FC = () => {
 
       {/* Course Grid */}
       <Grid container spacing={3} sx={{ mb: 6 }}>
-        {courses.map((course) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={course.id}>
-            <CourseCard course={course} />
-          </Grid>
-        ))}
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              py: 8,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          courses.map((course) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={course.id}>
+              <CourseCard
+                course={course}
+                isJoined={
+                  course.course_participations &&
+                  course.course_participations?.length > 0
+                }
+              />
+            </Grid>
+          ))
+        )}
       </Grid>
 
       {/* Pagination */}
@@ -222,7 +242,6 @@ const CoursePage: React.FC = () => {
           color="primary"
           size="large"
           onChange={(event, page) => {
-            console.log("Changed to page:", page);
             handlePageChange(page);
           }}
         />

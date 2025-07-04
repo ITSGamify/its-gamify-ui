@@ -7,7 +7,7 @@ import {
   Typography,
   Box,
   Chip,
-  Avatar,
+  // Avatar,
   Button,
   styled,
   useTheme,
@@ -16,18 +16,18 @@ import {
   Rating,
 } from "@mui/material";
 import {
-  Search as SearchIcon,
-  FilterList as FilterListIcon,
+  // Search as SearchIcon,
+  // FilterList as FilterListIcon,
   AccessTime as AccessTimeIcon,
-  Person as PersonIcon,
+  // Person as PersonIcon,
   Bookmark as BookmarkIcon,
   BookmarkBorder as BookmarkBorderIcon,
-  Star as StarIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
+  // Star as StarIcon,
+  // ArrowDropDown as ArrowDropDownIcon,
+  // RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
 } from "@mui/icons-material";
 
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+// import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { Course } from "@interfaces/api/course";
@@ -64,9 +64,15 @@ const LevelChip = styled(Chip)(({ theme }) => ({
 
 interface CourseCardProps {
   course: Course;
+  isShowBtn?: boolean;
+  isJoined?: boolean;
 }
 
-const CourseCard = ({ course }: CourseCardProps) => {
+const CourseCard = ({
+  course,
+  isShowBtn = false,
+  isJoined = false,
+}: CourseCardProps) => {
   const theme = useTheme();
   const [bookmarked, setBookmarked] = useState<string[]>([]);
   const toggleBookmark = (courseId: string) => {
@@ -76,7 +82,6 @@ const CourseCard = ({ course }: CourseCardProps) => {
       setBookmarked([...bookmarked, courseId]);
     }
   };
-
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -85,6 +90,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
     });
     navigate(route);
   };
+
   return (
     <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
       <Box sx={{ position: "relative" }}>
@@ -117,7 +123,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
               borderRadius: "16px",
             }}
           />
-          {course && (
+          {isJoined && (
             <Chip
               label="Đã tham gia"
               size="small"
@@ -225,25 +231,29 @@ const CourseCard = ({ course }: CourseCardProps) => {
               {course.duration_in_hours} • {course.modules?.length} bài học
             </Typography>
           </Box>
-          {/* <Button
-            variant="text"
-            sx={{ width: "fit-content" }}
-            color="primary"
-            fullWidth
-          >
-            {progress === undefined ? "Tiếp tục học" : "Xem chi tiết"}
-          </Button> */}
+          {!isShowBtn && (
+            <Button
+              variant="text"
+              sx={{ width: "fit-content" }}
+              color="primary"
+              fullWidth
+            >
+              {isJoined ? "Tiếp tục học" : "Xem chi tiết"}
+            </Button>
+          )}
         </Box>
 
-        <Button
-          sx={{ marginBottom: "10px" }}
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleCardClick}
-        >
-          Tiếp tục học ({10}%)
-        </Button>
+        {isShowBtn && isJoined && (
+          <Button
+            sx={{ marginBottom: "10px", marginTop: "10px" }}
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleCardClick}
+          >
+            Tiếp tục học
+          </Button>
+        )}
       </CardContent>
     </StyledCard>
   );

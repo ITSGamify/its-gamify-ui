@@ -116,7 +116,7 @@ const CourseDetailPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: "background.default" }}>
+    <Box sx={{ bgcolor: "background.default", px: 3 }}>
       <Container maxWidth="xl" sx={{ py: 0 }}>
         {/* Header */}
         <Grid

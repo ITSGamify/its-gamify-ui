@@ -49,6 +49,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { useCourseOverview } from "@hooks/data/useCourseOverview";
 import { formatToMB } from "@utils/file";
 import { formatDateToVietnamese } from "@utils/date";
+import { useNavigate } from "react-router-dom";
 
 //#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
@@ -108,15 +109,19 @@ const CourseOverviewPage: React.FC = () => {
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
+  const navigate = useNavigate();
 
   const { course, isJoinedCourse, handleJoinCourse } = useCourseOverview();
-
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
-    <Box>
+    <Box sx={{ px: 3 }}>
       {/* Header */}
       <PageHeader sx={{ pt: 0, pb: 0 }}>
         <Container maxWidth="xl" sx={{ py: 0 }}>
           <Button
+            onClick={handleBack}
             startIcon={<ArrowBackIcon />}
             sx={{ mb: 2, fontSize: "1.1rem" }}
           >

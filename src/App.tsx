@@ -8,6 +8,17 @@ import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import "@styles/global.css";
 import { useGlobal } from "@hooks/shared/useGlobal";
+import { ToastContainer, ToastContainerProps } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const toastConfig: ToastContainerProps = {
+  limit: 5,
+  icon: false,
+  autoClose: 5000,
+  closeButton: false,
+  position: "top-right",
+  hideProgressBar: true,
+};
 
 const App: React.FC = () => {
   const { themeOptions } = useGlobal();
@@ -18,6 +29,7 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <ToastProvider>
+          <ToastContainer {...toastConfig} />
           <RouterProvider router={router} />
         </ToastProvider>
       </ThemeProvider>

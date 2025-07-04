@@ -1,3 +1,4 @@
+import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
 import {
   useGetCourseDetail,
@@ -7,6 +8,7 @@ import {
 import { getRoute } from "@utils/route";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const useCourseOverview = () => {
   const { courseId } = useParams();
@@ -27,6 +29,11 @@ export const useCourseOverview = () => {
         { courseId: courseId as string },
         {
           onSuccess: () => {
+            toast.success(ToastContent, {
+              data: {
+                message: "Chào mừng bạn đến với khóa học!",
+              },
+            });
             const route = getRoute(PATH.COURSES_DETAIL, { id: courseId });
             navigate(route);
           },

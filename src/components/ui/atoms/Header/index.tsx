@@ -9,9 +9,9 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Drawer,
-  List,
-  ListItem,
+  // Drawer,
+  // List,
+  // ListItem,
   ListItemIcon,
   ListItemText,
   Divider,
@@ -27,15 +27,15 @@ import {
   Search as SearchIcon,
   Notifications as NotificationsIcon,
   AccountCircle,
-  Dashboard as DashboardIcon,
-  Book as BookIcon,
-  People as PeopleIcon,
+  // Dashboard as DashboardIcon,
+  // Book as BookIcon,
+  // People as PeopleIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
-  ChevronLeft as ChevronLeftIcon,
+  // ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
 import NavLink from "../NavLink";
 import { PATH } from "@constants/path";
@@ -87,13 +87,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
-}));
+// const DrawerHeader = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   alignItems: "center",
+//   padding: theme.spacing(0, 1),
+//   ...theme.mixins.toolbar,
+//   justifyContent: "flex-end",
+// }));
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -115,10 +115,10 @@ interface HeaderProps {
   isDrawerOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

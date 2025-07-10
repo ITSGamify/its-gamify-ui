@@ -13,7 +13,7 @@ import { DashboardCardProps } from "@interfaces/shared/home";
 // Styled components
 const StyledCard = styled(Card, {
   shouldForwardProp: (prop) => prop !== "color",
-})<{ color?: string }>(({ theme, color = "primary" }) => ({
+})<{ color?: string }>(({ theme }) => ({
   borderRadius: theme.shape.borderRadius, // 12px theo theme
   boxShadow: theme.shadows[2],
   height: "100%",
@@ -27,7 +27,7 @@ const StyledCard = styled(Card, {
 
 const IconBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== "color",
-})<{ color?: string }>(({ theme, color = "primary" }) => ({
+})<{ color?: string }>(({ theme }) => ({
   width: 48,
   height: 48,
   borderRadius: "50%",
@@ -79,6 +79,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             <LinearProgress
               variant="determinate"
               value={progress}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               color={color as any}
               sx={{ height: 6, borderRadius: 3 }}
             />

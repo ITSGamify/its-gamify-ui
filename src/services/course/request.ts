@@ -5,6 +5,7 @@ import { getRoute } from "@utils/route";
 import { HTTP_METHODS } from "@constants/request";
 import { END_POINTS } from "@constants/endpoint";
 import { Course, Participation } from "@interfaces/api/course";
+import { Module } from "@interfaces/api/lesson";
 
 export const getCourses = async (
   params?: GetCourseParams
@@ -40,5 +41,14 @@ export const joinCourse = async (
     url: getRoute(END_POINTS.COURSE.COURSE_PARTICIPATIONS, { courseId }),
     method: HTTP_METHODS.POST,
     data: {},
+  });
+};
+
+export const getCourseModules = async (
+  courseId: string
+): Promise<PaginatedResponse<Module>> => {
+  return request({
+    url: getRoute(END_POINTS.COURSE.COURSE_SECTIONS, { courseId }),
+    method: HTTP_METHODS.GET,
   });
 };

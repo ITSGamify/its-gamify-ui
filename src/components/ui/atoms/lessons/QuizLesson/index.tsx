@@ -2,8 +2,14 @@
 import React from "react";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { LessonProps } from "@components/ui/molecules/course-detail/CourseDetailMainContent";
 import QuizIcon from "@assets/images/quiz-icon.png";
+import {
+  LessonContentProps,
+  NavButton,
+  NavigationContainer,
+} from "@components/ui/molecules/course-detail/CourseDetailMainContent";
+
+import { ProgressRequestParams } from "@services/progress";
 
 const QuizContainer = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -30,71 +36,72 @@ const StartButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const NavigationContainer = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  width: "100%",
-  marginTop: theme.spacing(4),
-}));
-
-const NavButton = styled(Button)(() => ({
-  textTransform: "none",
-}));
-
-const QuizLesson: React.FC<LessonProps> = ({ lesson }) => {
-  const quizInfo = lesson.quizInfo || {
+const QuizLesson = ({
+  lesson,
+  isMoving,
+  handleMoveToNext,
+  participation,
+}: LessonContentProps) => {
+  const quizInfo = {
     questionCount: 7,
     timeLimit: "30 minutes",
   };
 
+  const params: ProgressRequestParams = {
+    lesson_id: lesson.id,
+    type: lesson.type,
+    status: "COMPLETED",
+    course_participation_id: participation.id,
+  };
   return (
-    <Box sx={{ py: 4 }}>
-      <QuizContainer>
-        {/* Quiz Icon */}
-        <Box
-          component="img"
-          src={QuizIcon}
-          alt="Quiz"
-          sx={{
-            mb: 3,
-            height: 200,
-            objectFit: "contain",
-          }}
-        />
+    <>
+      <Box>
+        <QuizContainer>
+          {/* Quiz Icon */}
+          <Box
+            component="img"
+            src={QuizIcon}
+            alt="Quiz"
+            sx={{
+              mb: 3,
+              height: 200,
+              objectFit: "contain",
+            }}
+          />
 
-        {/* Quiz Title */}
-        <Typography variant="h4" fontWeight="700" gutterBottom>
-          Ready For Quiz
-        </Typography>
+          {/* Quiz Title */}
+          <Typography variant="h4" fontWeight="700" gutterBottom>
+            Ready For Quiz
+          </Typography>
 
-        {/* Quiz Description */}
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ mb: 3, maxWidth: 450 }}
-        >
-          Test yourself on the skills in this training and earn mastery points
-          for what you already know!
-        </Typography>
+          {/* Quiz Description */}
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ mb: 3, maxWidth: 450 }}
+          >
+            Test yourself on the skills in this training and earn mastery points
+            for what you already know!
+          </Typography>
 
-        {/* Quiz Info */}
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-          {quizInfo.questionCount} Questions • Total duration:{" "}
-          {quizInfo.timeLimit}
-        </Typography>
+          {/* Quiz Info */}
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            {quizInfo.questionCount} Questions • Total duration:{" "}
+            {quizInfo.timeLimit}
+          </Typography>
 
-        {/* Start Button */}
-        <StartButton variant="contained" disableElevation>
-          Let's Start The Quiz
-        </StartButton>
-      </QuizContainer>
-
-      {/* Navigation Buttons */}
+          {/* Start Button */}
+          <StartButton variant="contained" disableElevation>
+            Let's Start The Quiz
+          </StartButton>
+        </QuizContainer>
+      </Box>
       <NavigationContainer>
         <NavButton
           variant="outlined"
           color="inherit"
           sx={{ borderColor: "divider", color: "text.secondary" }}
+          disabled={isMoving}
         >
           Previous
         </NavButton>
@@ -102,12 +109,13 @@ const QuizLesson: React.FC<LessonProps> = ({ lesson }) => {
         <NavButton
           variant="contained"
           color="primary"
-          sx={{ bgcolor: "#10b981" }}
+          disabled={isMoving}
+          onClick={() => handleMoveToNext(params)}
         >
           Next Chapter
         </NavButton>
       </NavigationContainer>
-    </Box>
+    </>
   );
 };
 

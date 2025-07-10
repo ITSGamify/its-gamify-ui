@@ -1,5 +1,8 @@
 import { Department } from "./department";
+import { LearningProgress } from "./learningProgress";
 import { Module } from "./lesson";
+
+export type ParticipationStatus = "IN_PROGRESS" | "COMPLETED";
 
 export interface Category {
   name: string;
@@ -47,10 +50,12 @@ export interface Material {
 }
 
 export interface Participation {
+  id: string;
   enrolled_Date: Date;
   user_id: string;
   course_id: string;
-  status: number;
+  status: ParticipationStatus;
   course: Course;
   created_date: Date;
+  learning_progresses: LearningProgress[];
 }

@@ -17,8 +17,12 @@ import {
   CheckCircle as CheckCircleIcon,
   ExpandMore as ExpandMoreIcon,
   QuestionAnswer as QuestionAnswerIcon,
+  ArticleOutlined,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import { Lesson, Module } from "@interfaces/api/lesson";
+import { useSearchParams } from "react-router-dom";
+import { LearningProgress } from "@interfaces/api/learningProgress";
 
 // Styled components
 const ProgressIndicator = styled(Box)<{ value: number }>(
@@ -50,38 +54,26 @@ const ProgressIndicator = styled(Box)<{ value: number }>(
   })
 );
 
-interface Chapter {
-  id: string;
-  title: string;
-  progress: number;
-  lessons: {
-    id: string;
-    title: string;
-    duration: string;
-    isCompleted: boolean;
-    isQuiz?: boolean;
-    questionCount?: number;
-  }[];
-}
-
 interface CourseContentSidebarProps {
-  courseData: {
-    totalChapters: number;
-    totalLessons: number;
-    totalDuration: string;
-    chapters: Chapter[];
-  };
+  modules: Module[];
+  learningProgresses: LearningProgress[] | undefined;
+  current_lesson_id: string;
+  completedLearningProgresses: LearningProgress[];
 }
 
-const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
-  courseData,
-}) => {
+const CourseContentSidebar = ({
+  modules,
+  current_lesson_id,
+  completedLearningProgresses,
+}: CourseContentSidebarProps) => {
   const [expandedChapters, setExpandedChapters] = useState<
     Record<string, boolean>
-  >({
-    "chapter-1": true,
-    "chapter-2": false,
-  });
+  >({});
+  const [, setSearchParams] = useSearchParams();
+
+  const handleLessonClick = (lessonId: string) => {
+    setSearchParams({ lessonId });
+  };
 
   const toggleChapter = (chapterId: string) => {
     setExpandedChapters((prev) => ({
@@ -90,15 +82,58 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
     }));
   };
 
+  const totalChapters = modules.length;
+  const totalLessons = modules.reduce(
+    (total, module) => total + module.lessons.length,
+    0
+  );
+
+  const totalDuration = modules.reduce((total, module) => {
+    return (
+      total +
+      module.lessons.reduce((moduleTotal, lesson) => {
+        return moduleTotal + lesson.duration;
+      }, 0)
+    );
+  }, 0);
+
+  const getProgress = (module: Module): number => {
+    const totalLessons = module.lessons.length;
+    if (totalLessons === 0) return 0;
+
+    return Math.round(
+      (completedLearningProgresses.length / totalLessons) * 100
+    );
+  };
+
+  const getLessonIcon = (lesson: Lesson) => {
+    const isCompleted = completedLearningProgresses.some(
+      (progress) =>
+        progress.lesson_id === lesson.id && progress.status === "COMPLETED"
+    );
+
+    if (isCompleted) {
+      return <CheckCircleIcon color="primary" />;
+    }
+
+    switch (lesson.type) {
+      case "article":
+        return <ArticleOutlined color="primary" />;
+      case "quiz":
+        return <QuestionAnswerIcon color="action" />;
+      default:
+        return <PlayCircleOutlineIcon color="action" />;
+    }
+  };
+
   return (
     <Paper sx={{ borderRadius: 2, overflow: "hidden" }}>
       <Box sx={{ p: 2, bgcolor: "background.paper" }}>
-        <Typography variant="h6" fontWeight="600" gutterBottom>
-          Training Content
+        <Typography variant="h3" fontWeight="600" gutterBottom>
+          Nội dung khóa học
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {courseData.totalChapters} Chapters • {courseData.totalLessons}{" "}
-          Lessons • Total duration: {courseData.totalDuration}
+          {`${totalChapters} Chương • ${totalLessons} Bài học • Thời gian ${totalDuration} phút`}
         </Typography>
       </Box>
 
@@ -106,8 +141,8 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
 
       {/* Chapters and lessons */}
       <Box sx={{ maxHeight: "600px", overflow: "auto" }}>
-        {courseData.chapters.map((chapter) => (
-          <React.Fragment key={chapter.id}>
+        {modules.map((module) => (
+          <React.Fragment key={module.id}>
             <Grid
               container
               alignItems="center"
@@ -115,25 +150,25 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
               sx={{
                 p: 2,
                 cursor: "pointer",
-                bgcolor: expandedChapters[chapter.id]
+                bgcolor: expandedChapters[module.id]
                   ? "action.hover"
                   : "background.paper",
               }}
-              onClick={() => toggleChapter(chapter.id)}
+              onClick={() => toggleChapter(module.id)}
             >
               <Grid>
                 <Box display="flex" alignItems="center">
-                  <ProgressIndicator value={chapter.progress} sx={{ mr: 2 }}>
+                  <ProgressIndicator value={getProgress(module)} sx={{ mr: 2 }}>
                     <Typography
                       variant="caption"
                       color="primary.main"
                       sx={{ zIndex: 1, fontWeight: "bold" }}
                     >
-                      {chapter.progress}%
+                      {getProgress(module)}%
                     </Typography>
                   </ProgressIndicator>
                   <Typography variant="subtitle1" fontWeight="600">
-                    {chapter.title}
+                    {module.title}
                   </Typography>
                 </Box>
               </Grid>
@@ -141,7 +176,7 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
                 <IconButton size="small">
                   <ExpandMoreIcon
                     sx={{
-                      transform: expandedChapters[chapter.id]
+                      transform: expandedChapters[module.id]
                         ? "rotate(180deg)"
                         : "rotate(0)",
                       transition: "0.3s",
@@ -151,35 +186,39 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
               </Grid>
             </Grid>
 
-            {expandedChapters[chapter.id] && (
+            {expandedChapters[module.id] && (
               <List disablePadding>
-                {chapter.lessons.map((lesson) => (
+                {module.lessons.map((lesson) => (
                   <ListItem
+                    onClick={() => handleLessonClick(lesson.id)}
                     key={lesson.id}
                     sx={{
                       px: 2,
                       py: 1.5,
                       borderLeft:
-                        lesson.id === "lesson-1-2" ? "4px solid" : "none",
+                        lesson.id === current_lesson_id ? "4px solid" : "none",
                       borderLeftColor: "primary.main",
                       bgcolor:
-                        lesson.id === "lesson-1-2"
+                        lesson.id === current_lesson_id
                           ? "action.hover"
                           : "background.paper",
+
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                      "&:active": {
+                        bgcolor: "action.selected",
+                      },
                     }}
                   >
                     <ListItemIcon sx={{ minWidth: 40 }}>
-                      {lesson.isCompleted ? (
-                        <CheckCircleIcon color="primary" />
-                      ) : lesson.isQuiz ? (
-                        <QuestionAnswerIcon color="action" />
-                      ) : (
-                        <PlayCircleOutlineIcon color="action" />
-                      )}
+                      {getLessonIcon(lesson)}
                     </ListItemIcon>
                     <ListItemText
                       primary={lesson.title}
-                      secondary={lesson.duration}
+                      secondary={`${lesson.duration} phút`}
                       primaryTypographyProps={{
                         variant: "body2",
                         fontWeight: lesson.id === "lesson-1-2" ? 600 : 400,
@@ -188,9 +227,9 @@ const CourseContentSidebar: React.FC<CourseContentSidebarProps> = ({
                         variant: "caption",
                       }}
                     />
-                    {lesson.isQuiz && (
+                    {lesson.type === "quiz" && (
                       <Typography variant="caption" color="text.secondary">
-                        {lesson.questionCount} questions
+                        {lesson.quiz?.total_questions} questions
                       </Typography>
                     )}
                   </ListItem>

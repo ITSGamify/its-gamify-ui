@@ -1,5 +1,5 @@
 // src/pages/CourseDetailPage.tsx
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Box,
   Container,
@@ -50,6 +50,8 @@ import { useCourseOverview } from "@hooks/data/useCourseOverview";
 import { formatToMB } from "@utils/file";
 import { formatDateToVietnamese } from "@utils/date";
 import { useNavigate } from "react-router-dom";
+import { Lesson } from "@interfaces/api/lesson";
+// import { Lesson } from "@interfaces/api/lesson";
 
 //#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
@@ -111,10 +113,60 @@ const CourseOverviewPage: React.FC = () => {
   };
   const navigate = useNavigate();
 
-  const { course, isJoinedCourse, handleJoinCourse } = useCourseOverview();
+  const {
+    course,
+    isJoinedCourse,
+    handleJoinCourse,
+    inCompleteLessons,
+    completedLearningProgresses,
+    allLessons,
+  } = useCourseOverview();
   const handleBack = () => {
     navigate(-1);
   };
+
+  const getLessonItem = (lesson: Lesson) => {
+    const isCompleted = completedLearningProgresses.some(
+      (progress) => progress.lesson_id === lesson.id
+    );
+
+    return (
+      <LessonItem
+        key={lesson.id}
+        completed={isCompleted}
+        current={false}
+        sx={{ px: 2 }}
+      >
+        <ListItemIcon>
+          {isCompleted ? (
+            <CheckCircleIcon color="success" />
+          ) : isJoinedCourse ? (
+            <LockIcon color="action" />
+          ) : (
+            <PlayCircleOutlineIcon
+              color={isJoinedCourse ? "primary" : "action"}
+            />
+          )}
+        </ListItemIcon>
+
+        <ListItemText
+          primary={lesson.title}
+          secondary={lesson.duration}
+          primaryTypographyProps={{
+            variant: "body2",
+            fontWeight: 600,
+
+            color: isJoinedCourse ? "text.disabled" : "text.primary",
+          }}
+          secondaryTypographyProps={{
+            variant: "caption",
+            color: isJoinedCourse ? "text.disabled" : "text.secondary",
+          }}
+        />
+      </LessonItem>
+    );
+  };
+
   return (
     <Box sx={{ px: 3 }}>
       {/* Header */}
@@ -330,59 +382,9 @@ const CourseOverviewPage: React.FC = () => {
 
                             <List>
                               {module.lessons.map((lesson) => (
-                                <LessonItem
-                                  key={lesson.id}
-                                  completed={isJoinedCourse}
-                                  current={false}
-                                  sx={{ px: 2 }}
-                                >
-                                  <ListItemIcon>
-                                    {!isJoinedCourse ? (
-                                      <CheckCircleIcon color="success" />
-                                    ) : isJoinedCourse ? (
-                                      <LockIcon color="action" />
-                                    ) : (
-                                      <PlayCircleOutlineIcon
-                                        color={
-                                          isJoinedCourse ? "primary" : "action"
-                                        }
-                                      />
-                                    )}
-                                  </ListItemIcon>
-
-                                  <ListItemText
-                                    primary={lesson.title}
-                                    secondary={lesson.duration}
-                                    primaryTypographyProps={{
-                                      variant: "body2",
-                                      fontWeight: 600,
-                                      color: "text.disabled",
-
-                                      // color: lesson.locked
-                                      //   ? "text.disabled"
-                                      //   : "text.primary",
-                                    }}
-                                    secondaryTypographyProps={{
-                                      variant: "caption",
-                                      color: "text.disabled",
-                                      // color: lesson.locked
-                                      //   ? "text.disabled"
-                                      //   : "text.secondary",
-                                    }}
-                                  />
-
-                                  {/* <ListItemSecondaryAction>
-                                    {lesson.hasAttachment && (
-                                      <IconButton
-                                        edge="end"
-                                        size="small"
-                                        disabled={lesson.locked}
-                                      >
-                                        <DownloadIcon fontSize="small" />
-                                      </IconButton>
-                                    )}
-                                  </ListItemSecondaryAction> */}
-                                </LessonItem>
+                                <Fragment key={lesson.id}>
+                                  {getLessonItem(lesson)}
+                                </Fragment>
                               ))}
                             </List>
                           </CardContent>
@@ -696,12 +698,27 @@ const CourseOverviewPage: React.FC = () => {
                           fontWeight={600}
                           color="primary.main"
                         >
-                          {0}%
+                          {allLessons.length > 0
+                            ? Math.round(
+                                (completedLearningProgresses.length /
+                                  allLessons.length) *
+                                  100
+                              )
+                            : 0}
+                          %
                         </Typography>
                       </Box>
                       <LinearProgress
                         variant="determinate"
-                        value={0}
+                        value={
+                          allLessons.length > 0
+                            ? Math.round(
+                                (completedLearningProgresses.length /
+                                  allLessons.length) *
+                                  100
+                              )
+                            : 0
+                        }
                         sx={{ height: 8, borderRadius: 4 }}
                       />
                     </Box>
@@ -712,14 +729,7 @@ const CourseOverviewPage: React.FC = () => {
                           Bài học đã hoàn thành
                         </Typography>
                         <Typography variant="h6">
-                          {/* {course?.modules?.reduce(
-                        (acc, module) =>
-                          acc +
-                          module.lessons.filter((lesson) => lesson.completed)
-                            .length,
-                        0
-                      )} */}
-                          0
+                          {completedLearningProgresses.length}
                         </Typography>
                       </Box>
                       <Box>
@@ -727,10 +737,7 @@ const CourseOverviewPage: React.FC = () => {
                           Tổng số bài học
                         </Typography>
                         <Typography variant="h6">
-                          {course?.modules?.reduce(
-                            (acc, module) => acc + module.lessons.length,
-                            0
-                          )}
+                          {allLessons.length}
                         </Typography>
                       </Box>
                       <Box>
@@ -738,9 +745,12 @@ const CourseOverviewPage: React.FC = () => {
                           Thời gian còn lại
                         </Typography>
                         <Typography variant="h6">
-                          {isJoinedCourse
-                            ? `${course?.duration_in_hours}h`
-                            : "4.5h"}
+                          {inCompleteLessons && inCompleteLessons.length > 0
+                            ? `${inCompleteLessons.reduce(
+                                (acc, lesson) => acc + lesson.duration,
+                                0
+                              )}h`
+                            : "0h"}
                         </Typography>
                       </Box>
                     </Box>
@@ -773,45 +783,39 @@ const CourseOverviewPage: React.FC = () => {
             </Card>
 
             {/* Current Lesson */}
-            {isJoinedCourse && (
+            {inCompleteLessons && inCompleteLessons.length > 0 && (
               <Card sx={{ borderRadius: "10px", mb: 4 }}>
                 <CardContent>
                   <Typography variant="h6" fontWeight={600} gutterBottom>
                     Bài học hiện tại
                   </Typography>
 
-                  {/* {course?.modules?
-                  .map((module) =>
-                    module.lessons.find((lesson) => lesson.current)
-                  )
-                  .filter(Boolean)
-                  .map((currentLesson) => (
-                    <Box key={currentLesson?.id}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        {currentLesson?.title}
+                  <Box key={inCompleteLessons[0]?.id}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      {inCompleteLessons[0]?.title}
+                    </Typography>
+
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <AccessTimeIcon
+                        fontSize="small"
+                        color="action"
+                        sx={{ mr: 0.5 }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {inCompleteLessons[0]?.duration}
                       </Typography>
-
-                      <Box display="flex" alignItems="center" mb={2}>
-                        <AccessTimeIcon
-                          fontSize="small"
-                          color="action"
-                          sx={{ mr: 0.5 }}
-                        />
-                        <Typography variant="body2" color="text.secondary">
-                          {currentLesson?.duration}
-                        </Typography>
-                      </Box>
-
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<PlayCircleOutlineIcon />}
-                        fullWidth
-                      >
-                        Tiếp tục bài học
-                      </Button>
                     </Box>
-                  ))} */}
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<PlayCircleOutlineIcon />}
+                      fullWidth
+                      onClick={handleJoinCourse}
+                    >
+                      Tiếp tục bài học
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             )}

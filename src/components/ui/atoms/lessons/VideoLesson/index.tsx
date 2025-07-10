@@ -9,11 +9,13 @@ import {
   SettingsOutlined,
   FullscreenOutlined,
   PictureInPictureAlt,
-  Replay10,
-  Forward10,
 } from "@mui/icons-material";
-import { Button } from "@mui/material";
-import { LessonProps } from "@components/ui/molecules/course-detail/CourseDetailMainContent";
+import {
+  LessonContentProps,
+  NavButton,
+  NavigationContainer,
+} from "@components/ui/molecules/course-detail/CourseDetailMainContent";
+import { ProgressRequestParams } from "@services/progress";
 
 const VideoContainer = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -50,27 +52,85 @@ const TimeDisplay = styled(Typography)(({ theme }) => ({
   minWidth: 40,
 }));
 
-const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
+const VideoLesson = ({
+  lesson,
+  isMoving,
+  handleMoveToNext,
+  participation,
+  learning_progress,
+}: LessonContentProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
-  const [currentTime, setCurrentTime] = useState(10); // Đặt giá trị mặc định là 10
+  const [currentTime, setCurrentTime] = useState(
+    learning_progress &&
+      videoRef.current?.duration &&
+      learning_progress.video_time_position < videoRef.current?.duration - 10
+      ? learning_progress.video_time_position
+      : 0
+  ); // Đặt giá trị mặc định là 10
   const [duration, setDuration] = useState(0);
 
+  console.log(learning_progress);
+  const params: ProgressRequestParams = React.useMemo(
+    () => ({
+      lesson_id: lesson.id,
+      type: lesson.type,
+      status:
+        learning_progress?.status === "COMPLETED"
+          ? "COMPLETED"
+          : !videoRef.current?.duration ||
+            !learning_progress?.video_time_position ||
+            Math.floor(learning_progress.video_time_position) <
+              Math.floor(videoRef.current.duration)
+          ? "IN_PROGRESS"
+          : "COMPLETED",
+      course_participation_id: participation.id,
+      video_time_position: currentTime,
+    }),
+    [lesson.id, lesson.type, learning_progress, participation.id, currentTime]
+  );
+
   useEffect(() => {
-    // Cập nhật âm lượng khi giá trị volume thay đổi
     if (videoRef.current) {
       videoRef.current.volume = volume / 100;
     }
   }, [volume]);
 
   useEffect(() => {
-    // Set default time to 10 seconds when video is loaded
     if (videoRef.current) {
-      videoRef.current.currentTime = 10;
+      videoRef.current.currentTime =
+        learning_progress &&
+        videoRef.current?.duration &&
+        learning_progress.video_time_position < videoRef.current?.duration - 10
+          ? learning_progress.video_time_position
+          : 0;
     }
-  }, []);
+  }, [learning_progress]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const handleVideoEnded = () => {
+        params.status = "COMPLETED";
+        handleMoveToNext(params);
+      };
+
+      video.addEventListener("ended", handleVideoEnded);
+
+      return () => {
+        video.removeEventListener("ended", handleVideoEnded);
+      };
+    }
+  }, [
+    currentTime,
+    handleMoveToNext,
+    lesson.id,
+    lesson.type,
+    params,
+    participation.id,
+  ]);
 
   const handlePlayPause = () => {
     if (videoRef.current) {
@@ -78,21 +138,10 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
         videoRef.current.pause();
       } else {
         // Đặt thời gian hiện tại là 10 giây trước khi phát
-        videoRef.current.currentTime = 10;
+        videoRef.current.currentTime = currentTime;
         videoRef.current.play();
       }
       setPlaying(!playing);
-    }
-  };
-
-  const handleProgressChange = (event: Event, newValue: number | number[]) => {
-    const newProgress = newValue as number;
-    setProgress(newProgress);
-
-    if (videoRef.current && duration) {
-      const newTime = (duration * newProgress) / 100;
-      videoRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
     }
   };
 
@@ -112,25 +161,12 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
-      videoRef.current.currentTime = 10; // Đặt thời gian hiện tại là 10 giây
-    }
-  };
-
-  const handleReplay10 = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.max(
-        0,
-        videoRef.current.currentTime - 10
-      );
-    }
-  };
-
-  const handleForward10 = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.min(
-        videoRef.current.duration,
-        videoRef.current.currentTime + 10
-      );
+      videoRef.current.currentTime =
+        learning_progress &&
+        videoRef.current?.duration &&
+        learning_progress.video_time_position < videoRef.current?.duration - 10
+          ? learning_progress.video_time_position
+          : 0;
     }
   };
 
@@ -158,174 +194,213 @@ const VideoLesson: React.FC<LessonProps> = ({ lesson }) => {
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  useEffect(() => {
+    const video = videoRef.current;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && video && playing) {
+        video.pause();
+        setPlaying(false);
+        handleMoveToNext(params);
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      if (video) {
+        if (playing) {
+          video.pause();
+          setPlaying(false);
+        }
+        handleMoveToNext(params);
+      }
+    };
+
+    // Thêm handler cho khi người dùng rời khỏi trang (page unload)
+    const handlePageHide = () => {
+      if (video && playing) {
+        video.pause();
+        setPlaying(false);
+      }
+      handleMoveToNext(params);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("pagehide", handlePageHide);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, [currentTime, duration, handleMoveToNext, params, playing]);
+
   return (
-    <Box sx={{ mb: 4 }}>
-      <VideoContainer>
-        {/* Video player */}
-        <Box
-          component="video"
-          ref={videoRef}
-          src={
-            "https://firebasestorage.googleapis.com/v0/b/digital-dynamo-cb555.appspot.com/o/assets%2FScreen%20Recording%202025-06-18%20223519.mp4?alt=media&token=ec743ae7-d904-488c-85e4-34ba75eece90"
-          }
-          // poster={"https://source.unsplash.com/random/1280x720/?presentation"}
-          controls={false}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onClick={handlePlayPause}
-          sx={{
-            width: "100%",
-            height: "auto",
-            display: "block",
-            cursor: "pointer",
-          }}
-        />
+    <>
+      <Box sx={{ mb: 4 }}>
+        <VideoContainer>
+          {/* Video player */}
+          <Box
+            component="video"
+            ref={videoRef}
+            src={lesson.video_url}
+            controls={false}
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onClick={handlePlayPause}
+            sx={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              cursor: "pointer",
+            }}
+          />
 
-        {/* Video controls overlay */}
-        <VideoControls>
-          <ControlsRow>
-            <Slider
-              size="small"
-              value={progress}
-              onChange={handleProgressChange}
-              aria-label="Video progress"
-              sx={{
-                color: "#4ecca3",
-                height: 4,
-                "& .MuiSlider-thumb": {
-                  width: 8,
-                  height: 8,
-                  "&:hover, &.Mui-focusVisible": {
-                    boxShadow: "none",
-                  },
-                },
-                "& .MuiSlider-rail": {
-                  opacity: 0.3,
-                },
-              }}
-            />
-          </ControlsRow>
-
-          <ControlsRow>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton
+          {/* Video controls overlay */}
+          <VideoControls>
+            <ControlsRow>
+              <Slider
                 size="small"
-                onClick={handlePlayPause}
-                sx={{ color: "white" }}
-              >
-                {playing ? <Pause /> : <PlayArrow />}
-              </IconButton>
-              <IconButton
-                size="small"
-                sx={{ color: "white" }}
-                onClick={handleReplay10}
-              >
-                <Replay10 />
-              </IconButton>
-              <IconButton
-                size="small"
-                sx={{ color: "white" }}
-                onClick={handleForward10}
-              >
-                <Forward10 />
-              </IconButton>
-              <Box sx={{ display: "flex", alignItems: "center", width: 100 }}>
-                <IconButton size="small" sx={{ color: "white" }}>
-                  <VolumeUp fontSize="small" />
-                </IconButton>
-                <Slider
-                  size="small"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  aria-label="Volume"
-                  sx={{
-                    color: "white",
-                    height: 2,
-                    width: 60,
-                    "& .MuiSlider-thumb": {
-                      width: 6,
-                      height: 6,
+                value={progress}
+                disableSwap={true}
+                disabled={true}
+                aria-label="Video progress"
+                sx={{
+                  color: "#4ecca3",
+                  height: 4,
+                  "& .MuiSlider-thumb": {
+                    width: 8,
+                    height: 8,
+                    "&:hover, &.Mui-focusVisible": {
+                      boxShadow: "none",
                     },
-                  }}
-                />
+                  },
+                  "& .MuiSlider-rail": {
+                    opacity: 0.3,
+                  },
+                }}
+              />
+            </ControlsRow>
+
+            <ControlsRow>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <IconButton
+                  size="small"
+                  onClick={handlePlayPause}
+                  sx={{ color: "white" }}
+                >
+                  {playing ? <Pause /> : <PlayArrow />}
+                </IconButton>
+                <Box sx={{ display: "flex", alignItems: "center", width: 100 }}>
+                  <IconButton size="small" sx={{ color: "white" }}>
+                    <VolumeUp fontSize="small" />
+                  </IconButton>
+                  <Slider
+                    size="small"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    aria-label="Volume"
+                    sx={{
+                      color: "white",
+                      height: 2,
+                      width: 60,
+                      "& .MuiSlider-thumb": {
+                        width: 6,
+                        height: 6,
+                      },
+                    }}
+                  />
+                </Box>
+                <TimeDisplay>
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </TimeDisplay>
               </Box>
-              <TimeDisplay>
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </TimeDisplay>
-            </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton size="small" sx={{ color: "white" }}>
-                <SettingsOutlined fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                sx={{ color: "white" }}
-                onClick={handlePictureInPicture}
-              >
-                <PictureInPictureAlt fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                sx={{ color: "white" }}
-                onClick={handleFullscreen}
-              >
-                <FullscreenOutlined fontSize="small" />
-              </IconButton>
-            </Box>
-          </ControlsRow>
-        </VideoControls>
-      </VideoContainer>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton size="small" sx={{ color: "white" }}>
+                  <SettingsOutlined fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  sx={{ color: "white" }}
+                  onClick={handlePictureInPicture}
+                >
+                  <PictureInPictureAlt fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  sx={{ color: "white" }}
+                  onClick={handleFullscreen}
+                >
+                  <FullscreenOutlined fontSize="small" />
+                </IconButton>
+              </Box>
+            </ControlsRow>
+          </VideoControls>
+        </VideoContainer>
 
-      {/* Lesson information */}
-      <Typography variant="h5" fontWeight="600" gutterBottom>
-        {lesson.title || "01 - Introduction to Project Management"}
-      </Typography>
-
-      <Box display="flex" alignItems="center" gap={1} mb={2}>
-        <Typography variant="body2" color="text.secondary">
-          By
+        {/* Lesson information */}
+        <Typography variant="h5" fontWeight="600" gutterBottom>
+          {lesson.title || "01 - Introduction to Project Management"}
         </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Typography variant="body2" color="primary" fontWeight="600">
-            {"Kristin Watson"}
-          </Typography>
+
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
           <Typography variant="body2" color="text.secondary">
-            , {"Product Owner"}
+            By
           </Typography>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="body2" color="primary" fontWeight="600">
+              {"Kristin Watson"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              , {"Product Owner"}
+            </Typography>
+          </Box>
         </Box>
-      </Box>
 
-      <Paper
-        variant="outlined"
-        sx={{
-          p: 3,
-          borderRadius: 2,
-          typography: "body1",
-          color: "text.secondary",
-          lineHeight: 1.7,
-        }}
-      >
-        <Typography variant="body1" component="div">
-          {lesson.description ||
-            "This training session offers a comprehensive introduction to the principles and methodologies of project management. Participants will gain an understanding of project management fundamentals, including project initiation, planning, execution, monitoring, and closure. Through interactive discussions and activities, attendees will explore key concepts such as project life cycles, project stakeholders, and the importance of effective project management in achieving organizational goals."}
-        </Typography>
-      </Paper>
-
-      {/* Navigation buttons */}
-      <Box display="flex" justifyContent="space-between" mt={3}>
-        <Button variant="outlined" size="medium" sx={{ textTransform: "none" }}>
-          Previous Lesson
-        </Button>
-        <Button
-          variant="contained"
-          size="medium"
-          sx={{ textTransform: "none", bgcolor: "#4ecca3" }}
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 3,
+            borderRadius: 2,
+            typography: "body1",
+            color: "text.secondary",
+            lineHeight: 1.7,
+          }}
         >
-          Next Lesson
-        </Button>
+          <Typography variant="body1" component="div">
+            {lesson.content ||
+              "This training session offers a comprehensive introduction to the principles and methodologies of project management. Participants will gain an understanding of project management fundamentals, including project initiation, planning, execution, monitoring, and closure. Through interactive discussions and activities, attendees will explore key concepts such as project life cycles, project stakeholders, and the importance of effective project management in achieving organizational goals."}
+          </Typography>
+        </Paper>
       </Box>
-    </Box>
+      <NavigationContainer>
+        <NavButton
+          variant="outlined"
+          color="inherit"
+          sx={{ borderColor: "divider", color: "text.secondary" }}
+          disabled={isMoving}
+        >
+          Previous
+        </NavButton>
+
+        <NavButton
+          variant="contained"
+          color="primary"
+          disabled={
+            isMoving ||
+            (learning_progress?.status !== "COMPLETED" &&
+              (!videoRef.current?.duration ||
+                !learning_progress?.video_time_position ||
+                Math.floor(learning_progress.video_time_position) <
+                  Math.floor(videoRef.current.duration)))
+          }
+          onClick={() => handleMoveToNext(params)}
+        >
+          Next Chapter
+        </NavButton>
+      </NavigationContainer>
+    </>
   );
 };
 export default VideoLesson;

@@ -41,23 +41,24 @@ interface StatusChipProps {
 
 const StatusChip = styled(Chip, {
   shouldForwardProp: (prop) => prop !== "status",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 })<StatusChipProps>(({ theme, status }) => {
-  const getStatusColor = (): string => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "success";
-      case "in progress":
-        return "primary";
-      case "pending":
-        return "warning";
-      case "delayed":
-        return "error";
-      default:
-        return "default";
-    }
-  };
+  // const getStatusColor = (): string => {
+  //   switch (status.toLowerCase()) {
+  //     case "completed":
+  //       return "success";
+  //     case "in progress":
+  //       return "primary";
+  //     case "pending":
+  //       return "warning";
+  //     case "delayed":
+  //       return "error";
+  //     default:
+  //       return "default";
+  //   }
+  // };
 
-  const color = getStatusColor();
+  // const color = getStatusColor();
 
   return {
     backgroundColor: alpha(theme.palette.primary.main, 0.16),

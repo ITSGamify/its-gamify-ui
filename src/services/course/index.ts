@@ -2,6 +2,7 @@ import { QUERY_KEYS } from "@constants/query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getCourseDetail,
+  getCourseModules,
   getCourseParticipations,
   getCourses,
   joinCourse,
@@ -43,5 +44,13 @@ export const useGetCourseParticipations = (courseId: string) => {
 export const useJoinCourse = () => {
   return useMutation({
     mutationFn: (data: RequestJoinCourseParams) => joinCourse(data),
+  });
+};
+
+export const useGetCourseModules = (courseId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COURSE.COURSE_SECTIONS, courseId],
+    queryFn: () => getCourseModules(courseId),
+    enabled: !!courseId,
   });
 };

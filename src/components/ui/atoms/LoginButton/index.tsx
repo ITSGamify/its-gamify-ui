@@ -21,6 +21,7 @@ const LoginButton: React.FC<CustomButtonProps> = ({
     <MuiButton
       fullWidth
       variant={muiVariant}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       color={color as any}
       sx={{
         borderRadius: "8px",

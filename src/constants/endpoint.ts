@@ -5,6 +5,8 @@ export const BASE_KEYS = {
   ROLES: "roles",
   STORAGE_FILES: "files",
   COURSE_PARTICIPATIONS: "course-participations",
+  LESSONS: "lessons",
+  PROGRESS: "learning-progresses",
 };
 
 export const END_POINTS = {
@@ -23,8 +25,16 @@ export const END_POINTS = {
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
     DELETE_RANGE: `${BASE_KEYS.COURSES}/delete`,
     COURSE_PARTICIPATIONS: `${BASE_KEYS.COURSES}/:courseId/course-participations`,
+    COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
   },
   PARTICIPATIONS: {
     BASE: BASE_KEYS.COURSE_PARTICIPATIONS,
+  },
+  LESSONS: {
+    BASE: BASE_KEYS.LESSONS,
+    DETAIL: `${BASE_KEYS.LESSONS}/:lessonId`,
+  },
+  PROGRESS: {
+    BASE: BASE_KEYS.PROGRESS,
   },
 };

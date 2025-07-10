@@ -9,7 +9,7 @@ import {
   ListItemText,
   Divider,
   Typography,
-  Toolbar,
+  // Toolbar,
   Collapse,
   IconButton,
 } from "@mui/material";
@@ -110,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       <Divider />
       <Box sx={{ overflow: "auto", height: "100%" }}>
         <List>
-          {menuItems.map((item, index) => {
+          {menuItems.map((item) => {
             if (item.children) {
               return (
                 <React.Fragment key={item.text}>

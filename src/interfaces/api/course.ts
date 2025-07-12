@@ -36,6 +36,7 @@ export interface Course {
   learning_materials?: Material[];
   course_participations?: Participation[];
   created_date: Date;
+  image_files: StorageFile[] | null;
 }
 
 export interface Material {

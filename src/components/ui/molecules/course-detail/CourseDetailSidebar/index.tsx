@@ -66,6 +66,8 @@ const CourseContentSidebar = ({
   current_lesson_id,
   completedLearningProgresses,
 }: CourseContentSidebarProps) => {
+  // console.log("completedLearningProgresses", completedLearningProgresses);
+
   const [expandedChapters, setExpandedChapters] = useState<
     Record<string, boolean>
   >({});
@@ -101,9 +103,13 @@ const CourseContentSidebar = ({
     const totalLessons = module.lessons.length;
     if (totalLessons === 0) return 0;
 
-    return Math.round(
-      (completedLearningProgresses.length / totalLessons) * 100
-    );
+    const completedLessonsInModule = completedLearningProgresses.filter(
+      (progress) =>
+        module.lessons.some((lesson) => lesson.id === progress.lesson_id) &&
+        progress.status === "COMPLETED"
+    ).length;
+
+    return Math.round((completedLessonsInModule / totalLessons) * 100);
   };
 
   const getLessonIcon = (lesson: Lesson) => {

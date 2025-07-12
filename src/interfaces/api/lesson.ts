@@ -1,3 +1,5 @@
+import { StorageFile } from "./file";
+
 export type LessonType = "video" | "article" | "quiz";
 export interface QuizQuestion {
   // index: number;
@@ -21,6 +23,7 @@ export interface Lesson {
   quiz?: Quizzes;
   index: number;
   module_id: string;
+  image_files: StorageFile[] | null;
 }
 
 export interface Quizzes {

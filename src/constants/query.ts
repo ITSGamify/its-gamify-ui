@@ -20,6 +20,10 @@ export const QUERY_KEYS = {
   LESSONS: {
     BASE: BASE_KEYS.LESSONS,
   },
+  QUIZZES: {
+    BASE: `${BASE_KEYS.QUIZZES}`,
+    DETAIL: `${BASE_KEYS.QUIZZES}/:quizId`,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

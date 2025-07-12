@@ -1,6 +1,6 @@
 // src/pages/course/components/lessons/ArticleLesson.tsx
 import React, { useState } from "react";
-import { Box, Typography, Tabs, Tab, Avatar, IconButton } from "@mui/material";
+import { Box, Typography, Tabs, Tab, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
@@ -82,12 +82,6 @@ interface TabPanelProps {
   value: number;
 }
 
-interface Slides {
-  id: number;
-  imageUrl: string;
-  alt: string;
-}
-
 const CustomTabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
 
@@ -104,34 +98,6 @@ const CustomTabPanel = (props: TabPanelProps) => {
   );
 };
 
-// Mock data for slides
-const mockSlides: Slides[] = [
-  {
-    id: 1,
-    imageUrl:
-      "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-    alt: "Project planning session",
-  },
-  {
-    id: 2,
-    imageUrl:
-      "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-    alt: "Team meeting",
-  },
-  {
-    id: 3,
-    imageUrl:
-      "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-    alt: "Planning with sticky notes",
-  },
-  {
-    id: 4,
-    imageUrl:
-      "https://assets.entrepreneur.com/content/3x2/2000/20190326201928-GettyImages-633710081-edit.jpeg?format=pjeg&auto=webp&crop=4:3",
-    alt: "Project presentation",
-  },
-];
-
 const ArticleLesson = ({
   lesson,
   isMoving,
@@ -140,7 +106,7 @@ const ArticleLesson = ({
 }: LessonContentProps) => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
-  const slides = mockSlides;
+  const slides = lesson.image_files || [];
 
   const handleSlideChange = (index: number) => {
     setActiveSlide(index);
@@ -171,8 +137,8 @@ const ArticleLesson = ({
         {/* Image Slider */}
         <SliderContainer>
           <SlideImage
-            src={slides[activeSlide].imageUrl}
-            alt={slides[activeSlide].alt}
+            src={slides[activeSlide].url}
+            alt={slides[activeSlide].file_name}
           />
 
           {/* Navigation Buttons */}
@@ -196,24 +162,9 @@ const ArticleLesson = ({
           </SlideIndicators>
         </SliderContainer>
 
-        {/* Lesson Title */}
         <Typography variant="h5" fontWeight="600" gutterBottom>
           {lesson.title || "02 - Project Planning and scope management"}
         </Typography>
-
-        {/* Instructor Info */}
-        <Box display="flex" alignItems="center" gap={1} mb={3}>
-          <Typography variant="body2" color="text.secondary">
-            By
-          </Typography>
-          <Typography variant="body2" color="primary" fontWeight="600">
-            {"Simon Shaw"}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            , {"Product Owner"}
-          </Typography>
-        </Box>
-
         {/* Tabs */}
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
@@ -231,7 +182,6 @@ const ArticleLesson = ({
             <StyledTab label="Reviews" />
             <StyledTab label="Discussion" />
             <StyledTab label="Resources" />
-            <StyledTab label="Instructor" />
           </Tabs>
         </Box>
 
@@ -273,29 +223,6 @@ const ArticleLesson = ({
             <Typography component="li" variant="body1" color="text.secondary">
               Recommended readings
             </Typography>
-          </Box>
-        </CustomTabPanel>
-
-        <CustomTabPanel value={activeTab} index={4}>
-          <Box display="flex" gap={2} alignItems="flex-start">
-            <Avatar
-              src={"https://source.unsplash.com/random/100x100/?portrait"}
-              alt={"Simon Shaw"}
-              sx={{ width: 80, height: 80 }}
-            />
-            <Box>
-              <Typography variant="h6" fontWeight="600">
-                {"Simon Shaw"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                {"Product Owner"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {
-                  "Simon is an experienced Product Owner with over 10 years of experience in project management. He has led numerous successful projects across various industries, specializing in agile methodologies and scope management."
-                }
-              </Typography>
-            </Box>
           </Box>
         </CustomTabPanel>
       </Box>

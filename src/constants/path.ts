@@ -5,7 +5,7 @@ export const PATH = {
   COURSES: "/courses",
   COURSES_OVERVIEW: "/courses/overview/:courseId",
   COURSES_DETAIL: "/courses/detail/:courseId",
-  QUIZ: "/quiz",
+  QUIZ: "/quizzes/:quizId",
   CHALLENGE: "/challenge",
   FORBIDDEN: "/403",
   NOT_FOUND: "/404",

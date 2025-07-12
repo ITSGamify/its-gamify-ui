@@ -72,7 +72,7 @@ const VideoLesson = ({
   ); // Đặt giá trị mặc định là 10
   const [duration, setDuration] = useState(0);
 
-  console.log(learning_progress);
+  // console.log(learning_progress);
   const params: ProgressRequestParams = React.useMemo(
     () => ({
       lesson_id: lesson.id,
@@ -340,23 +340,9 @@ const VideoLesson = ({
         </VideoContainer>
 
         {/* Lesson information */}
-        <Typography variant="h5" fontWeight="600" gutterBottom>
+        <Typography variant="h5" fontWeight="600" gutterBottom mb={2}>
           {lesson.title || "01 - Introduction to Project Management"}
         </Typography>
-
-        <Box display="flex" alignItems="center" gap={1} mb={2}>
-          <Typography variant="body2" color="text.secondary">
-            By
-          </Typography>
-          <Box display="flex" alignItems="center" gap={1}>
-            <Typography variant="body2" color="primary" fontWeight="600">
-              {"Kristin Watson"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              , {"Product Owner"}
-            </Typography>
-          </Box>
-        </Box>
 
         <Paper
           variant="outlined"

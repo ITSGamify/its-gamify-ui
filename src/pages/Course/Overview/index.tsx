@@ -13,7 +13,6 @@ import {
   Tabs,
   Avatar,
   styled,
-  Divider,
   List,
   ListItem,
   ListItemIcon,
@@ -223,17 +222,6 @@ const CourseOverviewPage: React.FC = () => {
                   </Typography>
                 </Box>
               </Box>
-
-              <Box display="flex" alignItems="center">
-                <Avatar
-                  src={"/avatars/instructor1.jpg"}
-                  alt={"Nguyễn Văn A"}
-                  sx={{ mr: 1 }}
-                />
-                <Typography variant="body2">
-                  Giảng viên: <strong>{"Nguyễn Văn A"}</strong>
-                </Typography>
-              </Box>
             </Grid>
           </Grid>
         </Container>
@@ -269,59 +257,6 @@ const CourseOverviewPage: React.FC = () => {
                     <SectionTitle variant="h6">Mô tả khóa học</SectionTitle>
                     <Typography variant="body1" paragraph>
                       {course?.description}
-                    </Typography>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <SectionTitle variant="h6">
-                      Thông tin giảng viên
-                    </SectionTitle>
-                    <Box display="flex" mb={3}>
-                      <Avatar
-                        src={"/avatars/instructor1.jpg"}
-                        alt={"Nguyễn Văn A"}
-                        sx={{ width: 80, height: 80, mr: 2 }}
-                      />
-                      <Box>
-                        <Typography variant="h6" gutterBottom>
-                          {"Nguyễn Văn A"}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          gutterBottom
-                        >
-                          {"Senior UI/UX Designer"}
-                        </Typography>
-                        <Box display="flex" alignItems="center" gap={2}>
-                          <Box display="flex" alignItems="center">
-                            <Rating
-                              value={5}
-                              precision={0.1}
-                              readOnly
-                              size="small"
-                            />
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              ml={0.5}
-                            >
-                              ({5})
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" color="text.secondary">
-                            {10} khóa học
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {20} học viên
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
-                    <Typography variant="body2" paragraph>
-                      {
-                        "Nguyễn Văn A là một nhà thiết kế UI/UX với hơn 8 năm kinh nghiệm làm việc với các công ty công nghệ hàng đầu. Anh đã tham gia thiết kế cho nhiều sản phẩm được hàng triệu người sử dụng và có niềm đam mê chia sẻ kiến thức với cộng đồng."
-                      }
                     </Typography>
                   </Box>
                 )}

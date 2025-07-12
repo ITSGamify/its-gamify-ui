@@ -1,5 +1,5 @@
 // src/pages/course/components/lessons/QuizLesson.tsx
-import React from "react";
+import React, { useCallback } from "react";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import QuizIcon from "@assets/images/quiz-icon.png";
@@ -10,6 +10,9 @@ import {
 } from "@components/ui/molecules/course-detail/CourseDetailMainContent";
 
 import { ProgressRequestParams } from "@services/progress";
+import { useNavigate } from "react-router-dom";
+import { getRoute } from "@utils/route";
+import { PATH } from "@constants/path";
 
 const QuizContainer = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -42,6 +45,8 @@ const QuizLesson = ({
   handleMoveToNext,
   participation,
 }: LessonContentProps) => {
+  const navigate = useNavigate();
+
   const quizInfo = {
     questionCount: 7,
     timeLimit: "30 minutes",
@@ -53,6 +58,22 @@ const QuizLesson = ({
     status: "COMPLETED",
     course_participation_id: participation.id,
   };
+
+  const handleStartQuiz = useCallback(() => {
+    localStorage.setItem("courseId", participation.course_id);
+    const path = getRoute(PATH.QUIZ, { quizId: lesson.quiz_id || "" });
+    navigate(
+      path +
+        `?type=LESSON&typeId=${lesson.id}&participationId=${participation.id}`
+    );
+  }, [
+    lesson.quiz_id,
+    lesson.id,
+    navigate,
+    participation.id,
+    participation.course_id,
+  ]);
+
   return (
     <>
       <Box>
@@ -91,7 +112,11 @@ const QuizLesson = ({
           </Typography>
 
           {/* Start Button */}
-          <StartButton variant="contained" disableElevation>
+          <StartButton
+            variant="contained"
+            disableElevation
+            onClick={handleStartQuiz}
+          >
             Let's Start The Quiz
           </StartButton>
         </QuizContainer>

@@ -1,4 +1,5 @@
 import { Department } from "./department";
+import { StorageFile } from "./file";
 import { LearningProgress } from "./learningProgress";
 import { Module } from "./lesson";
 

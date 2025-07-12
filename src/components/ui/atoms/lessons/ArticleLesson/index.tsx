@@ -135,32 +135,34 @@ const ArticleLesson = ({
     <>
       <Box sx={{ mb: 4 }}>
         {/* Image Slider */}
-        <SliderContainer>
-          <SlideImage
-            src={slides[activeSlide].url}
-            alt={slides[activeSlide].file_name}
-          />
+        {lesson.image_files && (
+          <SliderContainer>
+            <SlideImage
+              src={slides[activeSlide].url}
+              alt={slides[activeSlide].file_name}
+            />
 
-          {/* Navigation Buttons */}
-          <SlideNavButton onClick={handlePrevSlide} sx={{ left: 16 }}>
-            <ChevronLeft />
-          </SlideNavButton>
+            {/* Navigation Buttons */}
+            <SlideNavButton onClick={handlePrevSlide} sx={{ left: 16 }}>
+              <ChevronLeft />
+            </SlideNavButton>
 
-          <SlideNavButton onClick={handleNextSlide} sx={{ right: 16 }}>
-            <ChevronRight />
-          </SlideNavButton>
+            <SlideNavButton onClick={handleNextSlide} sx={{ right: 16 }}>
+              <ChevronRight />
+            </SlideNavButton>
 
-          {/* Slide Indicators */}
-          <SlideIndicators>
-            {slides.map((slide, index) => (
-              <SlideIndicator
-                key={slide.id}
-                active={index === activeSlide}
-                onClick={() => handleSlideChange(index)}
-              />
-            ))}
-          </SlideIndicators>
-        </SliderContainer>
+            {/* Slide Indicators */}
+            <SlideIndicators>
+              {slides.map((slide, index) => (
+                <SlideIndicator
+                  key={slide.id}
+                  active={index === activeSlide}
+                  onClick={() => handleSlideChange(index)}
+                />
+              ))}
+            </SlideIndicators>
+          </SliderContainer>
+        )}
 
         <Typography variant="h5" fontWeight="600" gutterBottom>
           {lesson.title || "02 - Project Planning and scope management"}

@@ -367,7 +367,7 @@ const VideoLesson = ({
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
         >
-          Previous
+          Trước
         </NavButton>
 
         <NavButton
@@ -383,7 +383,7 @@ const VideoLesson = ({
           }
           onClick={() => handleMoveToNext(params)}
         >
-          Next Chapter
+          Tiếp theo
         </NavButton>
       </NavigationContainer>
     </>

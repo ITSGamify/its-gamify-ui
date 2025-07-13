@@ -37,7 +37,7 @@ export const useCoursePage = () => {
   };
 
   const handlePageChange = (page: number) => {
-    setActivePage(page);
+    setActivePage(page - 1);
   };
 
   const { data, isFetching } = useGetCourses(getAccountsReq);

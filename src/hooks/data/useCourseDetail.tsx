@@ -138,7 +138,18 @@ export const useCourseDetail = () => {
               ? allLessons[nextIndex].id
               : progress.lesson_id;
 
-          if (allLessons.length !== learningProgresses.length + 1)
+          const existingProgress = learningProgresses.some(
+            (p) => p.lesson_id === progress.lesson_id
+          );
+          let completed = learningProgresses.filter(
+            (progress) => progress.status === "COMPLETED"
+          ).length;
+
+          if (progress.status === "COMPLETED" && !existingProgress) {
+            completed = completed + 1;
+          }
+
+          if (allLessons.length !== completed)
             setSearchParams({ lessonId: next_lesson_id });
           else {
             toast.success(ToastContent, {

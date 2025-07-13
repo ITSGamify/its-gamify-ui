@@ -179,7 +179,7 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
             />
 
             <QuestionNavigation
-              questions={currentQuestions}
+              questions={quiz.questions}
               answers={answers}
               onQuestionClick={handleQuestionNavigation}
               currentPage={currentPage}

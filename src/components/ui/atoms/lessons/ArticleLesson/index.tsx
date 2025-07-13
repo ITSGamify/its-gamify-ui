@@ -180,10 +180,10 @@ const ArticleLesson = ({
               },
             }}
           >
-            <StyledTab label="Description" />
-            <StyledTab label="Reviews" />
-            <StyledTab label="Discussion" />
-            <StyledTab label="Resources" />
+            <StyledTab label="Mô tả" />
+            <StyledTab label="Đánh giá" />
+            <StyledTab label="Thảo luận" />
+            <StyledTab label="Tài nguyên" />
           </Tabs>
         </Box>
 
@@ -235,7 +235,7 @@ const ArticleLesson = ({
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
         >
-          Previous
+          Trước
         </NavButton>
 
         <NavButton
@@ -244,7 +244,7 @@ const ArticleLesson = ({
           disabled={isMoving}
           onClick={() => handleMoveToNext(params)}
         >
-          Next Chapter
+          Tiếp Theo
         </NavButton>
       </NavigationContainer>
     </>

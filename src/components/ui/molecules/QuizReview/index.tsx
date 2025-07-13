@@ -138,7 +138,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
           </QuizCard>
         </Grid>
 
-        {/* Right Column - Results and Navigation */}
+        {/* Right Column - Results and Navigation - STICKY */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, mb: 3 }}>
             {/* Result Summary */}
@@ -177,7 +177,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
             />
 
             <QuestionNavigation
-              questions={currentQuestions}
+              questions={quiz.questions}
               answers={answers}
               onQuestionClick={handleQuestionNavigation}
               quizResult={quizResult}

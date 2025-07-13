@@ -9,7 +9,7 @@ export const QuizContainer = styled(Container)(({ theme }) => ({
 }));
 
 export const QuizCard = styled(Card)(() => ({
-  height: "100%",
+  height: "auto",
   minHeight: 500,
   display: "flex",
   flexDirection: "column",

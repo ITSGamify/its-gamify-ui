@@ -53,10 +53,7 @@ export const QuestionNavigation: React.FC<QuestionNavigationProps> = ({
   questionsPerPage = 2,
 }) => {
   const startIndex = (currentPage - 1) * questionsPerPage;
-  const currentQuestions = questions.slice(
-    startIndex,
-    startIndex + questionsPerPage
-  );
+  const currentQuestions = questions;
 
   const isQuestionAnswered = (questionId: string): boolean => {
     const answer = answers.find((a) => a.question_id === questionId);

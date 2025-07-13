@@ -44,18 +44,17 @@ const QuizLesson = ({
   isMoving,
   handleMoveToNext,
   participation,
+  learning_progress,
 }: LessonContentProps) => {
   const navigate = useNavigate();
-
-  const quizInfo = {
-    questionCount: 7,
-    timeLimit: "30 minutes",
-  };
 
   const params: ProgressRequestParams = {
     lesson_id: lesson.id,
     type: lesson.type,
-    status: "COMPLETED",
+    status:
+      learning_progress && learning_progress.status === "COMPLETED"
+        ? "COMPLETED"
+        : "IN_PROGRESS",
     course_participation_id: participation.id,
   };
 
@@ -92,7 +91,7 @@ const QuizLesson = ({
 
           {/* Quiz Title */}
           <Typography variant="h4" fontWeight="700" gutterBottom>
-            Ready For Quiz
+            Sẵn sàng cho bài kiểm tra
           </Typography>
 
           {/* Quiz Description */}
@@ -101,14 +100,14 @@ const QuizLesson = ({
             color="text.secondary"
             sx={{ mb: 3, maxWidth: 450 }}
           >
-            Test yourself on the skills in this training and earn mastery points
-            for what you already know!
+            Kiểm tra kiến thức của bạn về các kỹ năng trong khóa học này và nhận
+            điểm thành thạo cho những gì bạn đã biết!
           </Typography>
 
           {/* Quiz Info */}
           <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-            {quizInfo.questionCount} Questions • Total duration:{" "}
-            {quizInfo.timeLimit}
+            {lesson.quiz?.total_questions} Câu hỏi • Tổng thời gian:{" "}
+            {lesson.duration} phút
           </Typography>
 
           {/* Start Button */}
@@ -117,7 +116,9 @@ const QuizLesson = ({
             disableElevation
             onClick={handleStartQuiz}
           >
-            Let's Start The Quiz
+            {learning_progress && learning_progress.status === "COMPLETED"
+              ? "Làm lại bài kiểm tra"
+              : "Bắt đầu làm bài"}
           </StartButton>
         </QuizContainer>
       </Box>
@@ -128,7 +129,7 @@ const QuizLesson = ({
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
         >
-          Previous
+          Trước
         </NavButton>
 
         <NavButton
@@ -137,7 +138,7 @@ const QuizLesson = ({
           disabled={isMoving}
           onClick={() => handleMoveToNext(params)}
         >
-          Next Chapter
+          Tiếp theo
         </NavButton>
       </NavigationContainer>
     </>

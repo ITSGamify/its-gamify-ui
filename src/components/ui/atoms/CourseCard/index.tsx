@@ -66,12 +66,14 @@ interface CourseCardProps {
   course: Course;
   isShowBtn?: boolean;
   isJoined?: boolean;
+  isCompleted?: boolean;
 }
 
 const CourseCard = ({
   course,
   isShowBtn = false,
   isJoined = false,
+  isCompleted = false,
 }: CourseCardProps) => {
   const theme = useTheme();
   const [bookmarked, setBookmarked] = useState<string[]>([]);
@@ -123,12 +125,28 @@ const CourseCard = ({
               borderRadius: "16px",
             }}
           />
-          {isJoined && (
+          {isJoined && !isCompleted && (
             <Chip
               label="Đã tham gia"
               size="small"
               sx={{
                 backgroundColor: theme.palette.warning.main,
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                height: "24px",
+                borderRadius: "16px",
+                width: "fit-content",
+              }}
+            />
+          )}
+
+          {isCompleted && (
+            <Chip
+              label="Đã hoàn thành"
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.success.main,
                 color: "#fff",
                 fontWeight: 600,
                 fontSize: "0.75rem",

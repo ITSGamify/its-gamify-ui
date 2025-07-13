@@ -9,6 +9,7 @@ export const BASE_KEYS = {
   PROGRESS: "learning-progresses",
   QUIZZES: "quizzes",
   QUIZ_RESULTS: "quiz-results",
+  CATEGORIES: "categories",
 };
 
 export const END_POINTS = {
@@ -46,5 +47,8 @@ export const END_POINTS = {
   QUIZ_RESULTS: {
     BASE: BASE_KEYS.QUIZ_RESULTS,
     DETAIL: `${BASE_KEYS.QUIZ_RESULTS}/:quizId`,
+  },
+  CATEGORIES: {
+    BASE: BASE_KEYS.CATEGORIES,
   },
 };

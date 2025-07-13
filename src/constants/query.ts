@@ -24,6 +24,9 @@ export const QUERY_KEYS = {
     BASE: `${BASE_KEYS.QUIZZES}`,
     DETAIL: `${BASE_KEYS.QUIZZES}/:quizId`,
   },
+  CATEGORIES: {
+    BASE: BASE_KEYS.CATEGORIES,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

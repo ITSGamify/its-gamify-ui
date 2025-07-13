@@ -30,17 +30,16 @@ import {
 } from "@mui/material";
 import {
   Search as SearchIcon,
-  FilterList as FilterListIcon,
   // AccessTime as AccessTimeIcon,
   // Person as PersonIcon,
   // Bookmark as BookmarkIcon,
   // BookmarkBorder as BookmarkBorderIcon,
   // Star as StarIcon,
-  ArrowDropDown as ArrowDropDownIcon,
   // RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
 } from "@mui/icons-material";
 import CourseCard from "@components/ui/atoms/CourseCard";
 import { useCoursePage } from "@hooks/data/useCoursePage";
+import { simulateEnterKeyDown } from "@utils/common";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
@@ -67,18 +66,17 @@ const CoursePage: React.FC = () => {
     setTabValue(newValue);
   };
 
-  const { courses, total_page_count, handlePageChange, isLoading } =
-    useCoursePage();
-
-  // Categories for filter
-  const categories = [
-    "UI/UX Design",
-    "Frontend Development",
-    "Backend Development",
-    "Mobile Development",
-    "Graphic Design",
-    "Programming",
-  ];
+  const {
+    courses,
+    total_page_count,
+    handlePageChange,
+    isLoading,
+    categories,
+    handleSearch,
+    handleSearchResults,
+    searchInput,
+    handleCategorySearch,
+  } = useCoursePage();
 
   return (
     <Container maxWidth="xl">
@@ -96,11 +94,14 @@ const CoursePage: React.FC = () => {
       {/* Search and Filter Section */}
       <Box mb={3}>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 9 }}>
+          <Grid size={{ xs: 12, md: 12 }}>
             <TextField
               fullWidth
               placeholder="Tìm kiếm khóa học..."
               variant="outlined"
+              value={searchInput}
+              onChange={handleSearch}
+              onKeyDown={simulateEnterKeyDown(handleSearchResults)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -115,21 +116,6 @@ const CoursePage: React.FC = () => {
               }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<FilterListIcon />}
-              endIcon={<ArrowDropDownIcon />}
-              sx={{
-                height: "100%",
-                borderRadius: "8px",
-                justifyContent: "space-between",
-              }}
-            >
-              Lọc khóa học
-            </Button>
-          </Grid>
         </Grid>
       </Box>
 
@@ -142,6 +128,7 @@ const CoursePage: React.FC = () => {
           {categories.map((category, index) => (
             <Grid key={index}>
               <Button
+                onClick={() => handleCategorySearch(category.id)}
                 variant={index === 0 ? "contained" : "outlined"}
                 color="primary"
                 sx={{
@@ -149,7 +136,7 @@ const CoursePage: React.FC = () => {
                   px: 2,
                 }}
               >
-                {category}
+                {category.name}
               </Button>
             </Grid>
           ))}
@@ -185,26 +172,6 @@ const CoursePage: React.FC = () => {
           <Tab label="Đã tham gia" />
           <Tab label="Đã lưu" />
         </Tabs>
-
-        {/* <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-            Sắp xếp theo:
-          </Typography>
-          <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
-            <Select
-              value={sortBy}
-              // onChange={handleSortChange}
-              displayEmpty
-              sx={{ borderRadius: theme.shape.borderRadius }}
-            >
-              <MenuItem value="popular">Phổ biến nhất</MenuItem>
-              <MenuItem value="newest">Mới nhất</MenuItem>
-              <MenuItem value="price_low">Giá: Thấp đến cao</MenuItem>
-              <MenuItem value="price_high">Giá: Cao đến thấp</MenuItem>
-              <MenuItem value="rating">Đánh giá cao nhất</MenuItem>
-            </Select>
-          </FormControl>
-        </Box> */}
       </Box>
 
       {/* Course Grid */}
@@ -228,6 +195,11 @@ const CoursePage: React.FC = () => {
                 isJoined={
                   course.course_participations &&
                   course.course_participations?.length > 0
+                }
+                isCompleted={
+                  course.course_participations &&
+                  course.course_participations?.length > 0 &&
+                  course.course_participations[0].status === "COMPLETED"
                 }
               />
             </Grid>

@@ -232,7 +232,7 @@ const CourseOverviewPage: React.FC = () => {
                     sx={{ mr: 0.5 }}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    {course?.duration_in_hours} h
+                    {course?.duration_in_hours} phút
                   </Typography>
                 </Box>
               </Box>
@@ -290,7 +290,7 @@ const CourseOverviewPage: React.FC = () => {
                           (acc, module) => acc + module.lessons.length,
                           0
                         )}{" "}
-                        bài học • {course?.duration_in_hours} giờ
+                        bài học • {course?.duration_in_hours} phút
                       </Typography>
                     </Box>
                     <Box>
@@ -395,8 +395,14 @@ const CourseOverviewPage: React.FC = () => {
                                 material.created_date
                               )}`}
                             />
+
                             <ListItemSecondaryAction>
-                              <IconButton edge="end">
+                              <IconButton
+                                edge="end"
+                                onClick={() =>
+                                  window.open(material.url, "_blank")
+                                }
+                              >
                                 <DownloadIcon />
                               </IconButton>
                             </ListItemSecondaryAction>
@@ -748,7 +754,7 @@ const CourseOverviewPage: React.FC = () => {
             </Card>
 
             {/* Current Lesson */}
-            {inCompleteLessons && inCompleteLessons.length > 0 && (
+            {isJoinedCourse && (
               <Card sx={{ borderRadius: "10px", mb: 4 }}>
                 <CardContent>
                   <Typography variant="h6" fontWeight={600} gutterBottom>
@@ -799,7 +805,7 @@ const CourseOverviewPage: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary="Thời lượng"
-                      secondary={`${course?.duration_in_hours} giờ`}
+                      secondary={`${course?.duration_in_hours} phút`}
                       primaryTypographyProps={{ variant: "body2" }}
                       secondaryTypographyProps={{
                         variant: "body2",

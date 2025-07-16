@@ -23,7 +23,10 @@ export const NavButton = styled(Button)(() => ({
 export interface LessonContentProps {
   lesson: Lesson;
   isMoving: boolean;
-  handleMoveToNext: (param: ProgressRequestParams) => void;
+  handleMoveToNext: (
+    param: ProgressRequestParams,
+    shouldNavigate?: boolean
+  ) => void;
   participation: Participation;
   learning_progress: LearningProgress | null;
 }
@@ -33,7 +36,10 @@ interface CourseMainContentProps {
   participation: Participation | undefined;
   learningProgresses: LearningProgress[];
   isMoving: boolean;
-  handleMoveToNext: (param: ProgressRequestParams) => void;
+  handleMoveToNext: (
+    param: ProgressRequestParams,
+    shouldNavigate?: boolean
+  ) => void;
 }
 
 const CourseMainContent = ({

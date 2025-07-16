@@ -105,5 +105,6 @@ export const useCoursePage = () => {
     handleSearchResults,
     searchInput,
     handleCategorySearch,
+    searchCategories,
   };
 };

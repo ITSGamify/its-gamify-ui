@@ -22,7 +22,7 @@ export const useCourseDetail = () => {
   const { data: course, isFetching: isLoadingCourse } =
     useGetCourseDetail(courseId);
 
-  const { data: courseParticipationData } =
+  const { data: courseParticipationData, isFetching: isLoadingParticipation } =
     useGetCourseParticipations(courseId);
 
   const courseParticipations = useMemo(
@@ -58,13 +58,20 @@ export const useCourseDetail = () => {
     });
   }, []);
 
-  const isJoinedCourse = courseParticipations.length > 0;
+  const isJoinedCourse =
+    courseParticipationData && courseParticipations.length > 0;
 
   useEffect(() => {
-    if (!isJoinedCourse && courseParticipationData) {
+    if (!isLoadingParticipation && !isJoinedCourse) {
       navigate(PATH.COURSES);
     }
-  }, [isJoinedCourse, navigate, courseParticipationData]);
+  }, [
+    isLoadingParticipation,
+    courseParticipationData,
+    courseParticipations,
+    isJoinedCourse,
+    navigate,
+  ]);
 
   const modules = useMemo(() => {
     return (
@@ -125,10 +132,11 @@ export const useCourseDetail = () => {
   // }, [isCourseCompleted, navigate]);
 
   const handleMoveToNext = useCallback(
-    async (param: ProgressRequestParams) => {
+    async (param: ProgressRequestParams, shouldNavigate: boolean = true) => {
       await upsertProgress(param, {
         onSuccess: (progress) => {
           addLearningProgress(progress);
+
           const currentIndex = allLessons.findIndex(
             (lesson) => lesson.id === current_lesson_id
           );
@@ -141,6 +149,7 @@ export const useCourseDetail = () => {
           const existingProgress = learningProgresses.some(
             (p) => p.lesson_id === progress.lesson_id
           );
+
           let completed = learningProgresses.filter(
             (progress) => progress.status === "COMPLETED"
           ).length;
@@ -148,10 +157,18 @@ export const useCourseDetail = () => {
           if (progress.status === "COMPLETED" && !existingProgress) {
             completed = completed + 1;
           }
+          const last_index = allLessons.length - 1;
+          const isLastLesson = currentIndex === last_index;
 
-          if (allLessons.length !== completed)
-            setSearchParams({ lessonId: next_lesson_id });
-          else {
+          // Kiểm tra xem có nên navigate không
+          if (!isLastLesson) {
+            if (shouldNavigate) {
+              setSearchParams({ lessonId: next_lesson_id });
+            }
+          }
+
+          if (isLastLesson && allLessons.length === completed) {
+            // Hiển thị toast khi hoàn thành khóa học
             toast.success(ToastContent, {
               data: {
                 message: !isCourseCompleted

@@ -114,7 +114,7 @@ const VideoLesson = ({
     if (video) {
       const handleVideoEnded = () => {
         params.status = "COMPLETED";
-        handleMoveToNext(params);
+        handleMoveToNext(params, false);
       };
 
       video.addEventListener("ended", handleVideoEnded);
@@ -201,7 +201,7 @@ const VideoLesson = ({
       if (document.hidden && video && playing) {
         video.pause();
         setPlaying(false);
-        handleMoveToNext(params);
+        handleMoveToNext(params, false);
       }
     };
 
@@ -211,7 +211,7 @@ const VideoLesson = ({
           video.pause();
           setPlaying(false);
         }
-        handleMoveToNext(params);
+        handleMoveToNext(params, false);
       }
     };
 
@@ -221,7 +221,7 @@ const VideoLesson = ({
         video.pause();
         setPlaying(false);
       }
-      handleMoveToNext(params);
+      handleMoveToNext(params, false);
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);

@@ -76,6 +76,7 @@ const CoursePage: React.FC = () => {
     handleSearchResults,
     searchInput,
     handleCategorySearch,
+    searchCategories,
   } = useCoursePage();
 
   return (
@@ -129,7 +130,11 @@ const CoursePage: React.FC = () => {
             <Grid key={index}>
               <Button
                 onClick={() => handleCategorySearch(category.id)}
-                variant={index === 0 ? "contained" : "outlined"}
+                variant={
+                  searchCategories.includes(category.id)
+                    ? "contained"
+                    : "outlined"
+                }
                 color="primary"
                 sx={{
                   borderRadius: "20px",

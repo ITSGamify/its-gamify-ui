@@ -87,13 +87,13 @@ export const useCourseOverview = () => {
               },
             });
             const route = getRoute(PATH.COURSES_DETAIL, { courseId: courseId });
-            navigate(route);
+            return navigate(route);
           },
         }
       );
     } else {
       const route = getRoute(PATH.COURSES_DETAIL, { courseId: courseId });
-      navigate(route);
+      return navigate(route);
     }
   }, [courseId, joinCourse, navigate, isJoinedCourse]);
 

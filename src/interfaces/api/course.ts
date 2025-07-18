@@ -1,3 +1,4 @@
+import { User } from "@interfaces/shared/user";
 import { Department } from "./department";
 import { StorageFile } from "./file";
 import { LearningProgress } from "./learningProgress";
@@ -60,4 +61,17 @@ export interface Participation {
   course: Course;
   created_date: Date;
   learning_progresses: LearningProgress[];
+}
+
+export interface CourseResult {
+  course_id: string;
+  course: Course;
+  user_id: string;
+  user: User;
+  course_participation_id: string;
+  course_participation: Participation;
+  id: string;
+  scrore: number;
+  is_passed: boolean;
+  completed_date: string;
 }

@@ -5,6 +5,7 @@ export const BASE_KEYS = {
   ROLES: "roles",
   STORAGE_FILES: "files",
   COURSE_PARTICIPATIONS: "course-participations",
+  COURSE_RESULTS: "course-results",
   LESSONS: "lessons",
   PROGRESS: "learning-progresses",
   QUIZZES: "quizzes",
@@ -50,5 +51,11 @@ export const END_POINTS = {
   },
   CATEGORIES: {
     BASE: BASE_KEYS.CATEGORIES,
+  },
+  ACCOUNTS: {
+    COURSE_RESULT: `${BASE_KEYS.ACCOUNTS}/:userId/course-results`,
+  },
+  COURSE_RESULT: {
+    DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
   },
 };

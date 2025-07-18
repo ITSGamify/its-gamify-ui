@@ -1,12 +1,16 @@
-import { ALL } from "@constants/course";
-import { DEFAULT_TABLE_PAGE_NUMBER } from "@constants/table";
+import { PATH } from "@constants/path";
+import {
+  DEFAULT_TABLE_LIMIT,
+  DEFAULT_TABLE_PAGE_NUMBER,
+} from "@constants/table";
 import { OrderDirection } from "@interfaces/dom/query";
 import { TableColumns } from "@interfaces/dom/table";
-import { useGetCategories } from "@services/categories";
-import { useGetCourses } from "@services/course";
+import { useGetCourseResults } from "@services/courseResult";
+import { getRoute } from "@utils/route";
 import { createParamSetter, getInitialSorted } from "@utils/url";
+import userSession from "@utils/user-session";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const defaultSort = [
   {
@@ -15,7 +19,9 @@ const defaultSort = [
   },
 ];
 
-export const useCoursePage = () => {
+export const useCourseResultPage = () => {
+  const navigate = useNavigate();
+
   const [activePage, setActivePage] = useState<number>(
     DEFAULT_TABLE_PAGE_NUMBER
   );
@@ -24,45 +30,22 @@ export const useCoursePage = () => {
   const [sortedColumns] = useState<TableColumns>(
     getInitialSorted(searchParams, defaultSort)
   );
-  const [searchCategories, setSearchCategories] = useState<string[]>([]);
-  const [classify, setClassify] = useState<string>(ALL);
 
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const activeSearchInput = searchParams.get("q");
+  const profile = userSession.getUserProfile();
 
-  const cateSearch =
-    searchCategories.length > 0 ? JSON.stringify(searchCategories) : "";
-
-  const getCoursesReq = {
+  const getAccountsReq = {
     page: activePage,
-    limit: 12,
+    limit: DEFAULT_TABLE_LIMIT,
     q: activeSearchInput || "",
-    categories: cateSearch,
-    classify: classify,
+    userId: profile?.user.id || "",
     order_by: sortedColumns.map((sort) => ({
       order_column: sort.column ?? undefined,
       order_dir: sort.direction ?? undefined,
     })),
   };
-
   const setParam = createParamSetter(searchParams);
-
-  const handleCategorySearch = (id: string) => {
-    setActivePage(DEFAULT_TABLE_PAGE_NUMBER);
-    setSearchCategories((prev) => {
-      const isExist = prev.includes(id);
-      if (isExist) {
-        return prev.filter((categoryId) => categoryId !== id);
-      } else {
-        return [...prev, id];
-      }
-    });
-  };
-
-  const handleClassify = (type: string) => {
-    setActivePage(DEFAULT_TABLE_PAGE_NUMBER);
-    setClassify(type);
-  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -76,6 +59,7 @@ export const useCoursePage = () => {
   const resetSearch = () => {
     searchParams.delete("q");
     setSearchParams(searchParams);
+    setSearchInput("");
   };
 
   const handlePageChange = (page: number) => {
@@ -87,33 +71,32 @@ export const useCoursePage = () => {
     setSearchParams(searchParams);
   };
 
-  const { data, isFetching } = useGetCourses(getCoursesReq);
+  const { data, isFetching } = useGetCourseResults(getAccountsReq);
 
-  const courses = data?.data || [];
+  const course_results = data?.data || [];
   const pagination = data?.pagination;
   const page_index = pagination?.page_index ?? 0;
   const total_page_count = pagination?.total_pages_count ?? 0;
+  const total_item_count = pagination?.total_items_count ?? 0;
   const page_size = pagination?.page_size ?? 0;
 
-  const { data: cateData, isFetching: isLoadingCate } = useGetCategories({
-    page: 0,
-    limit: 1000,
-  });
+  const handleViewCertificate = (id: string) => {
+    const route = getRoute(PATH.CERTIFICATE_DETAIL, { certificateId: id });
+    navigate(route);
+  };
 
   return {
-    courses,
+    course_results,
     page_index,
     total_page_count,
+    total_item_count,
     page_size,
     handlePageChange,
-    isLoading: isFetching || isLoadingCate,
-    categories: cateData?.data || [],
+    isLoading: isFetching,
     handleSearch,
     handleSearchResults,
     searchInput,
-    handleCategorySearch,
-    searchCategories,
-    handleClassify,
-    classify,
+    handleViewCertificate,
+    resetSearch,
   };
 };

@@ -8,8 +8,9 @@ import { Lesson } from "@interfaces/api/lesson";
 import { Box, Button, styled } from "@mui/material";
 import { Participation } from "@interfaces/api/course";
 import { LearningProgress } from "@interfaces/api/learningProgress";
-import { ARTICLE, QUIZ, VIDEO } from "@constants/lesson";
+import { ARTICLE, PRACTICE, QUIZ, VIDEO } from "@constants/lesson";
 import { ProgressRequestParams } from "@services/progress";
+import PracticeLesson from "@components/ui/atoms/lessons/PracticeLesson";
 export const NavigationContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
@@ -59,6 +60,7 @@ const CourseMainContent = ({
       [ARTICLE]: ArticleLesson,
       [VIDEO]: VideoLesson,
       [QUIZ]: QuizLesson,
+      [PRACTICE]: PracticeLesson,
     };
 
   const ActiveLessonStepForm = stepForms[lesson?.type as string];

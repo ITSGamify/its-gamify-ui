@@ -10,8 +10,8 @@ import {
 import { PaginationParams } from "@interfaces/dom/query";
 
 export interface GetCourseParams extends PaginationParams {
-  department?: string;
   categories?: string;
+  classify?: string;
 }
 
 export interface RequestJoinCourseParams {

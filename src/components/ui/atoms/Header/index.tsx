@@ -87,14 +87,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-// const DrawerHeader = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   alignItems: "center",
-//   padding: theme.spacing(0, 1),
-//   ...theme.mixins.toolbar,
-//   justifyContent: "flex-end",
-// }));
-
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: theme.palette.primary.main,
@@ -106,8 +98,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const navigationLinks = [
   { path: PATH.HOME, label: "Tổng quan" },
   { path: PATH.COURSES, label: "Khóa học" },
-  // { path: PATH.QUIZ, label: "Quiz" },
-  { path: PATH.CHALLENGE, label: "Giải đấu" },
+  { path: PATH.CERTIFICATE, label: "Chứng chỉ" },
 ];
 
 interface HeaderProps {

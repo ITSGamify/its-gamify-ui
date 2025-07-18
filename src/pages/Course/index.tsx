@@ -1,45 +1,24 @@
 // src/pages/CourseListingPage.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Container,
   Typography,
   Grid,
-  // Card,
-  // CardContent,
-  // CardMedia,
   Button,
-  // Chip,
-  // Rating,
   TextField,
   InputAdornment,
-  // IconButton,
   Tabs,
   Tab,
-  // MenuItem,
-  // Select,
-  // FormControl,
-  // InputLabel,
   Pagination,
-  // Stack,
-  // Divider,
   styled,
   CircularProgress,
-  // useTheme,
-  // alpha,
 } from "@mui/material";
-import {
-  Search as SearchIcon,
-  // AccessTime as AccessTimeIcon,
-  // Person as PersonIcon,
-  // Bookmark as BookmarkIcon,
-  // BookmarkBorder as BookmarkBorderIcon,
-  // Star as StarIcon,
-  // RemoveRedEyeOutlined as RemoveRedEyeOutlinedIcon,
-} from "@mui/icons-material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import CourseCard from "@components/ui/atoms/CourseCard";
 import { useCoursePage } from "@hooks/data/useCoursePage";
 import { simulateEnterKeyDown } from "@utils/common";
+import { ALL, COMPLETED, ENROLLED, SAVED } from "@constants/course";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
@@ -57,15 +36,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const CoursePage: React.FC = () => {
-  // const theme = useTheme();
-  const [tabValue, setTabValue] = useState(0);
-  // const [sortBy, setSortBy] = useState("popular");
-  // const [bookmarked, setBookmarked] = useState<number[]>([2, 5]);
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
-
   const {
     courses,
     total_page_count,
@@ -77,6 +47,8 @@ const CoursePage: React.FC = () => {
     searchInput,
     handleCategorySearch,
     searchCategories,
+    handleClassify,
+    classify,
   } = useCoursePage();
 
   return (
@@ -160,8 +132,8 @@ const CoursePage: React.FC = () => {
         }}
       >
         <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
+          value={classify}
+          onChange={(e, value) => handleClassify(value)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
@@ -172,10 +144,10 @@ const CoursePage: React.FC = () => {
             },
           }}
         >
-          <Tab label="Tất cả" />
-          <Tab label="Được yêu thích" />
-          <Tab label="Đã tham gia" />
-          <Tab label="Đã lưu" />
+          <Tab value={ALL} label="Tất cả" />
+          <Tab value={ENROLLED} label="Đã tham gia" />
+          <Tab value={COMPLETED} label="Đã hoàn thành" />
+          <Tab value={SAVED} label="Đã lưu" />
         </Tabs>
       </Box>
 

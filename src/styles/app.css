@@ -1,7 +1,7 @@
 :root {
   --c-bg_default: #ffffff;
 }
-
+@import url('https://fonts.googleapis.com/css2?family=Island+Moments:wght@400&display=swap');
 @font-face {
   font-family: "Meiryo";
   src: url("/fonts/meiryo.ttf") format("truetype");

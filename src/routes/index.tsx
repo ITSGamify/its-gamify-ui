@@ -17,6 +17,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import { JSX } from "react";
 import LandingPage from "@pages/Landing";
+import CertificatesPage from "@pages/Certificate";
+import CertificateDetailPage from "@pages/Certificate/Detail";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
@@ -124,6 +126,14 @@ const router = createBrowserRouter(
         {
           path: PATH.COURSES_DETAIL,
           element: <CourseDetailPage />,
+        },
+        {
+          path: PATH.CERTIFICATE,
+          element: <CertificatesPage />,
+        },
+        {
+          path: PATH.CERTIFICATE_DETAIL,
+          element: <CertificateDetailPage />,
         },
         {
           path: PATH.QUIZ,

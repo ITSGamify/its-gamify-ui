@@ -120,17 +120,6 @@ export const useCourseDetail = () => {
   const isCourseCompleted =
     allLessons.length === completedLearningProgresses.length;
 
-  // useEffect(() => {
-  //   if (isCourseCompleted) {
-  //     toast.success(ToastContent, {
-  //       data: {
-  //         message: "Chúc mừng bạn đã hoàn thành khóa học!",
-  //       },
-  //     });
-  //     navigate(PATH.COURSES);
-  //   }
-  // }, [isCourseCompleted, navigate]);
-
   const handleMoveToNext = useCallback(
     async (param: ProgressRequestParams, shouldNavigate: boolean = true) => {
       await upsertProgress(param, {
@@ -176,6 +165,8 @@ export const useCourseDetail = () => {
                   : "Bạn đã hoàn thành khóa học",
               },
             });
+
+            navigate(PATH.CERTIFICATE);
           }
         },
       });
@@ -186,6 +177,7 @@ export const useCourseDetail = () => {
       current_lesson_id,
       isCourseCompleted,
       learningProgresses,
+      navigate,
       setSearchParams,
       upsertProgress,
     ]

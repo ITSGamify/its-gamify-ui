@@ -16,14 +16,6 @@ export const BASE_KEYS = {
 export const END_POINTS = {
   LOGIN: "/auth",
   LOGOUT: "/auth/logout",
-  REGISTER: "/auth/register",
-  FORGOT_PASSWORD: "/auth/forgot-password",
-  RESET_PASSWORD: "/auth/reset-password",
-  CHECK_AUTH_STATUS: "/auth/check-auth-status",
-  GET_USER_INFO: "/user/info",
-  UPDATE_USER_INFO: "/user/update",
-  CHANGE_PASSWORD: "/user/change-password",
-  UPLOAD_AVATAR: "/user/upload-avatar",
   COURSE: {
     BASE: BASE_KEYS.COURSES,
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
@@ -54,6 +46,7 @@ export const END_POINTS = {
   },
   ACCOUNTS: {
     COURSE_RESULT: `${BASE_KEYS.ACCOUNTS}/:userId/course-results`,
+    USER_METRIC: `${BASE_KEYS.ACCOUNTS}/:userId/user-metrics`,
   },
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,

@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Container,
@@ -10,20 +10,14 @@ import {
   CardContent,
   Tab,
   Tabs,
-  // Avatar,
   styled,
   Divider,
   useTheme,
   CircularProgress,
 } from "@mui/material";
 import {
-  // Dashboard as DashboardIcon,
   School as SchoolIcon,
-  Assignment as AssignmentIcon,
-  // People as PeopleIcon,
-  TrendingUp as TrendingUpIcon,
   AccessTime as AccessTimeIcon,
-  CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
 
@@ -32,8 +26,9 @@ import DashboardCard from "@components/ui/atoms/DashboardCard";
 import CourseCard from "@components/ui/atoms/CourseCard";
 import TaskManagement from "@components/ui/atoms/TaskManagement";
 import LearningProgress from "@components/ui/atoms/LearningProgress";
-import { DashboardCardProps } from "@interfaces/shared/home";
 import { useHomePage } from "@hooks/data/useHomePage";
+import { getTimeOfDay } from "@utils/timeUtils";
+import { COMPLETED, ENROLLED, SAVED } from "@constants/course";
 
 // Styled components
 const PageTitle = styled(Typography)(({ theme }) => ({
@@ -48,7 +43,6 @@ const WelcomeCard = styled(Card)(({ theme }) => ({
   overflow: "hidden",
   position: "relative",
   "&::after": {
-    // src/pages/DashboardPage.tsx (tiếp tục)
     content: '""',
     position: "absolute",
     top: 0,
@@ -74,46 +68,6 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
 // Main Dashboard component
 const HomePage: React.FC = () => {
   const theme = useTheme();
-  const [tabValue, setTabValue] = useState<number>(0);
-
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
-
-  // Dữ liệu mẫu
-  const stats: DashboardCardProps[] = [
-    {
-      title: "Khóa học đang học",
-      value: "5",
-      icon: <SchoolIcon />,
-      color: "primary",
-      progress: 68,
-      subtitle: "+2 khóa mới trong tuần",
-    },
-    {
-      title: "Công việc đang thực hiện",
-      value: "12",
-      icon: <AssignmentIcon />,
-      color: "warning",
-      progress: 45,
-      subtitle: "4 công việc sắp đến hạn",
-    },
-    {
-      title: "Thời gian học tập",
-      value: "24h",
-      icon: <AccessTimeIcon />,
-      color: "info",
-      progress: 75,
-      subtitle: "+5h so với tuần trước",
-    },
-    {
-      title: "Chứng chỉ đạt được",
-      value: "3",
-      icon: <CheckCircleIcon />,
-      color: "success",
-      subtitle: "1 chứng chỉ mới trong tháng",
-    },
-  ];
 
   interface UpcomingDeadline {
     id: number;
@@ -147,7 +101,19 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const { participations, isLoadingParticipation } = useHomePage();
+  const {
+    courses,
+    isLoadingCourses,
+    userMetric,
+    profile,
+    getStats,
+    handleClassify,
+    classify,
+    progresses,
+    progressClassify,
+    handleClassifyProgress,
+    handleViewAllCourses,
+  } = useHomePage();
   return (
     <Container maxWidth="xl" sx={{ pt: 0, pb: 3, px: 3 }}>
       {/* Header */}
@@ -158,16 +124,8 @@ const HomePage: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<SchoolIcon />}
-            sx={{ mr: 2 }}
           >
             Khám phá khóa học
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<AssignmentIcon />}
-          >
-            Tạo công việc mới
           </Button>
         </Box>
       </Box>
@@ -178,11 +136,12 @@ const HomePage: React.FC = () => {
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 8 }}>
               <Typography variant="h5" fontWeight={600} gutterBottom>
-                Chào buổi sáng, AbcXyz!
+                Chào {getTimeOfDay()}, {profile?.user.full_name}!
               </Typography>
               <Typography variant="body1" sx={{ mb: 2, opacity: 0.9 }}>
-                Bạn đã hoàn thành 65% mục tiêu học tập trong tuần này. Tiếp tục
-                cố gắng nhé!
+                Bạn đã hoàn thành{" "}
+                {userMetric ? userMetric.course_completed_num : 0} khóa học
+                trong quý này. Tiếp tục cố gắng nhé!
               </Typography>
               <Button
                 variant="contained"
@@ -203,7 +162,7 @@ const HomePage: React.FC = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, index) => (
+        {getStats.map((stat, index) => (
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <DashboardCard
               title={stat.title}
@@ -231,23 +190,27 @@ const HomePage: React.FC = () => {
               <Typography variant="h4" fontWeight={600}>
                 Khóa học của bạn
               </Typography>
-              <Button sx={{ fontSize: "1.1rem" }} color="primary">
+              <Button
+                sx={{ fontSize: "1.1rem" }}
+                color="primary"
+                onClick={handleViewAllCourses}
+              >
                 Xem tất cả
               </Button>
             </Box>
             <StyledTabs
-              value={tabValue}
-              onChange={handleTabChange}
+              value={classify}
+              onChange={(e, value) => handleClassify(value)}
               variant="scrollable"
               scrollButtons="auto"
             >
-              <Tab label="Đang học" />
-              <Tab label="Hoàn thành" />
-              <Tab label="Đã lưu" />
+              <Tab value={ENROLLED} label="Đã tham gia" />
+              <Tab value={COMPLETED} label="Đã hoàn thành" />
+              <Tab value={SAVED} label="Đã lưu" />
             </StyledTabs>
 
             <Grid container spacing={3}>
-              {isLoadingParticipation ? (
+              {isLoadingCourses ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -258,23 +221,32 @@ const HomePage: React.FC = () => {
                 >
                   <CircularProgress />
                 </Box>
-              ) : participations && participations.length > 0 ? (
-                participations.map((participation) => (
-                  <Grid
-                    size={{ xs: 12, sm: 6, md: 4 }}
-                    key={participation.course.id}
-                  >
+              ) : courses && courses.length > 0 ? (
+                courses.map((course) => (
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={course.id}>
                     <CourseCard
-                      course={participation.course}
+                      course={course}
                       isShowBtn={true}
-                      isJoined={true}
+                      isJoined={
+                        course.course_participations &&
+                        course.course_participations?.length > 0
+                      }
+                      isCompleted={
+                        course.course_participations &&
+                        course.course_participations?.length > 0 &&
+                        course.course_participations[0].status === "COMPLETED"
+                      }
                     />
                   </Grid>
                 ))
               ) : (
                 <Box sx={{ width: "100%", textAlign: "center", py: 4 }}>
                   <Typography variant="body1" color="text.secondary">
-                    Bạn chưa tham gia khóa học nào
+                    {classify === ENROLLED
+                      ? "Bạn chưa tham gia khóa học nào."
+                      : classify === COMPLETED
+                      ? "Bạn chưa hoàn thành khóa học nào."
+                      : "Bạn chưa lưu khóa học nào."}
                   </Typography>
                 </Box>
               )}
@@ -283,7 +255,11 @@ const HomePage: React.FC = () => {
 
           {/* Task Management */}
           <Box>
-            <TaskManagement />
+            <TaskManagement
+              tasks={progresses}
+              progressClassify={progressClassify}
+              handleClassifyProgress={handleClassifyProgress}
+            />
           </Box>
         </Grid>
 
@@ -371,74 +347,6 @@ const HomePage: React.FC = () => {
                 sx={{ mt: 2 }}
               >
                 Xem tất cả
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Learning Statistics */}
-          <Card sx={{ borderRadius: "15px" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Thống kê học tập
-              </Typography>
-
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 6 }}>
-                  <Card
-                    sx={{
-                      bgcolor: theme.palette.primary.light,
-                      color: theme.palette.primary.contrastText,
-                    }}
-                  >
-                    <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Giờ học tập
-                      </Typography>
-                      <Box display="flex" alignItems="center">
-                        <AccessTimeIcon sx={{ mr: 1 }} />
-                        <Typography variant="h5">24h</Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid size={{ xs: 6 }}>
-                  <Card
-                    sx={{
-                      bgcolor: theme.palette.success.light,
-                      color: theme.palette.success.contrastText,
-                    }}
-                  >
-                    <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Hoàn thành
-                      </Typography>
-                      <Box display="flex" alignItems="center">
-                        <CheckCircleIcon sx={{ mr: 1 }} />
-                        <Typography variant="h5">12</Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-
-              <Card sx={{ bgcolor: theme.palette.background.paper, mb: 2 }}>
-                <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                  <Typography variant="subtitle2" gutterBottom>
-                    Tiến độ tuần này
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TrendingUpIcon
-                      sx={{ mr: 1, color: theme.palette.success.main }}
-                    />
-                    <Typography variant="h5" color="success.main">
-                      +15%
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-
-              <Button fullWidth variant="text" color="primary">
-                Xem báo cáo chi tiết
               </Button>
             </CardContent>
           </Card>

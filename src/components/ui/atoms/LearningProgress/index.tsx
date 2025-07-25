@@ -1,5 +1,5 @@
 // src/components/LearningProgress.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Card,
@@ -11,24 +11,282 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction,
   IconButton,
   Button,
   styled,
   Divider,
+  Fade,
+  Skeleton,
 } from "@mui/material";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DownloadIcon from "@mui/icons-material/Download";
-import { alpha } from "@mui/material/styles";
-import { CourseProgressType } from "@interfaces/shared/home";
+import { alpha, useTheme } from "@mui/material/styles";
+import {
+  useGetCourseDetail,
+  useGetCourseParticipations,
+  useGetCourses,
+} from "@services/course";
+import { Course } from "@interfaces/api/course";
 
+const LearningProgress: React.FC = () => {
+  const theme = useTheme();
+
+  const getCoursesReq = {
+    page: 0,
+    limit: 1,
+    classify: "ENROLLED",
+  };
+
+  const { data: courses, isFetching: isLoadingCourse } =
+    useGetCourses(getCoursesReq);
+
+  const course = courses?.data[0] as Course | undefined;
+  const { data: courseDetail, isFetching: isLoadingCourseDetail } =
+    useGetCourseDetail(course?.id || "");
+
+  const { data: courseParticipationData, isFetching: isLoadingParticipation } =
+    useGetCourseParticipations(course?.id || "");
+
+  const courseParticipations = useMemo(
+    () => courseParticipationData?.data || [],
+    [courseParticipationData?.data]
+  );
+
+  const participation = useMemo(
+    () => courseParticipations[0],
+    [courseParticipations]
+  );
+
+  const learningProgresses = useMemo(
+    () => participation?.learning_progresses || [],
+    [participation]
+  );
+
+  // Flatten và sort modules/lessons (dựa trên code mới)
+  const modules = useMemo(() => {
+    return (
+      courseDetail?.modules
+        ?.sort((a, b) => a.ordered_number - b.ordered_number)
+        .map((module) => ({
+          ...module,
+          lessons: module.lessons?.sort((a, b) => a.index - b.index),
+        })) || []
+    );
+  }, [courseDetail?.modules]);
+
+  const allLessons = useMemo(() => {
+    return modules.flatMap((module) => module.lessons || []).filter(Boolean);
+  }, [modules]);
+
+  const completedLearningProgresses = useMemo(
+    () =>
+      learningProgresses.filter((progress) => progress.status === "COMPLETED"),
+    [learningProgresses]
+  );
+
+  const completedLessonIds = useMemo(
+    () => completedLearningProgresses.map((progress) => progress.lesson_id),
+    [completedLearningProgresses]
+  );
+
+  const courseProgress = useMemo(() => {
+    if (allLessons.length === 0) {
+      return { progress: 0, lessons: [] };
+    }
+
+    const firstIncompleteIndex = allLessons.findIndex(
+      (lesson) => !completedLessonIds.includes(lesson.id)
+    );
+
+    const lessonsWithProgress = allLessons.map((lesson, index) => {
+      const completed = completedLessonIds.includes(lesson.id);
+      const current =
+        firstIncompleteIndex !== -1 && index === firstIncompleteIndex;
+      const locked =
+        firstIncompleteIndex !== -1 && index > firstIncompleteIndex;
+
+      return {
+        id: lesson.id,
+        title: lesson.title,
+        duration: `${lesson.duration} phút`,
+        completed,
+        current,
+        locked,
+      };
+    });
+
+    const completedCount = completedLearningProgresses.length;
+    const progress =
+      Math.round((completedCount / allLessons.length) * 100) || 0;
+
+    return { progress, lessons: lessonsWithProgress };
+  }, [allLessons, completedLessonIds, completedLearningProgresses.length]);
+
+  const isLoading =
+    isLoadingCourse || isLoadingParticipation || isLoadingCourseDetail;
+
+  return (
+    <StyledCard>
+      <CardHeader
+        sx={{ py: "1.2rem" }}
+        title="Tiến độ học tập"
+        titleTypographyProps={{ variant: "h6", fontWeight: 600 }}
+        action={
+          <IconButton>
+            <MoreVertIcon />
+          </IconButton>
+        }
+      />
+
+      <CardContent sx={{ py: 0 }}>
+        {isLoading ? (
+          <Box>
+            <Skeleton variant="text" width="60%" height={32} />
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height={8}
+              sx={{ my: 2 }}
+            />
+            <Skeleton variant="text" width="80%" height={20} />
+            <Divider sx={{ my: 2 }} />
+            {[...Array(3)].map((_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                height={48}
+                sx={{ mb: 1 }}
+              />
+            ))}
+          </Box>
+        ) : !course ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height={200}
+            flexDirection="column"
+            textAlign="center"
+          >
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Không có khóa học đang tham gia
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Hãy đăng ký một khóa học mới để bắt đầu!
+            </Typography>
+          </Box>
+        ) : (
+          <>
+            <Box mb={3}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                {course.title || "Khóa học của bạn"}
+              </Typography>
+
+              <Box display="flex" alignItems="center" mb={1}>
+                <Box flexGrow={1} mr={2}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={courseProgress.progress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: alpha(theme.palette.grey[500], 0.2),
+                      "& .MuiLinearProgress-bar": {
+                        backgroundColor:
+                          courseProgress.progress >= 80
+                            ? theme.palette.success.main
+                            : courseProgress.progress >= 50
+                            ? theme.palette.primary.main
+                            : theme.palette.warning.main,
+                      },
+                    }}
+                  />
+                </Box>
+                <ProgressLabel variant="body2" value={courseProgress.progress}>
+                  {courseProgress.progress}%
+                </ProgressLabel>
+              </Box>
+
+              <Typography variant="body2" color="text.secondary">
+                {completedLearningProgresses.length}/{allLessons.length} bài học
+                hoàn thành
+              </Typography>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="subtitle1" gutterBottom fontWeight={600}>
+              Danh sách bài học
+            </Typography>
+
+            <List disablePadding>
+              {courseProgress.lessons.map((lesson, index) => (
+                <Fade in key={lesson.id} timeout={300 + index * 100}>
+                  <LessonItem
+                    completed={lesson.completed}
+                    current={lesson.current}
+                    locked={lesson.locked}
+                  >
+                    <ListItemIcon>
+                      {lesson.completed ? (
+                        <CheckCircleIcon color="success" />
+                      ) : lesson.locked ? (
+                        <LockIcon color="action" />
+                      ) : (
+                        <PlayCircleOutlineIcon
+                          color={lesson.current ? "primary" : "action"}
+                        />
+                      )}
+                    </ListItemIcon>
+
+                    <ListItemText
+                      primary={lesson.title}
+                      secondary={lesson.duration}
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        fontWeight: lesson.current ? 600 : 400,
+                        color: lesson.locked ? "text.disabled" : "text.primary",
+                      }}
+                      secondaryTypographyProps={{
+                        variant: "caption",
+                        color: lesson.locked
+                          ? "text.disabled"
+                          : "text.secondary",
+                      }}
+                    />
+                  </LessonItem>
+                </Fade>
+              ))}
+            </List>
+
+            <Box mt={3} display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<PlayCircleOutlineIcon />}
+                sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
+              >
+                Tiếp tục học
+              </Button>
+            </Box>
+          </>
+        )}
+      </CardContent>
+    </StyledCard>
+  );
+};
+
+// Styled components (giữ nguyên từ trước)
 const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[1],
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[3],
   height: "100%",
+  transition: "box-shadow 0.3s ease-in-out",
+  "&:hover": {
+    boxShadow: theme.shadows[6],
+  },
 }));
 
 interface ProgressLabelProps {
@@ -53,15 +311,19 @@ const ProgressLabel = styled(Typography, {
 interface LessonItemProps {
   completed?: boolean;
   current?: boolean;
+  locked?: boolean;
 }
 
 const LessonItem = styled(ListItem, {
-  shouldForwardProp: (prop) => prop !== "completed" && prop !== "current",
-})<LessonItemProps>(({ theme, completed, current }) => ({
+  shouldForwardProp: (prop) =>
+    prop !== "completed" && prop !== "current" && prop !== "locked",
+})<LessonItemProps>(({ theme, completed, current, locked }) => ({
   borderRadius: theme.shape.borderRadius,
   marginBottom: theme.spacing(1),
+  transition: "background-color 0.2s ease-in-out, transform 0.2s ease-in-out",
   "&:hover": {
-    backgroundColor: alpha(theme.palette.primary.main, 0.04),
+    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    transform: "translateY(-2px)",
   },
   ...(completed && {
     backgroundColor: alpha(theme.palette.success.main, 0.08),
@@ -70,175 +332,10 @@ const LessonItem = styled(ListItem, {
     backgroundColor: alpha(theme.palette.primary.main, 0.08),
     border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
   }),
+  ...(locked && {
+    opacity: 0.6,
+    cursor: "not-allowed",
+  }),
 }));
-
-const LearningProgress: React.FC = () => {
-  // Dữ liệu mẫu
-  const courseProgress: CourseProgressType = {
-    title: "Thiết kế UI/UX với Figma",
-    progress: 65,
-    lessons: [
-      {
-        id: 1,
-        title: "Giới thiệu về Figma",
-        duration: "15 phút",
-        completed: true,
-        current: false,
-        hasAttachment: true,
-      },
-      {
-        id: 2,
-        title: "Các công cụ cơ bản",
-        duration: "25 phút",
-        completed: true,
-        current: false,
-        hasAttachment: true,
-      },
-      {
-        id: 3,
-        title: "Thiết kế prototype",
-        duration: "30 phút",
-        completed: false,
-        current: true,
-        hasAttachment: true,
-      },
-      {
-        id: 4,
-        title: "Làm việc với components",
-        duration: "20 phút",
-        completed: false,
-        current: false,
-        hasAttachment: false,
-        locked: false,
-      },
-      {
-        id: 5,
-        title: "Auto layout và Constraints",
-        duration: "35 phút",
-        completed: false,
-        current: false,
-        hasAttachment: false,
-        locked: true,
-      },
-      {
-        id: 6,
-        title: "Thiết kế responsive",
-        duration: "40 phút",
-        completed: false,
-        current: false,
-        hasAttachment: false,
-        locked: true,
-      },
-    ],
-  };
-
-  return (
-    <StyledCard>
-      <CardHeader
-        sx={{ py: "1.2rem" }}
-        title="Tiến độ học tập"
-        action={
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
-        }
-      />
-
-      <CardContent sx={{ py: "0px" }}>
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>
-            {courseProgress.title}
-          </Typography>
-
-          <Box display="flex" alignItems="center" mb={1}>
-            <Box flexGrow={1} mr={2}>
-              <LinearProgress
-                variant="determinate"
-                value={courseProgress.progress}
-                sx={{ height: 8, borderRadius: 4 }}
-              />
-            </Box>
-            <ProgressLabel variant="body2" value={courseProgress.progress}>
-              {courseProgress.progress}%
-            </ProgressLabel>
-          </Box>
-
-          <Typography variant="body2" color="text.secondary">
-            {Math.round(
-              (courseProgress.lessons.filter((l) => l.completed).length /
-                courseProgress.lessons.length) *
-                100
-            )}
-            % hoàn thành (
-            {courseProgress.lessons.filter((l) => l.completed).length}/
-            {courseProgress.lessons.length} bài học)
-          </Typography>
-        </Box>
-
-        <Divider sx={{ my: 2 }} />
-
-        <Typography variant="subtitle1" gutterBottom>
-          Danh sách bài học
-        </Typography>
-
-        <List disablePadding>
-          {courseProgress.lessons.map((lesson) => (
-            <LessonItem
-              key={lesson.id}
-              completed={lesson.completed}
-              current={lesson.current}
-              //   disabled={lesson.locked}
-              //   button
-            >
-              <ListItemIcon>
-                {lesson.completed ? (
-                  <CheckCircleIcon color="success" />
-                ) : lesson.locked ? (
-                  <LockIcon color="action" />
-                ) : (
-                  <PlayCircleOutlineIcon
-                    color={lesson.current ? "primary" : "action"}
-                  />
-                )}
-              </ListItemIcon>
-
-              <ListItemText
-                primary={lesson.title}
-                secondary={lesson.duration}
-                primaryTypographyProps={{
-                  variant: "body2",
-                  fontWeight: lesson.current ? 600 : 400,
-                  color: lesson.locked ? "text.disabled" : "text.primary",
-                }}
-                secondaryTypographyProps={{
-                  variant: "caption",
-                  color: lesson.locked ? "text.disabled" : "text.secondary",
-                }}
-              />
-
-              <ListItemSecondaryAction>
-                {lesson.hasAttachment && (
-                  <IconButton edge="end" size="small" disabled={lesson.locked}>
-                    <DownloadIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </ListItemSecondaryAction>
-            </LessonItem>
-          ))}
-        </List>
-
-        <Box mt={3} display="flex" justifyContent="center">
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<PlayCircleOutlineIcon />}
-          >
-            Tiếp tục học
-          </Button>
-        </Box>
-      </CardContent>
-    </StyledCard>
-  );
-};
 
 export default LearningProgress;

@@ -52,8 +52,8 @@ export interface CourseCardProps {
 // Task types
 export type TaskPriorityType = "high" | "medium" | "low";
 export type TaskStatusType =
-  | "completed"
-  | "in progress"
+  | "COMPLETED"
+  | "IN_PROGRESS"
   | "pending"
   | "delayed";
 

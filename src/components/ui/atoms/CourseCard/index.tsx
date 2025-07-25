@@ -117,7 +117,7 @@ const CourseCard = ({
             size="small"
             // color="primary"
             sx={{
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.primary.light,
               color: "#fff",
               fontWeight: 600,
               fontSize: "0.75rem",
@@ -127,7 +127,7 @@ const CourseCard = ({
           />
           {isJoined && !isCompleted && (
             <Chip
-              label="Đã tham gia"
+              label="Đang tham gia"
               size="small"
               sx={{
                 backgroundColor: theme.palette.warning.main,
@@ -269,7 +269,7 @@ const CourseCard = ({
             fullWidth
             onClick={handleCardClick}
           >
-            Tiếp tục học
+           {isCompleted ? "Xem chi tiết" : "Tiếp tục học"}
           </Button>
         )}
       </CardContent>

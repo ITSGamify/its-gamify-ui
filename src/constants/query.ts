@@ -30,6 +30,9 @@ export const QUERY_KEYS = {
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
   },
+   PROGRESS: {
+    BASE: BASE_KEYS.PROGRESS,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

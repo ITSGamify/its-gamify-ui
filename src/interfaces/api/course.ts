@@ -38,7 +38,18 @@ export interface Course {
   learning_materials?: Material[];
   course_participations?: Participation[];
   created_date: Date;
+  is_optional:boolean;
+  quarter_id:string;
+  quarter?: Quater;
   image_files: StorageFile[] | null;
+}
+
+export interface Quater {
+  id: string;
+  name: string;
+  year: number;
+  start_date: string;
+  end_date: string;
 }
 
 export interface Material {

@@ -11,6 +11,8 @@ export const BASE_KEYS = {
   QUIZZES: "quizzes",
   QUIZ_RESULTS: "quiz-results",
   CATEGORIES: "categories",
+  QUARTERS: "quarters",
+  METRICS: "metrics",
 };
 
 export const END_POINTS = {
@@ -50,5 +52,11 @@ export const END_POINTS = {
   },
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
+  },
+  QUARTERS: {
+    BASE: BASE_KEYS.QUARTERS,
+  },
+  METRICS: {
+    BASE: BASE_KEYS.METRICS,
   },
 };

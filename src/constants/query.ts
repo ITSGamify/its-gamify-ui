@@ -30,8 +30,14 @@ export const QUERY_KEYS = {
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
   },
-   PROGRESS: {
+  PROGRESS: {
     BASE: BASE_KEYS.PROGRESS,
+  },
+  QUARTERS: {
+    BASE: BASE_KEYS.QUARTERS,
+  },
+  METRICS: {
+    BASE: BASE_KEYS.METRICS,
   },
 };
 

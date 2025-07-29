@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AttachmentIcon from "@mui/icons-material/Attachment";
-import MessageIcon from "@mui/icons-material/Message";
 import { alpha, useTheme } from "@mui/material/styles";
 import { TaskStatusType } from "@interfaces/shared/home";
 import { LearningProgress } from "@interfaces/api/learningProgress";
@@ -183,19 +182,6 @@ const TaskManagement = ({
                         />
                         <Typography variant="caption" color="text.secondary">
                           0 tệp đính kèm{" "}
-                          {/* Giả sử không có data, thay bằng real nếu có */}
-                        </Typography>
-                      </Box>
-
-                      <Box display="flex" alignItems="center">
-                        <MessageIcon
-                          fontSize="small"
-                          color="action"
-                          sx={{ mr: 0.5 }}
-                        />
-                        <Typography variant="caption" color="text.secondary">
-                          0 bình luận{" "}
-                          {/* Giả sử không có data, thay bằng real nếu có */}
                         </Typography>
                       </Box>
                     </Box>

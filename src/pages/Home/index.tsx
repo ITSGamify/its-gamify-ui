@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Container,
@@ -14,11 +14,13 @@ import {
   Divider,
   useTheme,
   CircularProgress,
+  alpha,
+  Skeleton,
+  CardHeader,
 } from "@mui/material";
 import {
   School as SchoolIcon,
   AccessTime as AccessTimeIcon,
-  Warning as WarningIcon,
 } from "@mui/icons-material";
 
 // Import các component đã tạo
@@ -29,7 +31,9 @@ import LearningProgress from "@components/ui/atoms/LearningProgress";
 import { useHomePage } from "@hooks/data/useHomePage";
 import { getTimeOfDay } from "@utils/timeUtils";
 import { COMPLETED, ENROLLED, SAVED } from "@constants/course";
-
+import { Participation } from "@interfaces/api/course";
+import { differenceInDays, format } from "date-fns";
+import { vi } from "date-fns/locale";
 // Styled components
 const PageTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
@@ -56,6 +60,15 @@ const WelcomeCard = styled(Card)(({ theme }) => ({
   },
 }));
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[3],
+  transition: "box-shadow 0.3s ease-in-out",
+  "&:hover": {
+    boxShadow: theme.shadows[6],
+  },
+}));
+
 const StyledTabs = styled(Tabs)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   "& .MuiTab-root": {
@@ -69,38 +82,6 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
 const HomePage: React.FC = () => {
   const theme = useTheme();
 
-  interface UpcomingDeadline {
-    id: number;
-    title: string;
-    course: string;
-    dueDate: string;
-    status: "urgent" | "normal";
-  }
-
-  const upcomingDeadlines: UpcomingDeadline[] = [
-    {
-      id: 1,
-      title: "Nộp bài tập UI Design",
-      course: "Thiết kế UI/UX với Figma",
-      dueDate: "10/06/2025",
-      status: "urgent",
-    },
-    {
-      id: 2,
-      title: "Hoàn thành project cuối khóa",
-      course: "React JS - Từ cơ bản đến thành thạo",
-      dueDate: "15/06/2025",
-      status: "normal",
-    },
-    {
-      id: 3,
-      title: "Bài kiểm tra giữa kỳ",
-      course: "Quản lý dự án chuyên nghiệp",
-      dueDate: "18/06/2025",
-      status: "normal",
-    },
-  ];
-
   const {
     courses,
     isLoadingCourses,
@@ -113,7 +94,19 @@ const HomePage: React.FC = () => {
     progressClassify,
     handleClassifyProgress,
     handleViewAllCourses,
+    participations,
+    isLoadingParticipations,
   } = useHomePage();
+
+  const enhancedParticipations = useMemo(() => {
+    return participations.map((p: Participation) => ({
+      ...p,
+      status:
+        differenceInDays(new Date(p.deadline), new Date()) <= 3
+          ? "urgent"
+          : "normal",
+    }));
+  }, [participations]);
   return (
     <Container maxWidth="xl" sx={{ pt: 0, pb: 3, px: 3 }}>
       {/* Header */}
@@ -270,86 +263,112 @@ const HomePage: React.FC = () => {
             <LearningProgress />
           </Box>
 
-          {/* Upcoming Deadlines */}
-          <Card sx={{ borderRadius: "15px", mb: 4 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Sắp đến hạn
-              </Typography>
-
-              <Box>
-                {upcomingDeadlines.map((item, index) => (
-                  <React.Fragment key={item.id}>
-                    <Box
-                      sx={{
-                        py: 2,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
+          <StyledCard>
+            <CardHeader
+              sx={{ py: "1.2rem" }}
+              title="Sắp đến hạn"
+              titleTypographyProps={{ variant: "h6", fontWeight: 600 }}
+            />
+            <Divider sx={{ mb: 2 }} />
+            {/* Upcoming Deadlines */}
+            <CardContent sx={{ py: 0 }}>
+              {isLoadingParticipations ? (
+                <Box>
+                  {[...Array(3)].map((_, index) => (
+                    <React.Fragment key={index}>
+                      <Skeleton
+                        variant="rectangular"
+                        height={48}
+                        sx={{ mb: 1, borderRadius: 1 }}
+                      />
+                      {index < 2 && <Divider sx={{ my: 1 }} />}
+                    </React.Fragment>
+                  ))}
+                </Box>
+              ) : enhancedParticipations.length === 0 ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height={150}
+                  flexDirection="column"
+                  textAlign="center"
+                >
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    Không có hạn nộp sắp tới
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Bạn đang theo kịp tiến độ!
+                  </Typography>
+                </Box>
+              ) : (
+                <Box>
+                  {enhancedParticipations.map((item, index) => (
+                    <React.Fragment key={item.id}>
                       <Box
                         sx={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: "50%",
+                          py: 2,
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          bgcolor:
-                            item.status === "urgent"
-                              ? theme.palette.error.light
-                              : theme.palette.warning.light,
-                          color:
-                            item.status === "urgent"
-                              ? theme.palette.error.main
-                              : theme.palette.warning.main,
-                          mr: 2,
                         }}
                       >
-                        {item.status === "urgent" ? (
-                          <WarningIcon />
-                        ) : (
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            bgcolor:
+                              item.status === "urgent"
+                                ? alpha(theme.palette.error.light, 0.8)
+                                : alpha(theme.palette.warning.light, 0.8),
+                            color:
+                              item.status === "urgent"
+                                ? theme.palette.error.main
+                                : theme.palette.warning.main,
+                            mr: 2,
+                          }}
+                        >
                           <AccessTimeIcon />
-                        )}
-                      </Box>
+                        </Box>
 
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="subtitle2">
-                          {item.title}
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="subtitle2">
+                            {item.course.title}{" "}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {item.course.short_description || "Khóa học"}{" "}
+                          </Typography>
+                        </Box>
+
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontWeight: 600,
+                            color:
+                              item.status === "urgent"
+                                ? theme.palette.error.main
+                                : theme.palette.text.secondary,
+                          }}
+                        >
+                          {format(new Date(item.deadline), "dd/MM/yyyy", {
+                            locale: vi,
+                          })}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {item.course}
-                        </Typography>
                       </Box>
-
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          fontWeight: 600,
-                          color:
-                            item.status === "urgent"
-                              ? theme.palette.error.main
-                              : theme.palette.text.secondary,
-                        }}
-                      >
-                        {item.dueDate}
-                      </Typography>
-                    </Box>
-                    {index < upcomingDeadlines.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
-              </Box>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                sx={{ mt: 2 }}
-              >
-                Xem tất cả
-              </Button>
+                      {index < enhancedParticipations.length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </Box>
+              )}
             </CardContent>
-          </Card>
+          </StyledCard>
         </Grid>
       </Grid>
     </Container>

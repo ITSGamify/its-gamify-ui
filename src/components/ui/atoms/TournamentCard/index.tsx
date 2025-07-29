@@ -7,20 +7,17 @@ import {
   Typography,
   Box,
   Chip,
-  // Avatar,
   Button,
   styled,
   useTheme,
   IconButton,
   alpha,
-  Rating,
 } from "@mui/material";
 import {
-  AccessTime as AccessTimeIcon,
   Bookmark as BookmarkIcon,
   BookmarkBorder as BookmarkBorderIcon,
+  PeopleOutlineOutlined as PeopleOutlineOutlinedIcon,
 } from "@mui/icons-material";
-
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { Course } from "@interfaces/api/course";
@@ -55,19 +52,11 @@ const LevelChip = styled(Chip)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-interface CourseCardProps {
+interface TournamentCardProps {
   course: Course;
-  isShowBtn?: boolean;
-  isJoined?: boolean;
-  isCompleted?: boolean;
 }
 
-const CourseCard = ({
-  course,
-  isShowBtn = false,
-  isJoined = false,
-  isCompleted = false,
-}: CourseCardProps) => {
+const TournamentCard = ({ course }: TournamentCardProps) => {
   const theme = useTheme();
   const [bookmarked, setBookmarked] = useState<string[]>([]);
   const toggleBookmark = (courseId: string) => {
@@ -80,8 +69,8 @@ const CourseCard = ({
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    const route = getRoute(PATH.COURSES_OVERVIEW, {
-      courseId: course.id,
+    const route = getRoute(PATH.TOURNAMENT_ROOM, {
+      tournamentId: course.id,
     });
     navigate(route);
   };
@@ -108,7 +97,6 @@ const CourseCard = ({
           <CategoryChip
             label={course.category?.name}
             size="small"
-            // color="primary"
             sx={{
               backgroundColor: theme.palette.primary.light,
               color: "#fff",
@@ -118,37 +106,6 @@ const CourseCard = ({
               borderRadius: "16px",
             }}
           />
-          {isJoined && !isCompleted && (
-            <Chip
-              label="Đang tham gia"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.warning.main,
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.75rem",
-                height: "24px",
-                borderRadius: "16px",
-                width: "fit-content",
-              }}
-            />
-          )}
-
-          {isCompleted && (
-            <Chip
-              label="Đã hoàn thành"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.success.main,
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.75rem",
-                height: "24px",
-                borderRadius: "16px",
-                width: "fit-content",
-              }}
-            />
-          )}
         </Box>
         <IconButton
           sx={{
@@ -193,37 +150,6 @@ const CourseCard = ({
           {course.short_description}
         </Typography>
 
-        {/*Auhtor */}
-        {/* <Box display="flex" alignItems="center" mb={1} mt="auto">
-          <Avatar
-            src={instructor.avatar}
-            alt={instructor.name}
-            sx={{ width: 32, height: 32, mr: 1 }}
-          />
-          <Typography variant="subtitle2">{instructor.name}</Typography>
-        </Box> */}
-
-        {/* Rating*/}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            mb: 1,
-          }}
-        >
-          <Rating
-            value={3}
-            precision={0.1}
-            readOnly
-            size="small"
-            sx={{ mr: 1 }}
-          />
-          <Typography variant="body2" color="text.secondary">
-            ({3}) • {145} đánh giá
-          </Typography>
-        </Box>
-
-        {/* Duration and Students */}
         <Box
           sx={{
             display: "flex",
@@ -237,37 +163,28 @@ const CourseCard = ({
               alignItems: "center",
             }}
           >
-            <AccessTimeIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
+            <PeopleOutlineOutlinedIcon
+              fontSize="small"
+              color="action"
+              sx={{ mr: 0.5 }}
+            />
             <Typography variant="body2" color="text.secondary">
-              {course.duration_in_hours} • {course.modules?.length} bài học
+              {course.duration_in_hours}/{course.modules?.length} người
             </Typography>
           </Box>
-          {!isShowBtn && (
-            <Button
-              variant="text"
-              sx={{ width: "fit-content" }}
-              color="primary"
-              fullWidth
-            >
-              {isJoined ? "Tiếp tục học" : "Xem chi tiết"}
-            </Button>
-          )}
-        </Box>
 
-        {isShowBtn && isJoined && (
           <Button
-            sx={{ marginBottom: "10px", marginTop: "10px" }}
-            variant="contained"
+            variant="text"
+            sx={{ width: "fit-content" }}
             color="primary"
             fullWidth
-            onClick={handleCardClick}
           >
-            {isCompleted ? "Xem chi tiết" : "Tiếp tục học"}
+            Xem chi tiết
           </Button>
-        )}
+        </Box>
       </CardContent>
     </StyledCard>
   );
 };
 
-export default CourseCard;
+export default TournamentCard;

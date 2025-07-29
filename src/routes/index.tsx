@@ -7,7 +7,6 @@ import CoursePage from "@pages/Course";
 import CourseOverviewPage from "@pages/Course/Overview";
 import CourseDetailPage from "@pages/Course/Detail";
 import QuizPage from "@pages/Quiz";
-import ChallengePage from "@pages/Challenge";
 import NotFound404 from "@pages/NotFound404";
 import ServerError500 from "@pages/ServerError500";
 import Forbidden403 from "@pages/Forbidden403";
@@ -19,6 +18,13 @@ import { JSX } from "react";
 import LandingPage from "@pages/Landing";
 import CertificatesPage from "@pages/Certificate";
 import CertificateDetailPage from "@pages/Certificate/Detail";
+import MetricsPage from "@pages/Metrics";
+import RoomsPage from "@pages/Tournament/Room";
+import WaitingRoomPage from "@pages/Tournament/WaitingRoomPage";
+import MatchPage from "@pages/Tournament/Match";
+import MatchHistoryPage from "@pages/Tournament/History";
+import LeaderboardPage from "@pages/Leaderboard";
+import TournamentPage from "@pages/Tournament";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
@@ -140,8 +146,32 @@ const router = createBrowserRouter(
           element: <QuizPage />,
         },
         {
-          path: PATH.CHALLENGE,
-          element: <ChallengePage />,
+          path: PATH.TOURNAMENT,
+          element: <TournamentPage />,
+        },
+        {
+          path: PATH.TOURNAMENT_ROOM,
+          element: <RoomsPage />,
+        },
+        {
+          path: PATH.TOURNAMENT_WAITING_ROOM,
+          element: <WaitingRoomPage />,
+        },
+        {
+          path: PATH.TOURNAMENT_MATCH,
+          element: <MatchPage />,
+        },
+        {
+          path: PATH.TOURNAMENT_MATCH_HISTORY,
+          element: <MatchHistoryPage />,
+        },
+        {
+          path: PATH.LEADER_BOARD,
+          element: <LeaderboardPage />,
+        },
+        {
+          path: PATH.METRIC,
+          element: <MetricsPage />,
         },
       ],
     },

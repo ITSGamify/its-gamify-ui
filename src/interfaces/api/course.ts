@@ -4,7 +4,7 @@ import { StorageFile } from "./file";
 import { LearningProgress } from "./learningProgress";
 import { Module } from "./lesson";
 
-export type ParticipationStatus = "IN_PROGRESS" | "COMPLETED";
+export type ParticipationStatus = "ENROLLED" | "COMPLETED";
 
 export interface Category {
   name: string;
@@ -38,13 +38,13 @@ export interface Course {
   learning_materials?: Material[];
   course_participations?: Participation[];
   created_date: Date;
-  is_optional:boolean;
-  quarter_id:string;
-  quarter?: Quater;
+  is_optional: boolean;
+  quarter_id: string;
+  quarter?: Quarter;
   image_files: StorageFile[] | null;
 }
 
-export interface Quater {
+export interface Quarter {
   id: string;
   name: string;
   year: number;
@@ -71,6 +71,7 @@ export interface Participation {
   status: ParticipationStatus;
   course: Course;
   created_date: Date;
+  deadline: Date;
   learning_progresses: LearningProgress[];
 }
 

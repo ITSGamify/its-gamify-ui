@@ -39,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
 import NavLink from "../NavLink";
 import { PATH } from "@constants/path";
+import userSession from "@utils/user-session";
 // Styled components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -97,6 +98,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 // Navigation links data
 const navigationLinks = [
   { path: PATH.HOME, label: "Tổng quan" },
+  { path: PATH.METRIC, label: "Thống kê" },
   { path: PATH.COURSES, label: "Khóa học" },
   { path: PATH.CERTIFICATE, label: "Chứng chỉ" },
 ];
@@ -109,7 +111,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  // const location = useLocation();
+
+  const profile = userSession.getUserProfile();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -139,7 +142,8 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
   const handleLogout = () => {
     // Xử lý đăng xuất
     handleMenuClose();
-    navigate("/login");
+    userSession.clearUserProfile();
+    navigate(PATH.LOGIN);
   };
 
   // Menu ID
@@ -167,10 +171,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
     >
       <Box sx={{ px: 2, py: 1.5 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          Nguyễn Văn A
+          {profile?.user.full_name.toUpperCase() || "Người dùng"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          admin@example.com
+          {profile?.user.email || "Người dùng"}
         </Typography>
       </Box>
       <Divider />

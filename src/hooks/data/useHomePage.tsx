@@ -9,13 +9,14 @@ import {
   School as SchoolIcon,
   Assignment as AssignmentIcon,
   Verified as VerifiedIcon,
-  CheckCircle as CheckCircleIcon,
+  EmojiEvents as EmojiEventsIcon,
 } from "@mui/icons-material";
 import { DashboardCardProps } from "@interfaces/shared/home";
 import { ENROLLED } from "@constants/course";
 import { useGetCourses } from "@services/course";
 import { useGetProgresses } from "@services/progress";
 import { PATH } from "@constants/path";
+import { useGetParticipations } from "@services/participation";
 const defaultSort = [
   {
     column: "created_date",
@@ -75,7 +76,7 @@ export const useHomePage = () => {
       {
         title: "Khóa học đã hoàn thành",
         value: userMetric?.course_completed_num || 0,
-        icon: <CheckCircleIcon />,
+        icon: <EmojiEventsIcon />,
         color: "warning",
       },
       {
@@ -110,6 +111,13 @@ export const useHomePage = () => {
   const { data: progresses, isFetching: isLoadingProgresses } =
     useGetProgresses(getProgressesReq);
 
+  const { data: participationData, isFetching: isLoadingParticipations } =
+    useGetParticipations({
+      page: 0,
+      limit: 3,
+      status: "ENROLLED",
+    });
+
   return {
     courses: courses?.data || [],
     isLoadingCourses,
@@ -124,5 +132,7 @@ export const useHomePage = () => {
     progressClassify,
     handleClassifyProgress,
     handleViewAllCourses,
+    participations: participationData?.data || [],
+    isLoadingParticipations,
   };
 };

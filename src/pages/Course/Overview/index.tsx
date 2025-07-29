@@ -47,6 +47,7 @@ import { formatToMB } from "@utils/file";
 import { formatDateToVietnamese } from "@utils/date";
 import { useNavigate } from "react-router-dom";
 import { Lesson } from "@interfaces/api/lesson";
+// import { VideoPlayer } from "@components/ui/atoms/Video";
 
 //#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
@@ -246,11 +247,17 @@ const CourseOverviewPage: React.FC = () => {
         <Grid container spacing={4}>
           {/* Left Column */}
           <Grid size={{ xs: 12, md: 8 }}>
+            {/* <VideoPlayer
+              videoUrl={course?.introduction_video || ""}
+              title={course?.title || ""}
+            /> */}
+
             <CourseImage
               image={course?.thumbnail_image}
               title={course?.title}
               sx={{ objectFit: "contain", backgroundSize: "contain" }}
             />
+
             <Box mt={4}>
               <StyledTabs
                 value={tabValue}

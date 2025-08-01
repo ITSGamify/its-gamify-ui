@@ -1,4 +1,3 @@
-// src/pages/WaitingRoomPage.tsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -10,14 +9,21 @@ import {
   Stack,
   CircularProgress,
   Container,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
-import { useSearchParams } from "react-router-dom"; // Giả sử dự án sử dụng React Router
-import { Link, useNavigate } from "react-router-dom"; // Để link và navigate
+import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import XIcon from "@mui/icons-material/X";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 
 const WaitingRoomPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -27,7 +33,15 @@ const WaitingRoomPage: React.FC = () => {
   const [countdown, setCountdown] = useState(5);
   const [isReady, setIsReady] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
-  const [loading, setLoading] = useState(true); // Thay Suspense bằng state loading đơn giản
+  const [loading, setLoading] = useState(true);
+
+  // State cho modal edit room
+  const [openModal, setOpenModal] = useState(false);
+  const [roomName, setRoomName] = useState("Phòng Chờ Mặc Định"); // Giá trị dummy, thay bằng data thực tế từ API
+
+  // Nếu có Auth, lấy role để check (ví dụ: chỉ admin thấy icon edit)
+  // const { userProfile } = useAuth();
+  // const isAdmin = userProfile?.role === "admin"; // Giả sử role là "admin"
 
   const opponent = {
     id: opponentId || "1",
@@ -83,6 +97,21 @@ const WaitingRoomPage: React.FC = () => {
     }
   }, [isReady, opponentReady, opponentId, tournamentId, navigate]);
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleSaveRoom = () => {
+    // Logic submit form (gọi API edit room)
+    console.log("Room name updated to:", roomName);
+    // Ví dụ: await api.updateRoom({ tournamentId, name: roomName });
+    handleCloseModal();
+  };
+
   if (loading) {
     return (
       <Box
@@ -116,7 +145,23 @@ const WaitingRoomPage: React.FC = () => {
           </Typography>
         </Box>
 
-        <Card sx={{ boxShadow: 3, p: 4, mb: 4 }}>
+        <Card sx={{ boxShadow: 3, p: 4, mb: 4, position: "relative" }}>
+          {" "}
+          {/* Thêm position: relative để icon absolute */}
+          {/* Icon Edit ở góc phải trên */}
+          {/* {isAdmin && ( */} {/* Uncomment nếu dùng auth để check role */}
+          <IconButton
+            onClick={handleOpenModal}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "primary.main",
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          {/* )} */}
           <Stack
             direction="row"
             spacing={4}
@@ -139,9 +184,6 @@ const WaitingRoomPage: React.FC = () => {
               </Avatar>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 {currentUser.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Cấp {currentUser.level}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {currentUser.wins}T - {currentUser.losses}B
@@ -195,9 +237,6 @@ const WaitingRoomPage: React.FC = () => {
                 {opponent.name}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Cấp {opponent.level}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
                 {opponent.wins}T - {opponent.losses}B
               </Typography>
               <Box sx={{ mt: 2 }}>
@@ -231,7 +270,6 @@ const WaitingRoomPage: React.FC = () => {
               </Box>
             </Box>
           </Stack>
-
           {isReady && opponentReady && (
             <Box sx={{ textAlign: "center" }}>
               <Typography
@@ -247,7 +285,6 @@ const WaitingRoomPage: React.FC = () => {
               </Typography>
             </Box>
           )}
-
           {!isReady && (
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
@@ -256,6 +293,41 @@ const WaitingRoomPage: React.FC = () => {
             </Box>
           )}
         </Card>
+
+        {/* Modal Edit Room */}
+        <Dialog
+          open={openModal}
+          onClose={handleCloseModal}
+          fullWidth
+          maxWidth="sm"
+        >
+          <DialogTitle>Chỉnh Sửa Phòng Chờ</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Tên Phòng"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
+            />
+            {/* Thêm fields khác nếu cần, ví dụ: edit rules, time limit, etc. */}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="inherit">
+              Hủy
+            </Button>
+            <Button
+              onClick={handleSaveRoom}
+              color="primary"
+              variant="contained"
+            >
+              Lưu
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Card sx={{ boxShadow: 3, p: 3 }}>
           <Typography variant="h6" fontWeight="bold" gutterBottom>

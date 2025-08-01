@@ -13,9 +13,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import { useCoursePage } from "@hooks/data/useCoursePage";
 import { simulateEnterKeyDown } from "@utils/common";
 import TournamentCard from "@components/ui/atoms/TournamentCard";
+import { useChallengePage } from "@hooks/data/useChallengePage";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
@@ -34,7 +34,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 const TournamentPage: React.FC = () => {
   const {
-    courses,
+    challenges,
     total_page_count,
     handlePageChange,
     isLoading,
@@ -44,7 +44,7 @@ const TournamentPage: React.FC = () => {
     searchInput,
     handleCategorySearch,
     searchCategories,
-  } = useCoursePage();
+  } = useChallengePage();
 
   return (
     <Container maxWidth="xl">
@@ -129,9 +129,9 @@ const TournamentPage: React.FC = () => {
             <CircularProgress />
           </Box>
         ) : (
-          courses.map((course) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={course.id}>
-              <TournamentCard course={course} />
+          challenges.map((challenge) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={challenge.id}>
+              <TournamentCard challenge={challenge} />
             </Grid>
           ))
         )}

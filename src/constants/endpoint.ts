@@ -13,6 +13,8 @@ export const BASE_KEYS = {
   CATEGORIES: "categories",
   QUARTERS: "quarters",
   METRICS: "metrics",
+  CHALLENGE: "challenges",
+  ROOM: "rooms",
 };
 
 export const END_POINTS = {
@@ -58,5 +60,14 @@ export const END_POINTS = {
   },
   METRICS: {
     BASE: BASE_KEYS.METRICS,
+  },
+  CHALLENGE: {
+    BASE: BASE_KEYS.CHALLENGE,
+    DETAIL: `${BASE_KEYS.CHALLENGE}/:challengeId`,
+    ROOMS: `${BASE_KEYS.CHALLENGE}/:challengeId/rooms`,
+  },
+  ROOM: {
+    BASE: BASE_KEYS.ROOM,
+    DETAIL: `${BASE_KEYS.ROOM}/:roomId`,
   },
 };

@@ -39,6 +39,15 @@ export const QUERY_KEYS = {
   METRICS: {
     BASE: BASE_KEYS.METRICS,
   },
+  CHALLENGE: {
+    BASE: BASE_KEYS.CHALLENGE,
+    DETAIL: `${BASE_KEYS.CHALLENGE}/:challengeId`,
+    ROOMS: `${BASE_KEYS.CHALLENGE}/:challengeId/rooms`,
+  },
+  ROOM: {
+    BASE: BASE_KEYS.ROOM,
+    DETAIL: `${BASE_KEYS.ROOM}/:roomId`,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

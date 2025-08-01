@@ -9,9 +9,6 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  // Drawer,
-  // List,
-  // ListItem,
   ListItemIcon,
   ListItemText,
   Divider,
@@ -26,13 +23,7 @@ import {
   Menu as MenuIcon,
   Search as SearchIcon,
   Notifications as NotificationsIcon,
-  AccountCircle,
-  // Dashboard as DashboardIcon,
-  // Book as BookIcon,
-  // People as PeopleIcon,
-  Settings as SettingsIcon,
   Logout as LogoutIcon,
-  // ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +31,8 @@ import Logo from "../Logo";
 import NavLink from "../NavLink";
 import { PATH } from "@constants/path";
 import userSession from "@utils/user-session";
-// Styled components
+import BarChartIcon from "@mui/icons-material/BarChart";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   color: theme.palette.text.primary,
@@ -98,9 +90,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 // Navigation links data
 const navigationLinks = [
   { path: PATH.HOME, label: "Tổng quan" },
-  { path: PATH.METRIC, label: "Thống kê" },
   { path: PATH.COURSES, label: "Khóa học" },
-  { path: PATH.CERTIFICATE, label: "Chứng chỉ" },
+  { path: PATH.TOURNAMENT, label: "Đấu trường" },
 ];
 
 interface HeaderProps {
@@ -181,24 +172,24 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
       <MenuItem
         onClick={() => {
           handleMenuClose();
-          navigate("/profile");
+          navigate(PATH.METRIC);
         }}
       >
         <ListItemIcon>
-          <AccountCircle fontSize="small" />
+          <BarChartIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Hồ sơ cá nhân</ListItemText>
+        <ListItemText>Thống kê</ListItemText>
       </MenuItem>
       <MenuItem
         onClick={() => {
           handleMenuClose();
-          navigate("/settings");
+          navigate(PATH.CERTIFICATE);
         }}
       >
         <ListItemIcon>
-          <SettingsIcon fontSize="small" />
+          <WorkspacePremiumIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Cài đặt</ListItemText>
+        <ListItemText>Chứng chỉ</ListItemText>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleLogout}>

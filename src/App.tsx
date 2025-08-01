@@ -10,6 +10,7 @@ import "@styles/global.css";
 import { useGlobal } from "@hooks/shared/useGlobal";
 import { ToastContainer, ToastContainerProps } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SignalRProvider } from "@providers/SignalRContext";
 
 const toastConfig: ToastContainerProps = {
   limit: 5,
@@ -30,7 +31,9 @@ const App: React.FC = () => {
         <CssBaseline />
         <ToastProvider>
           <ToastContainer {...toastConfig} />
-          <RouterProvider router={router} />
+          <SignalRProvider>
+            <RouterProvider router={router} />
+          </SignalRProvider>
         </ToastProvider>
       </ThemeProvider>
     </QueryProvider>

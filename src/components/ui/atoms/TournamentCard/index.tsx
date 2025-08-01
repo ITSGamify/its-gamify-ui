@@ -1,5 +1,4 @@
 // src/components/CourseCard.tsx
-import React, { useState } from "react";
 import {
   Card,
   CardMedia,
@@ -10,18 +9,13 @@ import {
   Button,
   styled,
   useTheme,
-  IconButton,
   alpha,
 } from "@mui/material";
-import {
-  Bookmark as BookmarkIcon,
-  BookmarkBorder as BookmarkBorderIcon,
-  PeopleOutlineOutlined as PeopleOutlineOutlinedIcon,
-} from "@mui/icons-material";
+import { PeopleOutlineOutlined as PeopleOutlineOutlinedIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
-import { Course } from "@interfaces/api/course";
 import { getRoute } from "@utils/route";
+import { Challenge } from "@interfaces/api/challenge";
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -53,24 +47,17 @@ const LevelChip = styled(Chip)(({ theme }) => ({
 }));
 
 interface TournamentCardProps {
-  course: Course;
+  challenge: Challenge;
 }
 
-const TournamentCard = ({ course }: TournamentCardProps) => {
+const TournamentCard = ({ challenge }: TournamentCardProps) => {
   const theme = useTheme();
-  const [bookmarked, setBookmarked] = useState<string[]>([]);
-  const toggleBookmark = (courseId: string) => {
-    if (bookmarked.includes(courseId)) {
-      setBookmarked(bookmarked.filter((id) => id !== courseId));
-    } else {
-      setBookmarked([...bookmarked, courseId]);
-    }
-  };
+
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     const route = getRoute(PATH.TOURNAMENT_ROOM, {
-      tournamentId: course.id,
+      tournamentId: challenge.id,
     });
     navigate(route);
   };
@@ -81,8 +68,8 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
         <CardMedia
           component="img"
           height="200"
-          image={course.thumbnail_image}
-          alt={course.title}
+          image={challenge.thumbnail_image}
+          alt={challenge.title}
         />
         <Box
           sx={{
@@ -95,7 +82,7 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
           }}
         >
           <CategoryChip
-            label={course.category?.name}
+            label={challenge.category?.name}
             size="small"
             sx={{
               backgroundColor: theme.palette.primary.light,
@@ -107,24 +94,6 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
             }}
           />
         </Box>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
-            },
-          }}
-          onClick={() => toggleBookmark(course.id)}
-        >
-          {bookmarked.includes(course.id) ? (
-            <BookmarkIcon color="primary" />
-          ) : (
-            <BookmarkBorderIcon />
-          )}
-        </IconButton>
       </Box>
 
       <CardContent sx={{ flexGrow: 1, p: 1, paddingBottom: "10px !important" }}>
@@ -132,7 +101,7 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
           <LevelChip label={"Cơ bản"} size="small" />
         </Box>
         <Typography variant="h6" component="div" gutterBottom noWrap>
-          {course.title}
+          {challenge.title}
         </Typography>
 
         <Typography
@@ -147,7 +116,7 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
             WebkitBoxOrient: "vertical",
           }}
         >
-          {course.short_description}
+          {challenge.description}
         </Typography>
 
         <Box
@@ -169,7 +138,7 @@ const TournamentCard = ({ course }: TournamentCardProps) => {
               sx={{ mr: 0.5 }}
             />
             <Typography variant="body2" color="text.secondary">
-              {course.duration_in_hours}/{course.modules?.length} người
+              {challenge.num_of_room}/{challenge.num_of_room} người
             </Typography>
           </Box>
 

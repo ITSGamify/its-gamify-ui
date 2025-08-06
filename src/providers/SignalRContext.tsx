@@ -48,7 +48,10 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
 
     isConnectingRef.current = true;
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5131/gameHub", { withCredentials: false })
+      .withUrl(
+        "https://its-gamify-eygvdsahhfbha5gg.southeastasia-01.azurewebsites.net/gameHub",
+        { withCredentials: false }
+      )
       .withAutomaticReconnect()
       .build();
 

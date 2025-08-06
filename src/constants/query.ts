@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
   },
   ACCOUNT: {
     BASE: BASE_KEYS.ACCOUNTS,
+    CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
   },
   COURSE: {
     BASE: BASE_KEYS.COURSES,
@@ -47,6 +48,9 @@ export const QUERY_KEYS = {
   ROOM: {
     BASE: BASE_KEYS.ROOM,
     DETAIL: `${BASE_KEYS.ROOM}/:roomId`,
+  },
+  QUESTION: {
+    BASE: BASE_KEYS.QUESTION,
   },
 };
 

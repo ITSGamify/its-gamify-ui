@@ -1,6 +1,7 @@
 // src/pages/TournamentRoomPage.tsx
 import { useRoomModalForm } from "@hooks/data/useRoomModalForm";
 import { Room } from "@interfaces/api/challenge";
+import { Metric } from "@interfaces/api/metric";
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ interface RoomModalFormProps {
   onClose: () => void;
   room: Room | null;
   challengeId: string | null;
+  userMetric: Metric | null;
 }
 
 export const RoomModalForm = ({
@@ -24,12 +26,13 @@ export const RoomModalForm = ({
   onClose,
   room,
   challengeId,
+  userMetric,
 }: RoomModalFormProps) => {
-  const { isSubmitting, userMetric, bet_points, handleSubmit, control } =
-    useRoomModalForm({
-      room,
-      challengeId,
-    });
+  const { isSubmitting, bet_points, handleSubmit, control } = useRoomModalForm({
+    room,
+    challengeId,
+    onClose,
+  });
 
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="create-room-modal">
@@ -203,8 +206,10 @@ export const RoomModalForm = ({
                   </Box>
                   Đang tạo...
                 </>
+              ) : room ? (
+                "Cập nhật"
               ) : (
-                "Tạo Phòng"
+                "Tạo phòng"
               )}
             </Button>
           </Stack>

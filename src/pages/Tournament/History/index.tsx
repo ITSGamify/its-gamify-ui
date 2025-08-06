@@ -1,4 +1,4 @@
-// src/pages/MatchHistoryPage.tsx
+// src/pages/Tournament/History/index.tsx
 import React, { useState } from "react";
 import {
   Box,
@@ -15,106 +15,54 @@ import {
   TableRow,
   Chip,
   Container,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Pagination,
+  CircularProgress,
 } from "@mui/material";
 import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
+import SearchIcon from "@mui/icons-material/Search";
+import { useHistoryPage } from "@hooks/data/useHistoryPage";
+import { formatDateToVietnamese } from "@utils/date";
 
 const MatchHistoryPage: React.FC = () => {
+  const {
+    histories,
+    page_index,
+    total_page_count,
+    handlePageChange,
+    isLoading,
+    handleSearch,
+    handleSearchResults,
+    searchInput,
+  } = useHistoryPage();
+
   const [selectedFilter, setSelectedFilter] = useState("all");
 
-  const matchHistory = [
-    {
-      id: "1",
-      date: "2024-01-15",
-      time: "14:30",
-      opponent: "Nguyen Van A",
-      opponentAvatar: "A",
-      tournament: "JavaScript Fundamentals",
-      result: "win",
-      userScore: 850,
-      opponentScore: 720,
-      duration: "3m 45s",
-    },
-    {
-      id: "2",
-      date: "2024-01-15",
-      time: "11:20",
-      opponent: "Tran Thi B",
-      opponentAvatar: "B",
-      tournament: "React Development",
-      result: "loss",
-      userScore: 640,
-      opponentScore: 780,
-      duration: "4m 12s",
-    },
-    {
-      id: "3",
-      date: "2024-01-14",
-      time: "16:45",
-      opponent: "Le Van C",
-      opponentAvatar: "C",
-      tournament: "Digital Marketing",
-      result: "win",
-      userScore: 920,
-      opponentScore: 650,
-      duration: "2m 58s",
-    },
-    {
-      id: "4",
-      date: "2024-01-14",
-      time: "09:15",
-      opponent: "Pham Thi D",
-      opponentAvatar: "D",
-      tournament: "Python Basics",
-      result: "win",
-      userScore: 750,
-      opponentScore: 690,
-      duration: "3m 22s",
-    },
-    {
-      id: "5",
-      date: "2024-01-13",
-      time: "15:30",
-      opponent: "Hoang Van E",
-      opponentAvatar: "E",
-      tournament: "UI/UX Design",
-      result: "loss",
-      userScore: 580,
-      opponentScore: 820,
-      duration: "4m 05s",
-    },
-    {
-      id: "6",
-      date: "2024-01-13",
-      time: "10:45",
-      opponent: "Vu Thi F",
-      opponentAvatar: "F",
-      tournament: "Data Analytics",
-      result: "win",
-      userScore: 880,
-      opponentScore: 760,
-      duration: "3m 18s",
-    },
-  ];
-
-  const filteredMatches = matchHistory.filter((match) => {
-    if (selectedFilter === "all") return true;
-    return match.result === selectedFilter;
-  });
-
+  // Calculate stats based on histories data
   const stats = {
-    totalMatches: matchHistory.length,
-    wins: matchHistory.filter((m) => m.result === "win").length,
-    losses: matchHistory.filter((m) => m.result === "loss").length,
-    winRate: Math.round(
-      (matchHistory.filter((m) => m.result === "win").length /
-        matchHistory.length) *
-        100
-    ),
+    totalMatches: histories?.length || 0,
+    wins: histories?.filter((match) => match.status === "WIN").length || 0,
+    losses: histories?.filter((match) => match.status === "LOSE").length || 0,
+    winRate: histories?.length
+      ? Math.round(
+          (histories.filter((match) => match.status === "WIN").length /
+            histories.length) *
+            100
+        )
+      : 0,
   };
 
+  const filteredMatches = histories
+    ? histories.filter((match) => {
+        if (selectedFilter === "all") return true;
+        return match.status === selectedFilter;
+      })
+    : [];
   return (
     <Container maxWidth="xl">
       <Box sx={{ maxWidth: "xl", mx: "auto" }}>
@@ -259,11 +207,36 @@ const MatchHistoryPage: React.FC = () => {
               justifyContent: "space-between",
               alignItems: "center",
               mb: 3,
+              flexWrap: "wrap",
+              gap: 2,
             }}
           >
             <Typography variant="h6" fontWeight="bold" color="text.primary">
               Trận Đấu Gần Đây
             </Typography>
+
+            <TextField
+              size="small"
+              placeholder="Tìm kiếm..."
+              value={searchInput}
+              onChange={handleSearch}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchResults();
+                }
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearchResults}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ width: { xs: "100%", sm: "300px" } }}
+            />
+
             <Box sx={{ display: "flex", gap: 1 }}>
               {[
                 { value: "all", label: "Tất Cả" },
@@ -285,76 +258,125 @@ const MatchHistoryPage: React.FC = () => {
             </Box>
           </Box>
 
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Ngày</TableCell>
-                  <TableCell>Đối Thủ</TableCell>
-                  <TableCell>Giải Đấu</TableCell>
-                  <TableCell>Kết Quả</TableCell>
-                  <TableCell>Điểm Số</TableCell>
-                  <TableCell>Thời Gian</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredMatches.map((match) => (
-                  <TableRow key={match.id} hover>
-                    <TableCell>
-                      <Typography variant="body1" fontWeight="medium">
-                        {match.date}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {match.time}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                      >
-                        <Typography variant="body1" fontWeight="medium">
-                          {match.opponent}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body1" color="text.primary">
-                        {match.tournament}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={
-                          match.result === "win" ? "Chiến Thắng" : "Thất Bại"
-                        }
-                        color={match.result === "win" ? "success" : "error"}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="medium"
-                        color={
-                          match.result === "win" ? "success.main" : "error.main"
-                        }
-                      >
-                        {match.userScore}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {match.opponentScore}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body1" color="text.primary">
-                        {match.duration}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {isLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Ngày</TableCell>
+                      <TableCell>Đối Thủ</TableCell>
+                      <TableCell>Giải Đấu</TableCell>
+                      <TableCell>Kết Quả</TableCell>
+                      <TableCell>Điểm Số</TableCell>
+                      {/* <TableCell>Thời Gian</TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredMatches.length > 0 ? (
+                      filteredMatches.map((match) => (
+                        <TableRow key={match.id} hover>
+                          <TableCell>
+                            <Typography variant="body1" fontWeight="medium">
+                              {formatDateToVietnamese(match.created_date)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
+                              }}
+                            >
+                              <Typography variant="body1" fontWeight="medium">
+                                {match.opponent.full_name}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body1" color="text.primary">
+                              {match.challenge.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={
+                                match.status === "WIN"
+                                  ? "Chiến Thắng"
+                                  : "Thất Bại"
+                              }
+                              color={
+                                match.status === "WIN" ? "success" : "error"
+                              }
+                              size="small"
+                            />
+                          </TableCell>
+                          <TableCell
+                            sx={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Typography
+                              variant="body1"
+                              fontWeight="medium"
+                              color={
+                                match.status === "WIN"
+                                  ? "success.main"
+                                  : "error.main"
+                              }
+                            >
+                              {match.your_score}
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              color="text.secondary"
+                              sx={{ mx: 0.5 }}
+                            >
+                              -
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {match.opp_score}
+                            </Typography>
+                          </TableCell>
+                          {/* <TableCell>
+                            <Typography variant="body1" color="text.primary">
+                              10 s
+                            </Typography>
+                          </TableCell> */}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center">
+                          <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            py={3}
+                          >
+                            Không tìm thấy dữ liệu
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              {total_page_count > 1 && (
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                  <Pagination
+                    count={total_page_count}
+                    page={page_index}
+                    onChange={(_, page) => handlePageChange(page)}
+                    color="primary"
+                  />
+                </Box>
+              )}
+            </>
+          )}
         </Card>
       </Box>
     </Container>

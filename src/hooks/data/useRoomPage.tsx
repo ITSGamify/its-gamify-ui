@@ -1,5 +1,4 @@
 import { PATH } from "@constants/path";
-import { useSignalR } from "@providers/SignalRContext";
 import { useGetChallengeDetail, useGetRooms } from "@services/challenge";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
@@ -43,21 +42,12 @@ export const useRoomPage = () => {
     navigate(PATH.TOURNAMENT);
   };
 
-  const { connection, setErrorMessage } = useSignalR();
-
   const handleJoinRoom = async (roomId: string) => {
-    if (!connection || !profile?.user.id) {
-      setErrorMessage("Không thể kết nối hoặc thiếu userId.");
-      return;
-    }
-
     try {
-      await connection.invoke("JoinRoom", roomId, profile?.user.id);
       const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, { roomId: roomId });
       navigate(route);
     } catch (err) {
       console.error("Error joining room: ", err);
-      setErrorMessage("Lỗi khi tham gia phòng.");
     }
   };
 

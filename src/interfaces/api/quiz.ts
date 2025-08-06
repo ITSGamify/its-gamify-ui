@@ -19,6 +19,7 @@ export interface Question extends BaseEntity {
   description: string;
   question_bank_id: string;
   quiz_id: string;
+  course_id: string;
 }
 
 // Interface chính cho Quiz

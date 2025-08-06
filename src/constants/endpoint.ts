@@ -15,6 +15,7 @@ export const BASE_KEYS = {
   METRICS: "metrics",
   CHALLENGE: "challenges",
   ROOM: "rooms",
+  QUESTION: "questions",
 };
 
 export const END_POINTS = {
@@ -51,6 +52,7 @@ export const END_POINTS = {
   ACCOUNTS: {
     COURSE_RESULT: `${BASE_KEYS.ACCOUNTS}/:userId/course-results`,
     USER_METRIC: `${BASE_KEYS.ACCOUNTS}/:userId/user-metrics`,
+    CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
   },
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
@@ -69,5 +71,8 @@ export const END_POINTS = {
   ROOM: {
     BASE: BASE_KEYS.ROOM,
     DETAIL: `${BASE_KEYS.ROOM}/:roomId`,
+  },
+  QUESTION: {
+    BASE: BASE_KEYS.QUESTION,
   },
 };

@@ -74,6 +74,7 @@ const RoomsPage = () => {
     handleBackToPrevious,
     handleJoinRoom,
     tournamentId,
+    userMetric,
   } = useRoomPage();
 
   // Tính tổng số người chơi hiện tại và tổng capacity dựa trên trạng thái phòng (giả sử mỗi phòng max 2 người)
@@ -204,6 +205,7 @@ const RoomsPage = () => {
                       >
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Avatar
+                            src={room.host_user.avatar_url || ""}
                             sx={{
                               bgcolor: "primary.main",
                               mr: 2,
@@ -339,7 +341,9 @@ const RoomsPage = () => {
                     <Typography color="text.secondary">
                       Điểm Hiện Tại
                     </Typography>
-                    <Typography fontWeight="bold">2.450</Typography>
+                    <Typography fontWeight="bold">
+                      {userMetric?.point_in_quarter || 0}
+                    </Typography>
                   </Box>
                   <Box
                     sx={{
@@ -350,7 +354,9 @@ const RoomsPage = () => {
                     <Typography color="text.secondary">
                       Tổng Trận Đấu
                     </Typography>
-                    <Typography fontWeight="bold">28</Typography>
+                    <Typography fontWeight="bold">
+                      {userMetric?.challenge_participate_num || 0}
+                    </Typography>
                   </Box>
                   <Box
                     sx={{
@@ -388,6 +394,7 @@ const RoomsPage = () => {
         onClose={handleCloseRoom}
         room={null}
         challengeId={tournamentId || null}
+        userMetric={userMetric || null}
       />
     </Container>
   );

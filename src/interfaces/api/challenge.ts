@@ -22,6 +22,7 @@ export interface Room {
   time_per_question: number;
   bet_points: number;
   challenge_id: string;
+  challenge: Challenge;
   host_user_id: string;
   host_user: User;
   status: RoomStatus;
@@ -30,5 +31,25 @@ export interface Room {
   is_host_ready: boolean;
   is_opponent_ready: boolean;
   is_abandoned: boolean;
+  created_date: string;
+  host_score: number;
+  opponent_score: number;
+  current_question: number;
+  is_opponent_answer: number;
+  is_host_answer: number;
+}
+
+export type HistoryStatus = "WIN" | "LOSE" | "DRAW";
+export interface History {
+  id: string;
+  your_score: number;
+  opp_score: number;
+  user_id: string;
+  user: User;
+  opponent_id: string;
+  opponent: User;
+  challenge_id: string;
+  challenge: Challenge;
+  status: HistoryStatus;
   created_date: string;
 }

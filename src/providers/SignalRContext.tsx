@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useRef,
 } from "react";
 import * as signalR from "@microsoft/signalr";
 import ToastContent from "@components/ui/atoms/Toast";
@@ -34,29 +35,46 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  // const [message, setMessage] = useState<string | null>(null);
+  const connectionRef = useRef<signalR.HubConnection | null>(null);
+  const isConnectingRef = useRef(false);
   // const profile = userSession.getUserProfile();
 
   useEffect(() => {
+    // Tránh tạo nhiều kết nối khi component re-render
+    if (connectionRef.current || isConnectingRef.current) {
+      return;
+    }
+
+    isConnectingRef.current = true;
     const newConnection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:5131/gameHub", { withCredentials: false })
       .withAutomaticReconnect()
       .build();
 
+    connectionRef.current = newConnection;
     setConnection(newConnection);
 
-    newConnection.on("UserJoined", (joinedUserId: string) => {
-      console.log(`User ${joinedUserId} joined the room`);
-      toast.success(ToastContent, {
-        data: {
-          message: "Hãy chuẩn bị sẵn sàng!",
-        },
-      });
-    });
+    // Đăng ký các event listeners
+    // newConnection.on("UserJoined", (message: string) => {
+    //   toast.success(ToastContent, {
+    //     data: {
+    //       message: `Người chơi đã tham gia!`,
+    //     },
+    //   });
+    //   setMessage(message);
+    // });
 
     newConnection.on("Error", (message: string) => {
       setErrorMessage(message);
       toast.error(ToastContent, {
+        data: {
+          message: message,
+        },
+      });
+    });
+    newConnection.on("Notify", (message: string) => {
+      toast.success(ToastContent, {
         data: {
           message: message,
         },
@@ -67,18 +85,44 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
     // newConnection.on("OpponentLeft", () => { /* Xử lý */ });
     // newConnection.on("HostChanged", (newHostId: string) => { /* Xử lý */ });
 
-    newConnection
-      .start()
-      .then(() => console.log("SignalR Connected (Global)"))
-      .catch((err) => {
-        console.error("SignalR Connection Error: ", err);
+    // Bắt đầu kết nối
+    const startConnection = async () => {
+      try {
+        await newConnection.start();
+        console.log("SignalR Connected (Global)");
+        isConnectingRef.current = false;
+      } catch {
         setErrorMessage("Lỗi kết nối SignalR.");
-      });
 
-    return () => {
-      if (newConnection) {
-        newConnection.stop();
+        // Thử kết nối lại sau 5 giây
+        setTimeout(() => {
+          isConnectingRef.current = false;
+          startConnection();
+        }, 5000);
       }
+    };
+
+    startConnection();
+
+    // Cleanup function
+    return () => {
+      const stopConnection = async () => {
+        if (
+          connectionRef.current &&
+          connectionRef.current.state === signalR.HubConnectionState.Connected
+        ) {
+          try {
+            await connectionRef.current.stop();
+            console.log("SignalR Disconnected");
+          } catch (err) {
+            console.error("Error stopping SignalR connection:", err);
+          }
+        }
+        connectionRef.current = null;
+        isConnectingRef.current = false;
+      };
+
+      stopConnection();
     };
   }, []);
 

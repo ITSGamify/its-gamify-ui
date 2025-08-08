@@ -69,8 +69,9 @@ const VideoLesson = ({
       learning_progress.video_time_position < videoRef.current?.duration - 10
       ? learning_progress.video_time_position
       : 0
-  ); // Đặt giá trị mặc định là 10
+  );
   const [duration, setDuration] = useState(0);
+  const [maxAllowedTime, setMaxAllowedTime] = useState(0);
 
   // console.log(learning_progress);
   const params: ProgressRequestParams = React.useMemo(
@@ -137,7 +138,6 @@ const VideoLesson = ({
       if (playing) {
         videoRef.current.pause();
       } else {
-        // Đặt thời gian hiện tại là 10 giây trước khi phát
         videoRef.current.currentTime = currentTime;
         videoRef.current.play();
       }
@@ -153,6 +153,12 @@ const VideoLesson = ({
     if (videoRef.current) {
       const current = videoRef.current.currentTime;
       const videoDuration = videoRef.current.duration;
+
+      // Update max allowed time if current time is greater
+      if (current > maxAllowedTime) {
+        setMaxAllowedTime(current);
+      }
+
       setCurrentTime(current);
       setProgress((current / videoDuration) * 100);
     }
@@ -161,12 +167,28 @@ const VideoLesson = ({
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
-      videoRef.current.currentTime =
+      const initialTime =
         learning_progress &&
         videoRef.current?.duration &&
         learning_progress.video_time_position < videoRef.current?.duration - 10
           ? learning_progress.video_time_position
           : 0;
+
+      videoRef.current.currentTime = initialTime;
+      setMaxAllowedTime(initialTime);
+    }
+  };
+
+  const handleProgressChange = (event: Event, newValue: number | number[]) => {
+    if (videoRef.current) {
+      const newTime = ((newValue as number) / 100) * duration;
+
+      // Only allow seeking backward or up to the max allowed time
+      if (newTime <= maxAllowedTime) {
+        videoRef.current.currentTime = newTime;
+        setCurrentTime(newTime);
+        setProgress(newValue as number);
+      }
     }
   };
 
@@ -262,8 +284,7 @@ const VideoLesson = ({
               <Slider
                 size="small"
                 value={progress}
-                disableSwap={true}
-                disabled={true}
+                onChange={handleProgressChange}
                 aria-label="Video progress"
                 sx={{
                   color: "#4ecca3",
@@ -277,6 +298,9 @@ const VideoLesson = ({
                   },
                   "& .MuiSlider-rail": {
                     opacity: 0.3,
+                  },
+                  "& .MuiSlider-track": {
+                    transition: "none",
                   },
                 }}
               />

@@ -15,6 +15,8 @@ import {
   ArrowForward as NextIcon,
   CheckCircle as PassIcon,
   Cancel as FailIcon,
+  Refresh as RefreshIcon,
+  School as SchoolIcon,
 } from "@mui/icons-material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -184,6 +186,27 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
               currentPage={currentPage}
               questionsPerPage={questionsPerPage}
             />
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={<RefreshIcon />}
+              onClick={() => window.location.reload()}
+              sx={{ mt: 3 }}
+            >
+              Làm lại
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              startIcon={<SchoolIcon />}
+              onClick={onBack}
+              sx={{ mt: 1 }}
+            >
+              Trở lại khóa học
+            </Button>
           </Paper>
 
           <Paper sx={{ p: 3 }}>

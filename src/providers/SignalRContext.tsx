@@ -10,6 +10,7 @@ import {
 import * as signalR from "@microsoft/signalr";
 import ToastContent from "@components/ui/atoms/Toast";
 import { toast } from "react-toastify";
+import { API_URL } from "@config/env";
 // import userSession from "@utils/user-session";
 
 interface SignalRContextType {
@@ -48,10 +49,7 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
 
     isConnectingRef.current = true;
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(
-        "https://its-gamify-eygvdsahhfbha5gg.southeastasia-01.azurewebsites.net/gameHub",
-        { withCredentials: false }
-      )
+      .withUrl(`${API_URL}/gameHub`, { withCredentials: false })
       .withAutomaticReconnect()
       .build();
 

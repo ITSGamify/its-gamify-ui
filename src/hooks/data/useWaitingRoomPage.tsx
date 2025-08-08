@@ -32,8 +32,14 @@ export const useWaitingRoomPage = () => {
   const { connection, setErrorMessage } = useSignalR();
 
   connection?.on("RoomUpdated", (message: string) => {
-    const roomData = JSON.parse(message);
-    setParsedRoom(roomData);
+    const roomData = JSON.parse(message) as Room;
+    if (
+      roomData.host_user_id === profile?.user.id ||
+      roomData.opponent_user_id === profile?.user.id
+    ) {
+      console.log(roomData);
+      setParsedRoom(roomData);
+    }
   });
 
   useEffect(() => {
@@ -93,12 +99,12 @@ export const useWaitingRoomPage = () => {
   };
   const handleOutRoom = useCallback(async () => {
     if (!connection) return;
-    await connection.invoke("OutRoom", roomId, profile?.user.id);
-    const route = getRoute(PATH.TOURNAMENT_ROOM, {
-      tournamentId: roomDetail?.challenge_id,
+    await connection.invoke("OutRoom", roomId, profile?.user.id).then(() => {
+      const route = getRoute(PATH.TOURNAMENT_ROOM, {
+        tournamentId: roomDetail?.challenge_id,
+      });
+      navigate(route);
     });
-
-    navigate(route);
   }, [
     connection,
     navigate,

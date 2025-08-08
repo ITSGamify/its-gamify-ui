@@ -745,7 +745,11 @@ const CourseOverviewPage: React.FC = () => {
                   fullWidth
                   sx={{ mb: 2, mt: isJoinedCourse ? 0 : 2 }}
                 >
-                  {isJoinedCourse ? "Tiếp tục học" : "Tham gia khóa học"}
+                  {!inCompleteLessons.length
+                    ? "Đã hoàn thành"
+                    : isJoinedCourse
+                    ? "Tiếp tục học"
+                    : "Tham gia khóa học"}
                 </Button>
 
                 <Box display="flex" justifyContent="space-between">
@@ -759,44 +763,6 @@ const CourseOverviewPage: React.FC = () => {
                 </Box>
               </CardContent>
             </Card>
-
-            {/* Current Lesson */}
-            {isJoinedCourse && (
-              <Card sx={{ borderRadius: "10px", mb: 4 }}>
-                <CardContent>
-                  <Typography variant="h6" fontWeight={600} gutterBottom>
-                    Bài học hiện tại
-                  </Typography>
-
-                  <Box key={inCompleteLessons[0]?.id}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {inCompleteLessons[0]?.title}
-                    </Typography>
-
-                    <Box display="flex" alignItems="center" mb={2}>
-                      <AccessTimeIcon
-                        fontSize="small"
-                        color="action"
-                        sx={{ mr: 0.5 }}
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {inCompleteLessons[0]?.duration} phút
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<PlayCircleOutlineIcon />}
-                      fullWidth
-                      onClick={handleJoinCourse}
-                    >
-                      Tiếp tục bài học
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Course Info */}
             <Card sx={{ borderRadius: "10px" }}>

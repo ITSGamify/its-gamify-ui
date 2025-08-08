@@ -126,9 +126,6 @@ export const VideoPlayer: React.FC<{ videoUrl: string; title: string }> = ({
         ref={videoRef}
         src={videoUrl}
         style={{ width: "100%", display: "block" }}
-        // poster={`https://img.youtube.com/vi/${
-        //   videoUrl.includes("youtube") ? videoUrl.split("v=")[1] : "default"
-        // }/maxresdefault.jpg`}
         onTimeUpdate={handleTimeUpdate}
         onClick={handlePlayPause}
       />

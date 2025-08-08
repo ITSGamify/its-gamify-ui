@@ -9,6 +9,7 @@ import {
   NavigationContainer,
 } from "@components/ui/molecules/course-detail/CourseDetailMainContent";
 import { ProgressRequestParams } from "@services/progress";
+import HeroImage from "@assets/images/hero-image.png";
 
 //#region  Styled components
 const SliderContainer = styled(Box)(({ theme }) => ({
@@ -138,8 +139,8 @@ const ArticleLesson = ({
         {lesson.image_files && (
           <SliderContainer>
             <SlideImage
-              src={slides[activeSlide].url}
-              alt={slides[activeSlide].file_name}
+              src={slides[activeSlide]?.url || HeroImage}
+              alt={slides[activeSlide]?.file_name || "Lesson image"}
             />
 
             {/* Navigation Buttons */}

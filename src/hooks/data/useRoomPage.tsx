@@ -1,10 +1,12 @@
+import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
 import { useGetChallengeDetail, useGetRooms } from "@services/challenge";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
 import userSession from "@utils/user-session";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export interface RoomCreateForm {
   question_count: number;
@@ -50,6 +52,20 @@ export const useRoomPage = () => {
       console.error("Error joining room: ", err);
     }
   };
+
+  useEffect(() => {
+    if (challengeDetail && challengeDetail?.course.course_results.length == 0) {
+      toast.warning(ToastContent, {
+        data: { message: "Bạn chưa hoàn thành khóa học" },
+      });
+      const route = getRoute(PATH.TOURNAMENT);
+      navigate(route);
+    }
+  }, [
+    challengeDetail,
+    challengeDetail?.course.course_results.length,
+    navigate,
+  ]);
 
   return {
     rooms: roomRes?.data || [],

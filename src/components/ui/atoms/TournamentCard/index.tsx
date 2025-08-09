@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { getRoute } from "@utils/route";
 import { Challenge } from "@interfaces/api/challenge";
+import { toast } from "react-toastify";
+import ToastContent from "../Toast";
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -56,11 +58,19 @@ const TournamentCard = ({ challenge }: TournamentCardProps) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
+    if (!challenge.course.course_results.length) {
+      toast.warning(ToastContent, {
+        data: { message: "Bạn chưa hoàn thành khóa học" },
+      });
+      return;
+    }
     const route = getRoute(PATH.TOURNAMENT_ROOM, {
       tournamentId: challenge.id,
     });
     navigate(route);
   };
+
+  const isCompleted = challenge.course.course_results.length > 0;
 
   return (
     <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
@@ -94,6 +104,24 @@ const TournamentCard = ({ challenge }: TournamentCardProps) => {
             }}
           />
         </Box>
+        {isCompleted && (
+          <Chip
+            label="Đã hoàn thành khóa học"
+            size="small"
+            sx={{
+              backgroundColor: "orange",
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: "0.75rem",
+              height: "24px",
+              borderRadius: "16px",
+              width: "fit-content",
+              position: "absolute",
+              top: 8,
+              right: 8,
+            }}
+          />
+        )}
       </Box>
 
       <CardContent sx={{ flexGrow: 1, p: 1, paddingBottom: "10px !important" }}>

@@ -92,6 +92,7 @@ const navigationLinks = [
   { path: PATH.HOME, label: "Tổng quan" },
   { path: PATH.COURSES, label: "Khóa học" },
   { path: PATH.TOURNAMENT, label: "Đấu trường" },
+  { path: PATH.LEADER_BOARD, label: "Bảng xếp hạng" },
 ];
 
 interface HeaderProps {

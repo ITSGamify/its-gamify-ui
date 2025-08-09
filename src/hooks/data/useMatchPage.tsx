@@ -74,13 +74,14 @@ export const useMatchPage = () => {
         .catch((err) => console.error("Error ending match:", err));
     } else {
       connection
-        ?.invoke("EndMatch", roomId)
+        ?.invoke("EndMatch", roomId, profile?.user.id)
         .catch((err) => console.error("Error ending match:", err));
       setShowResult(true);
     }
   }, [
     connection,
     currentQuestion,
+    profile?.user.id,
     questions.length,
     roomDetail?.time_per_question,
     roomId,

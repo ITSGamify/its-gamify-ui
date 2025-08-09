@@ -42,6 +42,7 @@ export interface Course {
   quarter_id: string;
   quarter?: Quarter;
   image_files: StorageFile[] | null;
+  course_results: CourseResult[];
 }
 
 export interface Quarter {

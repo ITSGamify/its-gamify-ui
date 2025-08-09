@@ -193,17 +193,6 @@ const CourseCard = ({
           {course.short_description}
         </Typography>
 
-        {/*Auhtor */}
-        {/* <Box display="flex" alignItems="center" mb={1} mt="auto">
-          <Avatar
-            src={instructor.avatar}
-            alt={instructor.name}
-            sx={{ width: 32, height: 32, mr: 1 }}
-          />
-          <Typography variant="subtitle2">{instructor.name}</Typography>
-        </Box> */}
-
-        {/* Rating*/}
         <Box
           sx={{
             display: "flex",

@@ -5,7 +5,7 @@ import { useGetRoomDetail } from "@services/room";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
 import userSession from "@utils/user-session";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const useWaitingRoomPage = () => {
@@ -31,18 +31,10 @@ export const useWaitingRoomPage = () => {
 
   const { connection, setErrorMessage } = useSignalR();
 
-  connection?.on("RoomUpdated", (message: string) => {
-    const roomData = JSON.parse(message) as Room;
-    if (
-      roomData.host_user_id === profile?.user.id ||
-      roomData.opponent_user_id === profile?.user.id
-    ) {
-      console.log(roomData);
-      setParsedRoom(roomData);
-    }
-  });
+  const intial_join = useRef(false);
 
   useEffect(() => {
+    if (intial_join.current) return;
     const joinRoom = async () => {
       if (!connection || !profile?.user.id || !roomId) {
         setErrorMessage("Không thể kết nối hoặc thiếu userId.");
@@ -51,6 +43,7 @@ export const useWaitingRoomPage = () => {
 
       try {
         await connection.invoke("JoinRoom", roomId, profile.user.id);
+        intial_join.current = true;
       } catch {
         setErrorMessage("Lỗi khi tham gia phòng.");
       }
@@ -97,14 +90,17 @@ export const useWaitingRoomPage = () => {
       setErrorMessage("Lỗi khi sẵn sàng.");
     }
   };
+  const isExiting = useRef(false);
+
+  // Trong handleOutRoom
   const handleOutRoom = useCallback(async () => {
     if (!connection) return;
-    await connection.invoke("OutRoom", roomId, profile?.user.id).then(() => {
-      const route = getRoute(PATH.TOURNAMENT_ROOM, {
-        tournamentId: roomDetail?.challenge_id,
-      });
-      navigate(route);
+    isExiting.current = true; // Đánh dấu đang exit
+    await connection.invoke("OutRoom", roomId, profile?.user.id);
+    const route = getRoute(PATH.TOURNAMENT_ROOM, {
+      tournamentId: roomDetail?.challenge_id,
     });
+    navigate(route);
   }, [
     connection,
     navigate,
@@ -112,6 +108,22 @@ export const useWaitingRoomPage = () => {
     roomDetail?.challenge_id,
     roomId,
   ]);
+
+  connection?.on("RoomUpdated", (message: string) => {
+    if (isExiting.current) return;
+    const roomData = JSON.parse(message) as Room;
+
+    if (roomData.host_user_id === null || roomData.opponent_user_id === null) {
+      setCountdown(5);
+    }
+
+    if (
+      roomData.host_user_id === profile?.user.id ||
+      roomData.opponent_user_id === profile?.user.id
+    ) {
+      setParsedRoom(roomData);
+    }
+  });
 
   return {
     isLoading: isLoadingUserMetric || isLoadingRoom,

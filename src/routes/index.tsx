@@ -25,6 +25,7 @@ import MatchPage from "@pages/Tournament/Match";
 import MatchHistoryPage from "@pages/Tournament/History";
 import LeaderboardPage from "@pages/Leaderboard";
 import TournamentPage from "@pages/Tournament";
+import { RoleEnum } from "@interfaces/api/user";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
@@ -108,7 +109,7 @@ const router = createBrowserRouter(
     {
       path: PATH.LANDING,
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute allowedRoles={[RoleEnum.LEADER, RoleEnum.EMPLOYEE]}>
           <MainLayout />
         </ProtectedRoute>
       ),
@@ -169,6 +170,16 @@ const router = createBrowserRouter(
           path: PATH.LEADER_BOARD,
           element: <LeaderboardPage />,
         },
+      ],
+    },
+    {
+      path: PATH.METRIC,
+      element: (
+        <ProtectedRoute allowedRoles={[RoleEnum.LEADER]}>
+          <MainLayout />
+        </ProtectedRoute>
+      ),
+      children: [
         {
           path: PATH.METRIC,
           element: <MetricsPage />,

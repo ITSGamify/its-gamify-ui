@@ -49,12 +49,13 @@ export const QuestionNavigation: React.FC<QuestionNavigationProps> = ({
   answers,
   onQuestionClick,
   quizResult,
-  currentPage = 1,
-  questionsPerPage = 2,
 }) => {
-  const startIndex = (currentPage - 1) * questionsPerPage;
-  const currentQuestions = questions;
-
+  // const startIndex = (currentPage - 1) * questionsPerPage;
+  // Sửa lại để chỉ lấy các câu hỏi của trang hiện tại
+  // const currentQuestions = questions.slice(
+  //   startIndex,
+  //   startIndex + questionsPerPage
+  // );
   const isQuestionAnswered = (questionId: string): boolean => {
     const answer = answers.find((a) => a.question_id === questionId);
     return answer?.answer !== null;
@@ -83,18 +84,17 @@ export const QuestionNavigation: React.FC<QuestionNavigationProps> = ({
         Danh sách câu hỏi
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", mb: 3 }}>
-        {currentQuestions.map((question, index) => {
-          const globalIndex = startIndex + index;
-          const status = getQuestionStatus(question, globalIndex);
+        {questions.map((question, index) => {
+          const status = getQuestionStatus(question, index);
 
           return (
             <QuestionButton
               key={question.id}
               variant="contained"
               {...status}
-              onClick={() => onQuestionClick(globalIndex)}
+              onClick={() => onQuestionClick(index)}
             >
-              {globalIndex + 1}
+              {index + 1}
             </QuestionButton>
           );
         })}

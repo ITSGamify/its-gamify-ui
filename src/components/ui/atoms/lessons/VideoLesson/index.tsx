@@ -73,7 +73,6 @@ const VideoLesson = ({
   const [duration, setDuration] = useState(0);
   const [maxAllowedTime, setMaxAllowedTime] = useState(0);
 
-  // console.log(learning_progress);
   const params: ProgressRequestParams = React.useMemo(
     () => ({
       lesson_id: lesson.id,

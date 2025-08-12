@@ -1,6 +1,7 @@
 import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
 import { useGetChallengeDetail, useGetRooms } from "@services/challenge";
+import { useGetChallengeQuestions } from "@services/question";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
 import userSession from "@utils/user-session";
@@ -67,10 +68,26 @@ export const useRoomPage = () => {
     navigate,
   ]);
 
+  const getChallengeQuestionsReq = {
+    page: 0,
+    limit: 10000,
+    courseId: challengeDetail?.course_id || "",
+    q: "",
+  };
+
+  const { data: questionsData, isFetching: isLoadingQuestion } =
+    useGetChallengeQuestions(getChallengeQuestionsReq);
+
+  const num_of_question = questionsData?.length;
+
   return {
     rooms: roomRes?.data || [],
     challengeDetail,
-    isLoading: isLoadingChallenge || isLoadingUserMetric || isLoadingRooms,
+    isLoading:
+      isLoadingChallenge ||
+      isLoadingUserMetric ||
+      isLoadingRooms ||
+      isLoadingQuestion,
     handleCloseRoom,
     showCreateRoom,
     handleOpenRoom,
@@ -78,5 +95,6 @@ export const useRoomPage = () => {
     handleBackToPrevious,
     handleJoinRoom,
     tournamentId,
+    num_of_question,
   };
 };

@@ -9,7 +9,6 @@ import { Metric } from "@interfaces/api/metric";
 export const getMetrics = async (
   params?: GetMetricsParams
 ): Promise<PaginatedResponse<Metric>> => {
-  console.log("getMetrics", params);
   return request({
     url: getRoute(END_POINTS.METRICS.BASE),
     method: HTTP_METHODS.GET,

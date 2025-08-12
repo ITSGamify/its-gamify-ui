@@ -1,6 +1,7 @@
 import { PATH } from "@constants/path";
 import { Room } from "@interfaces/api/challenge";
 import { useSignalR } from "@providers/SignalRContext";
+import { useGetChallengeQuestions } from "@services/question";
 import { useGetRoomDetail } from "@services/room";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
@@ -21,6 +22,7 @@ export const useWaitingRoomPage = () => {
 
   const { data: userMetric, isFetching: isLoadingUserMetric } =
     useGetUserMetric(profile?.user.id || "");
+
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -125,8 +127,27 @@ export const useWaitingRoomPage = () => {
     }
   });
 
+  const getChallengeQuestionsReq = {
+    page: 0,
+    limit: 10000,
+    courseId: roomDetail?.challenge?.course_id || "",
+    q: "",
+  };
+
+  const { data: questionsData, isFetching: isLoadingQuestion } =
+    useGetChallengeQuestions(getChallengeQuestionsReq);
+
+  const num_of_question = questionsData?.length;
+
+  const { data: opponentMetric, isFetching: isLoadingOpponentMetric } =
+    useGetUserMetric(roomDetail?.opponent_user_id || "");
+
   return {
-    isLoading: isLoadingUserMetric || isLoadingRoom,
+    isLoading:
+      isLoadingUserMetric ||
+      isLoadingRoom ||
+      isLoadingQuestion ||
+      isLoadingOpponentMetric,
     userMetric,
     roomDetail,
     openModal,
@@ -136,5 +157,7 @@ export const useWaitingRoomPage = () => {
     handleReady,
     isHost: roomDetail?.host_user_id == profile?.user.id,
     handleOutRoom,
+    num_of_question,
+    opponentMetric,
   };
 };

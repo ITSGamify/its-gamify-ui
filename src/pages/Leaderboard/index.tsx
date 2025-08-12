@@ -506,12 +506,10 @@ const LeaderboardPage: React.FC = () => {
                 <TableRow>
                   <TableCell>Hạng</TableCell>
                   <TableCell>Người Chơi</TableCell>
-                  <TableCell>Cấp Độ</TableCell>
                   <TableCell>Điểm</TableCell>
                   <TableCell>Thắng/Thua</TableCell>
                   <TableCell>Tỷ Lệ Thắng</TableCell>
                   <TableCell>Chuỗi</TableCell>
-                  <TableCell>Hành Động</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -556,27 +554,7 @@ const LeaderboardPage: React.FC = () => {
                           >
                             {player.name}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Cấp độ {player.level}
-                          </Typography>
                         </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <Box
-                          sx={{
-                            width: 12,
-                            height: 12,
-                            bgcolor: "primary.main",
-                            borderRadius: "50%",
-                          }}
-                        />
-                        <Typography variant="body1" fontWeight="medium">
-                          {player.level}
-                        </Typography>
                       </Box>
                     </TableCell>
                     <TableCell>
@@ -629,11 +607,6 @@ const LeaderboardPage: React.FC = () => {
                           {player.streak}
                         </Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Button color="primary" sx={{ textTransform: "none" }}>
-                        Thách Đấu
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

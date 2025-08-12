@@ -66,7 +66,6 @@ const CourseContentSidebar = ({
   current_lesson_id,
   completedLearningProgresses,
 }: CourseContentSidebarProps) => {
-  // console.log("completedLearningProgresses", completedLearningProgresses);
 
   const [expandedChapters, setExpandedChapters] = useState<
     Record<string, boolean>

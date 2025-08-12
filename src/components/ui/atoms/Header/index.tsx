@@ -25,6 +25,7 @@ import {
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
@@ -194,6 +195,17 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
           <WorkspacePremiumIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Chứng chỉ</ListItemText>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate(PATH.TOURNAMENT_MATCH_HISTORY);
+        }}
+      >
+        <ListItemIcon>
+          <HistoryEduIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Lịch sử đấu</ListItemText>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleLogout}>

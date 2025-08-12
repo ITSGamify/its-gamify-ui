@@ -75,6 +75,7 @@ const RoomsPage = () => {
     handleJoinRoom,
     tournamentId,
     userMetric,
+    num_of_question,
   } = useRoomPage();
 
   // Tính tổng số người chơi hiện tại và tổng capacity dựa trên trạng thái phòng (giả sử mỗi phòng max 2 người)
@@ -366,7 +367,16 @@ const RoomsPage = () => {
                   >
                     <Typography color="text.secondary">Tỷ Lệ Thắng</Typography>
                     <Typography color="success.main" fontWeight="bold">
-                      67%
+                      {userMetric &&
+                      (userMetric.win_num || 0) + (userMetric.lose_num || 0) > 0
+                        ? (
+                            ((userMetric.win_num || 0) /
+                              ((userMetric.win_num || 0) +
+                                (userMetric.lose_num || 0))) *
+                            100
+                          ).toFixed(1)
+                        : "0"}
+                      % %
                     </Typography>
                   </Box>
                   <Box
@@ -379,7 +389,7 @@ const RoomsPage = () => {
                       Chuỗi Thắng Hiện Tại
                     </Typography>
                     <Typography color="warning.main" fontWeight="bold">
-                      🔥 3
+                      🔥 {userMetric?.win_streak}
                     </Typography>
                   </Box>
                 </Stack>
@@ -395,6 +405,7 @@ const RoomsPage = () => {
         room={null}
         challengeId={tournamentId || null}
         userMetric={userMetric || null}
+        num_of_question={num_of_question}
       />
     </Container>
   );

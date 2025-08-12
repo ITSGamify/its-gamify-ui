@@ -10,7 +10,6 @@ export const getCourseResults = async (
   params: GetCourseResultParams
 ): Promise<PaginatedResponse<CourseResult>> => {
   const { userId, ...data } = params;
-  console.log(data);
   return request({
     url: getRoute(END_POINTS.ACCOUNTS.COURSE_RESULT, { userId }),
     method: HTTP_METHODS.GET,

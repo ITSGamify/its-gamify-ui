@@ -25,6 +25,7 @@ import {
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
@@ -33,6 +34,7 @@ import { PATH } from "@constants/path";
 import userSession from "@utils/user-session";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import { RoleEnum } from "@interfaces/api/user";
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   color: theme.palette.text.primary,
@@ -170,17 +172,19 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
         </Typography>
       </Box>
       <Divider />
-      <MenuItem
-        onClick={() => {
-          handleMenuClose();
-          navigate(PATH.METRIC);
-        }}
-      >
-        <ListItemIcon>
-          <BarChartIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Thống kê</ListItemText>
-      </MenuItem>
+      {profile?.user.role === RoleEnum.LEADER && (
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            navigate(PATH.METRIC);
+          }}
+        >
+          <ListItemIcon>
+            <BarChartIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Thống kê</ListItemText>
+        </MenuItem>
+      )}
       <MenuItem
         onClick={() => {
           handleMenuClose();
@@ -191,6 +195,17 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
           <WorkspacePremiumIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Chứng chỉ</ListItemText>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate(PATH.TOURNAMENT_MATCH_HISTORY);
+        }}
+      >
+        <ListItemIcon>
+          <HistoryEduIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Lịch sử đấu</ListItemText>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleLogout}>
@@ -355,11 +370,11 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar
-                  alt="User Avatar"
-                  src="/assets/avatar.jpg"
-                  sx={{ width: 32, height: 32 }}
-                />
+                <Avatar alt="User Avatar" sx={{ width: 32, height: 32 }}>
+                  {profile?.user.full_name
+                    ? profile.user.full_name.charAt(0).toUpperCase()
+                    : "U"}
+                </Avatar>
               </IconButton>
             </Tooltip>
           </Box>

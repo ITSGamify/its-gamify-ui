@@ -2,7 +2,7 @@ import { Department } from "./department";
 
 export enum RoleEnum {
   ADMIN = "ADMIN",
-  EMPLOYEE = "EMPOLYEE",
+  EMPLOYEE = "EMPLOYEE",
   LEADER = "LEADER",
   TRAINER = "TRAINING STAFF",
 }

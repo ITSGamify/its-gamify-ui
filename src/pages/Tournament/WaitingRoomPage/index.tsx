@@ -31,6 +31,8 @@ const WaitingRoomPage: React.FC = () => {
     isLoading,
     isHost,
     handleOutRoom,
+    num_of_question,
+    opponentMetric,
   } = useWaitingRoomPage();
 
   if (isLoading) {
@@ -112,7 +114,7 @@ const WaitingRoomPage: React.FC = () => {
                       {roomDetail.host_user.full_name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      10 T - 2 B
+                      {`${userMetric?.win_num} T - ${userMetric?.lose_num} B`}
                     </Typography>
                     <Box sx={{ mt: 2 }}>
                       {roomDetail.is_host_ready ? (
@@ -192,7 +194,7 @@ const WaitingRoomPage: React.FC = () => {
                         {roomDetail.opponent_user.full_name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        10 T - 2 B
+                        {`${opponentMetric?.win_num} T - ${opponentMetric?.lose_num} B`}
                       </Typography>
                       <Box sx={{ mt: 2 }}>
                         {roomDetail.is_opponent_ready ? (
@@ -412,6 +414,7 @@ const WaitingRoomPage: React.FC = () => {
         room={roomDetail || null}
         challengeId={null}
         userMetric={userMetric || null}
+        num_of_question={num_of_question}
       />
     </Container>
   );

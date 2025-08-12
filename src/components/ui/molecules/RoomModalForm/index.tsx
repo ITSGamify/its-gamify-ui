@@ -19,6 +19,7 @@ interface RoomModalFormProps {
   room: Room | null;
   challengeId: string | null;
   userMetric: Metric | null;
+  num_of_question?: number;
 }
 
 export const RoomModalForm = ({
@@ -27,11 +28,13 @@ export const RoomModalForm = ({
   room,
   challengeId,
   userMetric,
+  num_of_question,
 }: RoomModalFormProps) => {
   const { isSubmitting, bet_points, handleSubmit, control } = useRoomModalForm({
     room,
     challengeId,
     onClose,
+    numOfQuestion: num_of_question,
   });
 
   return (
@@ -84,7 +87,7 @@ export const RoomModalForm = ({
                 color="text.secondary"
                 sx={{ mt: 1 }}
               >
-                Tối thiểu: 1 | Tối đa: 20
+                Tối thiểu: 1 | Tối đa: {num_of_question || 20}
               </Typography>
             </Box>
 

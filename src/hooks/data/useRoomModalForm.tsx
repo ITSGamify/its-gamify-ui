@@ -6,16 +6,18 @@ import { useSignalR } from "@providers/SignalRContext";
 import { useCreateRoom, useUpdateRoom } from "@services/room";
 import { getRoute } from "@utils/route";
 import userSession from "@utils/user-session";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { roomModalFormSchema } from "src/form-schema/room";
+// import { roomModalFormSchema } from "src/form-schema/room";
+import * as yup from "yup";
 
 interface Props {
   room: Room | null;
   challengeId: string | null;
   onClose?: () => void;
+  numOfQuestion?: number;
 }
 
 export interface RoomModalForm {
@@ -26,8 +28,39 @@ export interface RoomModalForm {
   host_user_id: string;
 }
 
-export const useRoomModalForm = ({ room, challengeId, onClose }: Props) => {
+export const useRoomModalForm = ({
+  room,
+  challengeId,
+  onClose,
+  numOfQuestion,
+}: Props) => {
   const profile = userSession.getUserProfile();
+
+  const roomModalFormSchema = useMemo(() => {
+    return yup.object().shape({
+      question_count: yup
+        .number()
+        .typeError("Số câu hỏi phải là số")
+        .min(1, "Số câu hỏi tối thiểu là 1")
+        .max(numOfQuestion || 20, `Số câu hỏi tối đa là ${numOfQuestion || 20}`)
+        .required("Số câu hỏi là bắt buộc"),
+      bet_points: yup
+        .number()
+        .typeError("Số điểm cược phải là số")
+        .min(50, "Số điểm cược tối thiểu là 10")
+        .max(5000, "Số điểm cược tối đa là 5000")
+        .required("Số điểm cược là bắt buộc"),
+      time_per_question: yup
+        .number()
+        .typeError("Thời gian cho mỗi câu hỏi phải là số")
+        .min(10, "Thời gian cho mỗi câu hỏi tối thiểu là 10 giây")
+        .max(60, "Thời gian cho mỗi câu hỏi tối đa là 60 giây")
+        .required("Thời gian cho mỗi câu hỏi là bắt buộc"),
+      challenge_id: yup.string().required("Challenge ID là bắt buộc"),
+      host_user_id: yup.string().required("Host user ID là bắt buộc"),
+    });
+  }, [numOfQuestion]);
+
   const navigate = useNavigate();
   const { control, handleSubmit, reset, watch } = useForm<RoomModalForm>({
     mode: "onChange",

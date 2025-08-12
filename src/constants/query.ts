@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
   },
   ACCOUNT: {
     BASE: BASE_KEYS.ACCOUNTS,
+    DETAIL: `${BASE_KEYS.ACCOUNTS}/:userId`,
     CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
   },
   COURSE: {
@@ -39,6 +40,8 @@ export const QUERY_KEYS = {
   },
   METRICS: {
     BASE: BASE_KEYS.METRICS,
+    GENERAL: BASE_KEYS.METRICS + "/general-infor",
+    TOP10: BASE_KEYS.METRICS + "/top-10",
   },
   CHALLENGE: {
     BASE: BASE_KEYS.CHALLENGE,

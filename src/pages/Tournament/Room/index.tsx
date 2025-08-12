@@ -376,7 +376,7 @@ const RoomsPage = () => {
                             100
                           ).toFixed(1)
                         : "0"}
-                      % %
+                      %
                     </Typography>
                   </Box>
                   <Box

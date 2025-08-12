@@ -76,7 +76,7 @@ export const RoomModalForm = ({
                     onChange={field.onChange}
                     error={!!error}
                     helperText={error?.message}
-                    inputProps={{ min: 10, max: 20 }}
+                    inputProps={{ min: 1, max: num_of_question || 20 }}
                     placeholder="Nhập số lượng câu hỏi"
                   />
                 )}

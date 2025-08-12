@@ -6,10 +6,18 @@ import { Metric } from "@interfaces/api/metric";
 import { GetHistoriesParams } from ".";
 import { PaginatedResponse } from "@interfaces/dom/query";
 import { History } from "@interfaces/api/challenge";
+import { User } from "@interfaces/api/user";
 
 export const getUserMetric = async (userId: string): Promise<Metric> => {
   return request({
     url: getRoute(END_POINTS.ACCOUNTS.USER_METRIC, { userId }),
+    method: HTTP_METHODS.GET,
+  });
+};
+
+export const getUserDetail = async (userId: string): Promise<User> => {
+  return request({
+    url: getRoute(END_POINTS.ACCOUNTS.DETAIL, { userId }),
     method: HTTP_METHODS.GET,
   });
 };

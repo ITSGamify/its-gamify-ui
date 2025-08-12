@@ -89,8 +89,7 @@ const features = [
   },
   {
     title: "Học mọi lúc mọi nơi",
-    description:
-      "Truy cập nền tảng từ mọi thiết bị: máy tính, tablet hoặc điện thoại di động.",
+    description: "Truy cập website từ mọi thiết bị: máy tính hoặc tablet.",
     icon: <DevicesIcon fontSize="large" color="primary" />,
   },
   {
@@ -174,15 +173,15 @@ const LandingPage: React.FC = () => {
           <Grid container spacing={15} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography
-                variant="h1"
+                variant="h2"
                 gutterBottom
                 sx={{
-                  fontSize: { xs: "2.0rem", md: "2.7rem" },
+                  fontSize: { xs: "1.0rem", md: "2.5rem" },
                   fontWeight: 700,
                   lineHeight: 1.2,
                 }}
               >
-                Nền tảng học tập cho doanh nghiệp hiện đại
+                Khai phóng tiềm năng, dẫn dắt tăng trưởng
               </Typography>
               <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
                 Giải pháp đào tạo toàn diện giúp nhân viên phát triển kỹ năng và
@@ -244,8 +243,8 @@ const LandingPage: React.FC = () => {
               Tính năng nổi bật
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
-              Nền tảng học tập của chúng tôi được thiết kế để đáp ứng mọi nhu
-              cầu phát triển kỹ năng trong doanh nghiệp
+              Website học tập của chúng tôi được thiết kế để đáp ứng mọi nhu cầu
+              phát triển kỹ năng trong doanh nghiệp
             </Typography>
           </Box>
 
@@ -292,7 +291,7 @@ const LandingPage: React.FC = () => {
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-                  Lợi ích khi sử dụng nền tảng
+                  Lợi ích khi truy cập Website
                 </Typography>
                 <Typography variant="subtitle1" paragraph>
                   Đầu tư vào việc học tập và phát triển nhân viên mang lại nhiều
@@ -369,11 +368,11 @@ const LandingPage: React.FC = () => {
         <Container>
           <Box sx={{ textAlign: "center", mb: 8 }}>
             <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-              Nhân viên nói gì về chúng tôi
+              Trải nghiệm thực tế từ đội ngũ
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
               Những phản hồi từ người dùng thực tế về trải nghiệm học tập trên
-              nền tảng của chúng tôi
+              Website của chúng tôi
             </Typography>
           </Box>
 
@@ -432,8 +431,8 @@ const LandingPage: React.FC = () => {
             variant="h6"
             sx={{ mb: 4, maxWidth: 800, mx: "auto", opacity: 0.9 }}
           >
-            Bắt đầu hành trình học tập và phát triển ngay hôm nay với nền tảng
-            đào tạo toàn diện của chúng tôi
+            Bắt đầu hành trình học tập và phát triển ngay hôm nay thông qua
+            Website đào tạo toàn diện của chúng tôi
           </Typography>
           <Button
             variant="contained"

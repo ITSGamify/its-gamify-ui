@@ -26,6 +26,7 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
@@ -206,6 +207,17 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
           <HistoryEduIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Lịch sử đấu</ListItemText>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate(PATH.PROFILE);
+        }}
+      >
+        <ListItemIcon>
+          <PersonOutlineIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Trang cá nhân</ListItemText>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleLogout}>

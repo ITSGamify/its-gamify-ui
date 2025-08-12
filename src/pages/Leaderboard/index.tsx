@@ -18,281 +18,86 @@ import {
   InputLabel,
   Button,
   Container,
+  CircularProgress,
+  Skeleton,
 } from "@mui/material";
 import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined";
-import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
-import StraightOutlinedIcon from "@mui/icons-material/StraightOutlined";
-import WhatshotOutlinedIcon from "@mui/icons-material/WhatshotOutlined";
+// import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
+// import StraightOutlinedIcon from "@mui/icons-material/StraightOutlined";
+// import WhatshotOutlinedIcon from "@mui/icons-material/WhatshotOutlined";
+import { useLeaderBoardPage } from "@hooks/data/useLeaderBoardPage";
+import { Quarter } from "@interfaces/api/course";
+import { formatDateShort } from "@utils/date";
 
 const LeaderboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overall");
-  const [timeFilter, setTimeFilter] = useState("all");
 
-  const leaderboardData = {
-    overall: [
-      {
-        rank: 1,
-        name: "Nguyễn Văn Hùng",
-        avatar: "H",
-        level: 15,
-        points: 2450,
-        wins: 87,
-        losses: 23,
-        winRate: 79.1,
-        streak: 8,
-      },
-      {
-        rank: 2,
-        name: "Trần Thị Lan",
-        avatar: "L",
-        level: 14,
-        points: 2380,
-        wins: 82,
-        losses: 28,
-        winRate: 74.5,
-        streak: 5,
-      },
-      {
-        rank: 3,
-        name: "Lê Minh Tuấn",
-        avatar: "T",
-        level: 13,
-        points: 2290,
-        wins: 78,
-        losses: 32,
-        winRate: 70.9,
-        streak: 3,
-      },
-      {
-        rank: 4,
-        name: "Phạm Thị Hồng",
-        avatar: "H",
-        level: 12,
-        points: 2180,
-        wins: 75,
-        losses: 35,
-        winRate: 68.2,
-        streak: 12,
-      },
-      {
-        rank: 5,
-        name: "Hoàng Văn Đức",
-        avatar: "D",
-        level: 12,
-        points: 2150,
-        wins: 73,
-        losses: 37,
-        winRate: 66.4,
-        streak: 2,
-      },
-      {
-        rank: 6,
-        name: "Võ Thị Mai",
-        avatar: "M",
-        level: 11,
-        points: 2080,
-        wins: 69,
-        losses: 41,
-        winRate: 62.7,
-        streak: 1,
-      },
-      {
-        rank: 7,
-        name: "Đặng Minh Khôi",
-        avatar: "K",
-        level: 11,
-        points: 2020,
-        wins: 66,
-        losses: 44,
-        winRate: 60.0,
-        streak: 4,
-      },
-      {
-        rank: 8,
-        name: "Bùi Thị Thảo",
-        avatar: "T",
-        level: 10,
-        points: 1950,
-        wins: 63,
-        losses: 47,
-        winRate: 57.3,
-        streak: 0,
-      },
-      {
-        rank: 9,
-        name: "Ngô Văn Sơn",
-        avatar: "S",
-        level: 10,
-        points: 1890,
-        wins: 60,
-        losses: 50,
-        winRate: 54.5,
-        streak: 6,
-      },
-      {
-        rank: 10,
-        name: "Đinh Thị Linh",
-        avatar: "L",
-        level: 9,
-        points: 1820,
-        wins: 57,
-        losses: 53,
-        winRate: 51.8,
-        streak: 2,
-      },
-    ],
-    software: [
-      {
-        rank: 1,
-        name: "Lê Minh Tuấn",
-        avatar: "T",
-        level: 13,
-        points: 1890,
-        wins: 45,
-        losses: 12,
-        winRate: 78.9,
-        streak: 7,
-      },
-      {
-        rank: 2,
-        name: "Nguyễn Văn Hùng",
-        avatar: "H",
-        level: 15,
-        points: 1780,
-        wins: 42,
-        losses: 15,
-        winRate: 73.7,
-        streak: 4,
-      },
-      {
-        rank: 3,
-        name: "Đặng Minh Khôi",
-        avatar: "K",
-        level: 11,
-        points: 1650,
-        wins: 38,
-        losses: 19,
-        winRate: 66.7,
-        streak: 2,
-      },
-      {
-        rank: 4,
-        name: "Hoàng Văn Đức",
-        avatar: "D",
-        level: 12,
-        points: 1580,
-        wins: 35,
-        losses: 22,
-        winRate: 61.4,
-        streak: 1,
-      },
-      {
-        rank: 5,
-        name: "Ngô Văn Sơn",
-        avatar: "S",
-        level: 10,
-        points: 1450,
-        wins: 32,
-        losses: 25,
-        winRate: 56.1,
-        streak: 3,
-      },
-    ],
-    marketing: [
-      {
-        rank: 1,
-        name: "Trần Thị Lan",
-        avatar: "L",
-        level: 14,
-        points: 1920,
-        wins: 48,
-        losses: 9,
-        winRate: 84.2,
-        streak: 9,
-      },
-      {
-        rank: 2,
-        name: "Phạm Thị Hồng",
-        avatar: "H",
-        level: 12,
-        points: 1750,
-        wins: 43,
-        losses: 14,
-        winRate: 75.4,
-        streak: 6,
-      },
-      {
-        rank: 3,
-        name: "Võ Thị Mai",
-        avatar: "M",
-        level: 11,
-        points: 1680,
-        wins: 40,
-        losses: 17,
-        winRate: 70.2,
-        streak: 2,
-      },
-      {
-        rank: 4,
-        name: "Bùi Thị Thảo",
-        avatar: "T",
-        level: 10,
-        points: 1590,
-        wins: 37,
-        losses: 20,
-        winRate: 64.9,
-        streak: 1,
-      },
-      {
-        rank: 5,
-        name: "Đinh Thị Linh",
-        avatar: "L",
-        level: 9,
-        points: 1420,
-        wins: 33,
-        losses: 24,
-        winRate: 57.9,
-        streak: 0,
-      },
-    ],
+  // const achievements = [
+  //   {
+  //     name: "Nguyễn Văn Hùng",
+  //     achievement: "Chuỗi Thắng Dài Nhất",
+  //     value: "15 trận thắng",
+  //     icon: <WhatshotOutlinedIcon color="error" />,
+  //     color: "text-red-500",
+  //   },
+  //   {
+  //     name: "Trần Thị Lan",
+  //     achievement: "Trả Lời Nhanh Nhất",
+  //     value: "0.8s trung bình",
+  //     icon: <BoltOutlinedIcon sx={{ color: "#effa19" }} />,
+  //     color: "text-yellow-500",
+  //   },
+  //   {
+  //     name: "Lê Minh Tuấn",
+  //     achievement: "Chính Xác Nhất",
+  //     value: "94% độ chính xác",
+  //     icon: <PercentOutlinedIcon sx={{ color: "#2f9104" }} />,
+  //     color: "text-green-500",
+  //   },
+  //   {
+  //     name: "Phạm Thị Hồng",
+  //     achievement: "Cải Thiện Nhiều Nhất",
+  //     value: "+580 điểm",
+  //     icon: <StraightOutlinedIcon sx={{ color: "#1b75e3" }} />,
+  //     color: "text-blue-500",
+  //   },
+  // ];
+
+  const {
+    generalMetric,
+    isLoading,
+    top10Metrics,
+    selectedQuarterId,
+    setSelectedQuarterId,
+    sortedQuarters,
+    isLoadingQuarters,
+  } = useLeaderBoardPage();
+
+  const calculateWinRate = (wins: number, losses: number) => {
+    const totalGames = wins + losses;
+    if (totalGames === 0) return 0;
+    return Math.round((wins / totalGames) * 100);
   };
-
-  const achievements = [
-    {
-      name: "Nguyễn Văn Hùng",
-      achievement: "Chuỗi Thắng Dài Nhất",
-      value: "15 trận thắng",
-      icon: <WhatshotOutlinedIcon color="error" />,
-      color: "text-red-500",
-    },
-    {
-      name: "Trần Thị Lan",
-      achievement: "Trả Lời Nhanh Nhất",
-      value: "0.8s trung bình",
-      icon: <BoltOutlinedIcon sx={{ color: "#effa19" }} />,
-      color: "text-yellow-500",
-    },
-    {
-      name: "Lê Minh Tuấn",
-      achievement: "Chính Xác Nhất",
-      value: "94% độ chính xác",
-      icon: <PercentOutlinedIcon sx={{ color: "#2f9104" }} />,
-      color: "text-green-500",
-    },
-    {
-      name: "Phạm Thị Hồng",
-      achievement: "Cải Thiện Nhiều Nhất",
-      value: "+580 điểm",
-      icon: <StraightOutlinedIcon sx={{ color: "#1b75e3" }} />,
-      color: "text-blue-500",
-    },
-  ];
-
-  const currentData =
-    leaderboardData[activeTab as keyof typeof leaderboardData];
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress />
+        <Typography variant="h6" sx={{ ml: 2 }}>
+          Đang tải dữ liệu...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="xl">
@@ -334,7 +139,10 @@ const LeaderboardPage: React.FC = () => {
                 </Avatar>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Avatar sx={{ bgcolor: "primary.main", width: 48, height: 48 }}>
+                <Avatar
+                  src={generalMetric?.top_metric.user.avatar_url}
+                  sx={{ bgcolor: "primary.main", width: 48, height: 48 }}
+                >
                   H
                 </Avatar>
                 <Box>
@@ -343,10 +151,11 @@ const LeaderboardPage: React.FC = () => {
                     fontWeight="medium"
                     color="text.primary"
                   >
-                    Nguyễn Văn Hùng
+                    {generalMetric?.top_metric.user.full_name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    2,450 điểm
+                    {generalMetric?.top_metric.point_in_quarter.toLocaleString()}
+                    điểm
                   </Typography>
                 </Box>
               </Box>
@@ -372,7 +181,9 @@ const LeaderboardPage: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
-                  247
+                  {generalMetric?.num_of_player
+                    ? generalMetric?.num_of_player - 3
+                    : 0}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Hoạt động tháng này
@@ -403,10 +214,10 @@ const LeaderboardPage: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
-                  1,234
+                  {generalMetric?.match_in_day}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  +15% so với hôm qua
+                  Hoạt động trong ngày
                 </Typography>
               </Box>
             </Card>
@@ -431,7 +242,7 @@ const LeaderboardPage: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
-                  78.5%
+                  {generalMetric?.average_correct}%
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Trung bình công ty
@@ -454,16 +265,27 @@ const LeaderboardPage: React.FC = () => {
               <Typography variant="h6" fontWeight="bold" color="text.primary">
                 Xếp Hạng
               </Typography>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
+              <FormControl size="small" sx={{ minWidth: 400 }}>
                 <InputLabel>Thời Gian</InputLabel>
                 <Select
-                  value={timeFilter}
-                  label="Thời Gian"
-                  onChange={(e) => setTimeFilter(e.target.value as string)}
+                  value={selectedQuarterId}
+                  onChange={(e) =>
+                    setSelectedQuarterId(e.target.value as string)
+                  }
+                  label="Chọn quý"
                 >
-                  <MenuItem value="all">Toàn Thời Gian</MenuItem>
-                  <MenuItem value="month">Tháng Này</MenuItem>
-                  <MenuItem value="week">Tuần Này</MenuItem>
+                  {isLoadingQuarters ? (
+                    <MenuItem disabled>
+                      <Skeleton width={200} />
+                    </MenuItem>
+                  ) : (
+                    sortedQuarters.map((q: Quarter) => (
+                      <MenuItem key={q.id} value={q.id}>
+                        {q.name}, ({formatDateShort(q.start_date)} -{" "}
+                        {formatDateShort(q.end_date)})
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Box>
@@ -513,23 +335,23 @@ const LeaderboardPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {currentData.map((player, index) => (
+                {top10Metrics.map((player, index) => (
                   <TableRow key={index} hover>
                     <TableCell>
                       <Box
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
-                        {player.rank === 1 && (
+                        {index === 1 && (
                           <i className="ri-trophy-fill text-yellow-500" />
                         )}
-                        {player.rank === 2 && (
+                        {index === 2 && (
                           <i className="ri-medal-line text-grey-400" />
                         )}
-                        {player.rank === 3 && (
+                        {index === 3 && (
                           <i className="ri-medal-line text-orange-400" />
                         )}
                         <Typography variant="body1" fontWeight="medium">
-                          #{player.rank}
+                          #{index}
                         </Typography>
                       </Box>
                     </TableCell>
@@ -544,7 +366,7 @@ const LeaderboardPage: React.FC = () => {
                             height: 40,
                           }}
                         >
-                          {player.avatar}
+                          {player.user.avatar_url}
                         </Avatar>
                         <Box>
                           <Typography
@@ -552,14 +374,14 @@ const LeaderboardPage: React.FC = () => {
                             fontWeight="medium"
                             color="text.primary"
                           >
-                            {player.name}
+                            {player.user.full_name}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body1" fontWeight="medium">
-                        {player.points.toLocaleString()}
+                        {player.point_in_quarter.toLocaleString()}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -568,7 +390,7 @@ const LeaderboardPage: React.FC = () => {
                         color="success.main"
                         fontWeight="medium"
                       >
-                        {player.wins}
+                        {player.win_num}
                       </Typography>
                       <Typography
                         component="span"
@@ -582,29 +404,31 @@ const LeaderboardPage: React.FC = () => {
                         color="error.main"
                         fontWeight="medium"
                       >
-                        {player.losses}
+                        {player.lose_num}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body1" fontWeight="medium">
-                        {player.winRate}%
+                        {calculateWinRate(player.win_num, player.lose_num)}%
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Box
                         sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
                       >
-                        {player.streak > 0 && (
+                        {player.win_streak > 0 && (
                           <i className="ri-fire-line text-red-500 text-sm" />
                         )}
                         <Typography
                           variant="body1"
                           fontWeight="medium"
                           color={
-                            player.streak > 0 ? "error.main" : "text.secondary"
+                            player.win_streak > 0
+                              ? "error.main"
+                              : "text.secondary"
                           }
                         >
-                          {player.streak}
+                          {player.win_streak}
                         </Typography>
                       </Box>
                     </TableCell>
@@ -615,7 +439,7 @@ const LeaderboardPage: React.FC = () => {
           </TableContainer>
         </Card>
 
-        <Card sx={{ boxShadow: 3 }}>
+        {/* <Card sx={{ boxShadow: 3 }}>
           <Box sx={{ p: 3, borderBottom: 1, borderColor: "divider" }}>
             <Typography variant="h6" fontWeight="bold" color="text.primary">
               Thành Tựu Đặc Biệt
@@ -668,7 +492,7 @@ const LeaderboardPage: React.FC = () => {
               ))}
             </Grid>
           </Box>
-        </Card>
+        </Card> */}
       </Box>
     </Container>
   );

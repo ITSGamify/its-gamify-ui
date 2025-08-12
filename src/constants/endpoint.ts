@@ -53,6 +53,7 @@ export const END_POINTS = {
     COURSE_RESULT: `${BASE_KEYS.ACCOUNTS}/:userId/course-results`,
     USER_METRIC: `${BASE_KEYS.ACCOUNTS}/:userId/user-metrics`,
     CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
+    DETAIL: `${BASE_KEYS.ACCOUNTS}/:userId`,
   },
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,
@@ -62,6 +63,8 @@ export const END_POINTS = {
   },
   METRICS: {
     BASE: BASE_KEYS.METRICS,
+    GENERAL: BASE_KEYS.METRICS + "/general-infor",
+    TOP10: BASE_KEYS.METRICS + "/top-10",
   },
   CHALLENGE: {
     BASE: BASE_KEYS.CHALLENGE,

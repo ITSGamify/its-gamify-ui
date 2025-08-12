@@ -17,3 +17,10 @@ export interface Metric {
   quarter_id: string;
   quarter: Quarter;
 }
+
+export interface GeneralMetric {
+  top_metric: Metric;
+  num_of_player: number;
+  match_in_day: number;
+  average_correct: number;
+}

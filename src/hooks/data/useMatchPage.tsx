@@ -16,7 +16,7 @@ export const useMatchPage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isAnswering, setIsAnswering] = useState(false);
-
+  const [numOfCorrect, setNumOfCorrect] = useState(0);
   const [parsedRoom, setParsedRoom] = useState<Room | null>(null);
 
   const { data: roomDetailFromApi, isFetching: isLoadingRoom } =
@@ -73,16 +73,21 @@ export const useMatchPage = () => {
         ?.invoke("MoveToNextQuestion", roomId)
         .catch((err) => console.error("Error ending match:", err));
     } else {
-      connection
-        ?.invoke("EndMatch", roomId, profile?.user.id)
-        .catch((err) => console.error("Error ending match:", err));
+      if (profile?.user.id == roomDetail?.host_user_id) {
+        connection
+          ?.invoke("EndMatch", roomId, profile?.user.id, numOfCorrect)
+          .catch((err) => console.error("Error ending match:", err));
+      }
+      setNumOfCorrect(0);
       setShowResult(true);
     }
   }, [
     connection,
     currentQuestion,
+    numOfCorrect,
     profile?.user.id,
     questions.length,
+    roomDetail?.host_user_id,
     roomDetail?.time_per_question,
     roomId,
   ]);
@@ -127,7 +132,7 @@ export const useMatchPage = () => {
       setIsAnswering(true);
 
       const isCorrect = selected === question.correct_answer;
-
+      if (isCorrect) setNumOfCorrect((prev) => prev + 1);
       // Tính điểm (base 100 + speed bonus)
       const speedBonus = Math.floor(timeLeft / 3);
       const points = isCorrect ? 100 + speedBonus : 0;
@@ -161,18 +166,37 @@ export const useMatchPage = () => {
     initial.current = true;
   }, [connection, roomId]);
 
-  // const handleOutRoom = useCallback(async () => {
-  //   if (!connection) return;
-  //   await connection.invoke("OutRoom", roomId, profile?.user.id);
-  // }, [connection, profile?.user.id, roomId]);
+  const handleLeaveRoom = useCallback(async () => {
+    if (!connection || !roomId || !profile?.user.id) return;
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (!showResult) {
-  //       handleOutRoom();
-  //     }
-  //   };
-  // }, [handleOutRoom, showResult]);
+    try {
+      const isGameStarted = roomDetail?.status === "PLAYING";
+
+      if (isGameStarted && roomDetail?.status !== "FINISHED" && !showResult) {
+        await connection.invoke("EndMatch", roomId);
+      }
+
+      await connection.invoke("OutRoom", roomId, profile.user.id);
+      console.log("Out_room");
+    } catch (error) {
+      console.error("Error leaving room:", error);
+    }
+  }, [connection, roomId, profile?.user.id, roomDetail, showResult]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      handleLeaveRoom();
+
+      if (roomDetail?.status === "PLAYING" && !showResult) {
+        event.preventDefault();
+        event.returnValue = "Bạn có chắc chắn muốn thoát? Game đang diễn ra.";
+        return event.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [handleLeaveRoom, roomDetail?.status, showResult]);
 
   return {
     roomDetail,

@@ -1,4 +1,5 @@
 import { Department } from "./department";
+import { Metric } from "./metric";
 
 export enum RoleEnum {
   ADMIN = "ADMIN",
@@ -21,4 +22,5 @@ export interface User {
   status: string;
   department: Department;
   avatar_url?: string;
+  metrics?: Metric[];
 }

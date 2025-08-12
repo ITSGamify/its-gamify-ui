@@ -1,12 +1,20 @@
 import { QUERY_KEYS } from "@constants/query";
 import { useQuery } from "@tanstack/react-query";
-import { getUserMetric, getHistories } from "./request";
+import { getUserMetric, getHistories, getUserDetail } from "./request";
 import { PaginationParams } from "@interfaces/dom/query";
 
 export const useGetUserMetric = (userId: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT, userId],
     queryFn: () => getUserMetric(userId),
+    enabled: !!userId,
+  });
+};
+
+export const useGetUserDetail = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.ACCOUNT.DETAIL, userId],
+    queryFn: () => getUserDetail(userId),
     enabled: !!userId,
   });
 };

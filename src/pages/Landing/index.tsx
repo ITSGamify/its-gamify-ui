@@ -89,7 +89,7 @@ const features = [
   },
   {
     title: "Học mọi lúc mọi nơi",
-    description: "Truy cập website từ mọi thiết bị: máy tính hoặc tablet.",
+    description: "Truy cập Website từ mọi thiết bị: máy tính hoặc tablet.",
     icon: <DevicesIcon fontSize="large" color="primary" />,
   },
   {
@@ -118,7 +118,7 @@ const statistics = [
 const testimonials = [
   {
     quote:
-      "Nền tảng học tập này đã giúp tôi nâng cao kỹ năng chuyên môn và thăng tiến trong sự nghiệp.",
+      "Hệ thống đào tạo này đã giúp tôi nâng cao kỹ năng chuyên môn và thăng tiến trong sự nghiệp.",
     author: "Nguyễn Văn A",
     position: "Trưởng phòng Marketing",
     avatar: "/assets/avatars/avatar1.jpg",
@@ -132,7 +132,7 @@ const testimonials = [
   },
   {
     quote:
-      "Đội ngũ hỗ trợ luôn sẵn sàng giải đáp thắc mắc. Tôi đánh giá cao sự chuyên nghiệp của nền tảng này.",
+      "Đội ngũ hỗ trợ luôn sẵn sàng giải đáp thắc mắc. Tôi đánh giá cao sự chuyên nghiệp của hệ thống này.",
     author: "Lê Văn C",
     position: "Kỹ sư Phần mềm",
     avatar: "/assets/avatars/avatar3.jpg",
@@ -181,7 +181,7 @@ const LandingPage: React.FC = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Khai phóng tiềm năng, dẫn dắt tăng trưởng
+                Hệ thống đào tạo cho doanh nghiệp hiện đại
               </Typography>
               <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
                 Giải pháp đào tạo toàn diện giúp nhân viên phát triển kỹ năng và

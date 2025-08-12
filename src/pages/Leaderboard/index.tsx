@@ -328,9 +328,10 @@ const LeaderboardPage: React.FC = () => {
                 <TableRow>
                   <TableCell>Hạng</TableCell>
                   <TableCell>Người Chơi</TableCell>
-                  <TableCell>Điểm</TableCell>
-                  <TableCell>Thắng/Thua</TableCell>
-                  <TableCell>Tỷ Lệ Thắng</TableCell>
+                  <TableCell align="center">Điểm</TableCell>
+                  <TableCell align="center">Khóa học (Hoàn thành)</TableCell>
+                  <TableCell align="center">Thắng/Thua</TableCell>
+                  <TableCell align="center">Tỷ Lệ Thắng</TableCell>
                   <TableCell>Chuỗi</TableCell>
                 </TableRow>
               </TableHead>
@@ -379,12 +380,17 @@ const LeaderboardPage: React.FC = () => {
                         </Box>
                       </Box>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Typography variant="body1" fontWeight="medium">
                         {player.point_in_quarter.toLocaleString()}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body1" fontWeight="medium">
+                        {player.course_completed_num}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
                       <Typography
                         component="span"
                         color="success.main"
@@ -407,12 +413,12 @@ const LeaderboardPage: React.FC = () => {
                         {player.lose_num}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Typography variant="body1" fontWeight="medium">
                         {calculateWinRate(player.win_num, player.lose_num)}%
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Box
                         sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
                       >

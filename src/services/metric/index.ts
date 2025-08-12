@@ -27,6 +27,6 @@ export const useGetTop10Metrics = (params?: GetMetricsParams) => {
   return useQuery({
     queryKey: [QUERY_KEYS.METRICS.TOP10, params],
     queryFn: () => getTop10Metrics(params),
-    enabled: !!params?.quarterId && !!params?.departmentId,
+    enabled: !!params?.quarterId,
   });
 };

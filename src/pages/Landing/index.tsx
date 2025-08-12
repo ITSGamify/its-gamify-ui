@@ -89,7 +89,7 @@ const features = [
   },
   {
     title: "Học mọi lúc mọi nơi",
-    description: "Truy cập Website từ mọi thiết bị: máy tính hoặc tablet.",
+    description: "Truy cập hệ thống từ mọi thiết bị: máy tính hoặc tablet.",
     icon: <DevicesIcon fontSize="large" color="primary" />,
   },
   {
@@ -243,8 +243,8 @@ const LandingPage: React.FC = () => {
               Tính năng nổi bật
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
-              Website học tập của chúng tôi được thiết kế để đáp ứng mọi nhu cầu
-              phát triển kỹ năng trong doanh nghiệp
+              Hệ thống học tập của chúng tôi được thiết kế để đáp ứng mọi nhu
+              cầu phát triển kỹ năng trong doanh nghiệp
             </Typography>
           </Box>
 
@@ -291,7 +291,7 @@ const LandingPage: React.FC = () => {
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-                  Lợi ích khi truy cập Website
+                  Lợi ích khi sử dụng hệ thống
                 </Typography>
                 <Typography variant="subtitle1" paragraph>
                   Đầu tư vào việc học tập và phát triển nhân viên mang lại nhiều
@@ -372,7 +372,7 @@ const LandingPage: React.FC = () => {
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
               Những phản hồi từ người dùng thực tế về trải nghiệm học tập trên
-              Website của chúng tôi
+              hệ thống của chúng tôi
             </Typography>
           </Box>
 
@@ -431,8 +431,8 @@ const LandingPage: React.FC = () => {
             variant="h6"
             sx={{ mb: 4, maxWidth: 800, mx: "auto", opacity: 0.9 }}
           >
-            Bắt đầu hành trình học tập và phát triển ngay hôm nay thông qua
-            Website đào tạo toàn diện của chúng tôi
+            Bắt đầu hành trình học tập và phát triển ngay hôm nay thông qua hệ
+            thống đào tạo toàn diện của chúng tôi
           </Typography>
           <Button
             variant="contained"

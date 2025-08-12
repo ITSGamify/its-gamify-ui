@@ -209,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
           color="text.secondary"
           sx={{ display: "block", textAlign: "center" }}
         >
-          © 2025 Its-Gamify
+          © 2025 FCP IT company
         </Typography>
       </Box>
     </>

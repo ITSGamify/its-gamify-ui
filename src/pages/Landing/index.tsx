@@ -1,5 +1,5 @@
 // src/pages/HomePage.tsx
-import React from "react";
+import React, { useRef } from "react";
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -26,6 +26,8 @@ import {
 } from "@mui/icons-material";
 import BenefitImage from "@assets/images/benefits-image.png";
 import HeroImage from "@assets/images/hero-image.png";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@constants/path";
 // Styled components
 const HeroSection = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -67,16 +69,6 @@ const TestimonialCard = styled(Card)(({ theme }) => ({
   height: "100%",
   backgroundColor: theme.palette.background.paper,
   position: "relative",
-  //   "&::before": {
-  //     content: '"""',
-  //     position: "absolute",
-  //     top: theme.spacing(2),
-  //     left: theme.spacing(2),
-  //     fontSize: "4rem",
-  //     lineHeight: 1,
-  //     color: theme.palette.primary.light,
-  //     opacity: 0.3,
-  //   },
 }));
 
 // Data for features
@@ -163,8 +155,11 @@ const benefits = [
 
 const LandingPage: React.FC = () => {
   const theme = useTheme();
-  //   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const scrollToFeatures = () => {
+    featuresRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const navigate = useNavigate();
   return (
     <Box component="main">
       {/* Hero Section */}
@@ -176,12 +171,12 @@ const LandingPage: React.FC = () => {
                 variant="h2"
                 gutterBottom
                 sx={{
-                  fontSize: { xs: "1.0rem", md: "2.5rem" },
+                  fontSize: { xs: "1.0rem", md: "2.0rem" },
                   fontWeight: 700,
                   lineHeight: 1.2,
                 }}
               >
-                Hệ thống đào tạo cho doanh nghiệp hiện đại
+                FCP IT Company – Hệ thống đào tạo cho doanh nghiệp hiện đại
               </Typography>
               <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
                 Giải pháp đào tạo toàn diện giúp nhân viên phát triển kỹ năng và
@@ -193,6 +188,7 @@ const LandingPage: React.FC = () => {
                   size="large"
                   color="secondary"
                   sx={{ px: 4, py: 1.5 }}
+                  onClick={() => navigate(PATH.COURSES)}
                 >
                   Bắt đầu học ngay
                 </Button>
@@ -210,6 +206,7 @@ const LandingPage: React.FC = () => {
                       borderColor: "white",
                     },
                   }}
+                  onClick={scrollToFeatures}
                 >
                   Tìm hiểu thêm
                 </Button>
@@ -236,7 +233,7 @@ const LandingPage: React.FC = () => {
       </HeroSection>
 
       {/* Features Section */}
-      <SectionWrapper>
+      <SectionWrapper ref={featuresRef}>
         <Container>
           <Box sx={{ textAlign: "center", mb: 8 }}>
             <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>

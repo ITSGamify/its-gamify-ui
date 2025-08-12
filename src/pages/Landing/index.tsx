@@ -90,7 +90,7 @@ const features = [
   {
     title: "Học mọi lúc mọi nơi",
     description:
-      "Truy cập nền tảng từ mọi thiết bị: máy tính, tablet hoặc điện thoại di động.",
+      "Truy cập hệ thống từ mọi thiết bị: máy tính, tablet hoặc điện thoại di động.",
     icon: <DevicesIcon fontSize="large" color="primary" />,
   },
   {
@@ -119,7 +119,7 @@ const statistics = [
 const testimonials = [
   {
     quote:
-      "Nền tảng học tập này đã giúp tôi nâng cao kỹ năng chuyên môn và thăng tiến trong sự nghiệp.",
+      "Hệ thống đào tạo này đã giúp tôi nâng cao kỹ năng chuyên môn và thăng tiến trong sự nghiệp.",
     author: "Nguyễn Văn A",
     position: "Trưởng phòng Marketing",
     avatar: "/assets/avatars/avatar1.jpg",
@@ -133,7 +133,7 @@ const testimonials = [
   },
   {
     quote:
-      "Đội ngũ hỗ trợ luôn sẵn sàng giải đáp thắc mắc. Tôi đánh giá cao sự chuyên nghiệp của nền tảng này.",
+      "Đội ngũ hỗ trợ luôn sẵn sàng giải đáp thắc mắc. Tôi đánh giá cao sự chuyên nghiệp của hệ thống này.",
     author: "Lê Văn C",
     position: "Kỹ sư Phần mềm",
     avatar: "/assets/avatars/avatar3.jpg",
@@ -182,7 +182,7 @@ const LandingPage: React.FC = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Nền tảng học tập cho doanh nghiệp hiện đại
+                Hệ thống đào tạo cho doanh nghiệp hiện đại
               </Typography>
               <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
                 Giải pháp đào tạo toàn diện giúp nhân viên phát triển kỹ năng và
@@ -244,7 +244,7 @@ const LandingPage: React.FC = () => {
               Tính năng nổi bật
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
-              Nền tảng học tập của chúng tôi được thiết kế để đáp ứng mọi nhu
+              Hệ thống học tập của chúng tôi được thiết kế để đáp ứng mọi nhu
               cầu phát triển kỹ năng trong doanh nghiệp
             </Typography>
           </Box>
@@ -292,7 +292,7 @@ const LandingPage: React.FC = () => {
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-                  Lợi ích khi sử dụng nền tảng
+                  Lợi ích khi sử dụng hệ thống
                 </Typography>
                 <Typography variant="subtitle1" paragraph>
                   Đầu tư vào việc học tập và phát triển nhân viên mang lại nhiều
@@ -373,7 +373,7 @@ const LandingPage: React.FC = () => {
             </Typography>
             <Typography variant="subtitle1" sx={{ maxWidth: 700, mx: "auto" }}>
               Những phản hồi từ người dùng thực tế về trải nghiệm học tập trên
-              nền tảng của chúng tôi
+              hệ thống của chúng tôi
             </Typography>
           </Box>
 
@@ -432,7 +432,7 @@ const LandingPage: React.FC = () => {
             variant="h6"
             sx={{ mb: 4, maxWidth: 800, mx: "auto", opacity: 0.9 }}
           >
-            Bắt đầu hành trình học tập và phát triển ngay hôm nay với nền tảng
+            Bắt đầu hành trình học tập và phát triển ngay hôm nay với hệ thống
             đào tạo toàn diện của chúng tôi
           </Typography>
           <Button

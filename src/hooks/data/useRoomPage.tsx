@@ -38,6 +38,12 @@ export const useRoomPage = () => {
   };
 
   const handleOpenRoom = () => {
+    if (userMetric?.point_in_quarter && userMetric?.point_in_quarter < 50) {
+      toast.error(ToastContent, {
+        data: { message: "Bạn không đủ điểm cược!" },
+      });
+      return;
+    }
     setShowCreateRoom(true);
   };
 

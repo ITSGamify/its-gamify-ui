@@ -121,9 +121,9 @@ const MatchResult: React.FC<{
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 {isHost ? hostUser?.full_name : opponentUser?.full_name}
               </Typography>
-              {/* <Typography variant="h5" fontWeight="bold" color="primary.main">
+              <Typography variant="h5" fontWeight="bold" color="primary.main">
                 {userScore}
-              </Typography> */}
+              </Typography>
               <Typography variant="body2" color="text.secondary">
                 điểm
               </Typography>
@@ -152,9 +152,9 @@ const MatchResult: React.FC<{
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 {isHost ? opponentUser?.full_name : hostUser?.full_name}
               </Typography>
-              {/* <Typography variant="h5" fontWeight="bold" color="info.main">
+              <Typography variant="h5" fontWeight="bold" color="info.main">
                 {opponentScore}
-              </Typography> */}
+              </Typography>
               <Typography variant="body2" color="text.secondary">
                 điểm
               </Typography>
@@ -257,13 +257,13 @@ const MatchPage: React.FC = () => {
                 <Typography variant="subtitle1" fontWeight="bold">
                   {hostUser?.full_name}
                 </Typography>
-                <Typography
+                {/* <Typography
                   variant="body1"
                   fontWeight="bold"
                   color="primary.main"
                 >
                   {roomDetail.host_score} điểm
-                </Typography>
+                </Typography> */}
               </Box>
             </Stack>
 
@@ -275,9 +275,9 @@ const MatchPage: React.FC = () => {
                 <Typography variant="subtitle1" fontWeight="bold">
                   {opponentUser?.full_name}
                 </Typography>
-                <Typography variant="body1" fontWeight="bold" color="info.main">
+                {/* <Typography variant="body1" fontWeight="bold" color="info.main">
                   {roomDetail.opponent_score} điểm
-                </Typography>
+                </Typography> */}
               </Box>
               <Avatar
                 src={opponentUser?.avatar_url}

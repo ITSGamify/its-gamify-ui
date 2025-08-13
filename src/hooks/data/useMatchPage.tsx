@@ -219,17 +219,17 @@ export const useMatchPage = () => {
 
     history.pushState = function (...args) {
       originalPushState.apply(history, args);
-      handleUrlChange();
+      // handleUrlChange();
     };
 
     history.replaceState = function (...args) {
       originalReplaceState.apply(history, args);
-      handleUrlChange();
+      // handleUrlChange();
     };
 
     // Event listeners
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handleUrlChange);
+    // window.addEventListener("popstate", handleUrlChange);
 
     return () => {
       // Restore original methods
@@ -238,7 +238,7 @@ export const useMatchPage = () => {
 
       // Remove listeners
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handleUrlChange);
+      // window.removeEventListener("popstate", handleUrlChange);
     };
   }, [
     connection,

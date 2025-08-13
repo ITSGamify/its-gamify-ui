@@ -228,7 +228,15 @@ const RoomsPage = () => {
                               }}
                             >
                               <Typography variant="body2">
-                                {`10 Thắng - 2 Thua`}
+                                {`${
+                                  room.host_user.user_metrics
+                                    ? room.host_user.user_metrics[0].win_num
+                                    : 0
+                                } Thắng - ${
+                                  room.host_user.user_metrics
+                                    ? room.host_user.user_metrics[0].lose_num
+                                    : 0
+                                } Thua`}
                               </Typography>
                             </Box>
                           </Box>
@@ -289,7 +297,9 @@ const RoomsPage = () => {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={() => handleJoinRoom(room.id)}
+                              onClick={() =>
+                                handleJoinRoom(room.id, room.bet_points)
+                              }
                             >
                               Tham gia Phòng
                             </Button>

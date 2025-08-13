@@ -45,8 +45,17 @@ export const useRoomPage = () => {
     navigate(PATH.TOURNAMENT);
   };
 
-  const handleJoinRoom = async (roomId: string) => {
+  const handleJoinRoom = async (roomId: string, bet_points: number) => {
     try {
+      if (
+        userMetric?.point_in_quarter &&
+        bet_points > userMetric?.point_in_quarter
+      ) {
+        toast.warning(ToastContent, {
+          data: { message: "Bạn không đủ điểm cược!" },
+        });
+        return;
+      }
       const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, { roomId: roomId });
       navigate(route);
     } catch (err) {

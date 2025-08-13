@@ -22,5 +22,5 @@ export interface User {
   status: string;
   department: Department;
   avatar_url?: string;
-  metrics?: Metric[];
+  user_metrics?: Metric[];
 }

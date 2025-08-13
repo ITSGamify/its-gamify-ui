@@ -11,11 +11,12 @@ import {
   LinearProgress,
   Container,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import XIcon from "@mui/icons-material/X";
 import { PATH } from "@constants/path";
 import { useMatchPage } from "@hooks/data/useMatchPage";
-import { getRoute } from "@utils/route";
+import { Room } from "@interfaces/api/challenge";
+import { LoginResponse } from "@interfaces/api/auth";
 
 // Component con chỉ để hiển thị timer (re-render riêng, không ảnh hưởng toàn bộ page)
 const TimerDisplay: React.FC<{ timeLeft: number }> = React.memo(
@@ -38,6 +39,152 @@ const TimerDisplay: React.FC<{ timeLeft: number }> = React.memo(
   }
 );
 
+const MatchResult: React.FC<{
+  profile: LoginResponse;
+  roomDetail: Room;
+  navigate: NavigateFunction;
+  handlePlayAgain: () => void;
+}> = React.memo(({ profile, roomDetail, navigate, handlePlayAgain }) => {
+  const isHost = profile?.user.id === roomDetail?.host_user_id;
+  const hostUser = roomDetail?.host_user;
+  const opponentUser = roomDetail?.opponent_user;
+  const userScore = isHost
+    ? roomDetail?.host_score || 0
+    : roomDetail?.opponent_score || 0;
+  const opponentScore = isHost
+    ? roomDetail?.opponent_score || 0
+    : roomDetail?.host_score || 0;
+  const userWon = userScore > opponentScore;
+  const userTie = userScore === opponentScore;
+  const userOut =
+    roomDetail.host_user_id === null || roomDetail.opponent_user_id === null;
+  return (
+    <Container maxWidth="xl">
+      <Box sx={{ maxWidth: "md", mx: "auto" }}>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            color="text.primary"
+            gutterBottom
+          >
+            Kết Quả Trận Đấu
+          </Typography>
+        </Box>
+
+        <Card sx={{ boxShadow: 3, p: 2 }}>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              variant="h2"
+              fontWeight="bold"
+              color={userWon || userOut ? "success.main" : "error.main"}
+              gutterBottom
+            >
+              {userWon || userOut
+                ? "Chiến Thắng!"
+                : userTie
+                ? "Hòa"
+                : "Thất Bại!"}
+            </Typography>
+            <Box sx={{ width: 64, height: 64, mx: "auto" }}>
+              <i
+                className={`${
+                  userWon
+                    ? "ri-trophy-fill text-yellow-500"
+                    : "ri-emotion-sad-line text-gray-500"
+                } text-4xl`}
+              />
+            </Box>
+          </Box>
+
+          <Stack
+            direction="row"
+            spacing={4}
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mb: 4 }}
+          >
+            <Box sx={{ textAlign: "center", width: 160 }}>
+              <Avatar
+                src={isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
+                sx={{
+                  bgcolor: "primary.main",
+                  width: 80,
+                  height: 80,
+                  mb: 2,
+                  fontSize: "2rem",
+                  mx: "auto",
+                }}
+              >
+                {isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
+              </Avatar>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                {isHost ? hostUser?.full_name : opponentUser?.full_name}
+              </Typography>
+              <Typography variant="h5" fontWeight="bold" color="primary.main">
+                {userScore}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                điểm
+              </Typography>
+            </Box>
+
+            <Box sx={{ textAlign: "center" }}>
+              <Avatar sx={{ bgcolor: "grey.200", width: 48, height: 48 }}>
+                <XIcon color="disabled" />
+              </Avatar>
+            </Box>
+
+            <Box sx={{ textAlign: "center", width: 160 }}>
+              <Avatar
+                src={isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
+                sx={{
+                  bgcolor: "info.main",
+                  width: 80,
+                  height: 80,
+                  mb: 2,
+                  fontSize: "2rem",
+                  mx: "auto",
+                }}
+              >
+                {isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
+              </Avatar>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                {isHost ? opponentUser?.full_name : hostUser?.full_name}
+              </Typography>
+              <Typography variant="h5" fontWeight="bold" color="info.main">
+                {opponentScore}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                điểm
+              </Typography>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                handlePlayAgain();
+              }}
+            >
+              Chơi Lại
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => navigate(PATH.TOURNAMENT_MATCH_HISTORY)}
+            >
+              Xem Lịch Sử
+            </Button>
+          </Stack>
+        </Card>
+      </Box>
+    </Container>
+  );
+});
+
 const MatchPage: React.FC = () => {
   const {
     roomDetail,
@@ -47,12 +194,12 @@ const MatchPage: React.FC = () => {
     selectedAnswer,
     showResult,
     isAnswering,
-    userScore,
-    opponentScore,
-    isHost,
     loading,
     getOptions,
     handleAnswerSelect,
+    roomResult,
+    profile,
+    handlePlayAgain,
   } = useMatchPage();
 
   const navigate = useNavigate();
@@ -76,134 +223,16 @@ const MatchPage: React.FC = () => {
     );
   }
 
-  if (showResult) {
-    const userWon = userScore > opponentScore;
+  if (showResult && roomResult) {
     return (
-      <Container maxWidth="xl">
-        <Box sx={{ maxWidth: "md", mx: "auto" }}>
-          <Box sx={{ textAlign: "center", mb: 4 }}>
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              color="text.primary"
-              gutterBottom
-            >
-              Kết Quả Trận Đấu
-            </Typography>
-          </Box>
-
-          <Card sx={{ boxShadow: 3, p: 2 }}>
-            <Box sx={{ textAlign: "center" }}>
-              <Typography
-                variant="h2"
-                fontWeight="bold"
-                color={userWon ? "success.main" : "error.main"}
-                gutterBottom
-              >
-                {userWon ? "Chiến Thắng!" : "Thất Bại!"}
-              </Typography>
-              <Box sx={{ width: 64, height: 64, mx: "auto" }}>
-                <i
-                  className={`${
-                    userWon
-                      ? "ri-trophy-fill text-yellow-500"
-                      : "ri-emotion-sad-line text-gray-500"
-                  } text-4xl`}
-                />
-              </Box>
-            </Box>
-
-            <Stack
-              direction="row"
-              spacing={4}
-              justifyContent="center"
-              alignItems="center"
-              sx={{ mb: 4 }}
-            >
-              <Box sx={{ textAlign: "center", width: 160 }}>
-                <Avatar
-                  src={isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
-                  sx={{
-                    bgcolor: "primary.main",
-                    width: 80,
-                    height: 80,
-                    mb: 2,
-                    fontSize: "2rem",
-                    mx: "auto",
-                  }}
-                >
-                  {isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
-                </Avatar>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  {isHost ? hostUser?.full_name : opponentUser?.full_name}
-                </Typography>
-                <Typography variant="h5" fontWeight="bold" color="primary.main">
-                  {userScore}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  điểm
-                </Typography>
-              </Box>
-
-              <Box sx={{ textAlign: "center" }}>
-                <Avatar sx={{ bgcolor: "grey.200", width: 48, height: 48 }}>
-                  <XIcon color="disabled" />
-                </Avatar>
-              </Box>
-
-              <Box sx={{ textAlign: "center", width: 160 }}>
-                <Avatar
-                  src={isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
-                  sx={{
-                    bgcolor: "info.main",
-                    width: 80,
-                    height: 80,
-                    mb: 2,
-                    fontSize: "2rem",
-                    mx: "auto",
-                  }}
-                >
-                  {isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
-                </Avatar>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  {isHost ? opponentUser?.full_name : hostUser?.full_name}
-                </Typography>
-                <Typography variant="h5" fontWeight="bold" color="info.main">
-                  {opponentScore}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  điểm
-                </Typography>
-              </Box>
-            </Stack>
-
-            <Stack direction="row" spacing={2} justifyContent="center">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
-                    roomId: roomDetail.id,
-                  });
-                  navigate(route);
-                }}
-              >
-                Chơi Lại
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => navigate(PATH.TOURNAMENT_MATCH_HISTORY)}
-              >
-                Xem Lịch Sử
-              </Button>
-            </Stack>
-          </Card>
-        </Box>
-      </Container>
+      <MatchResult
+        profile={profile as LoginResponse}
+        roomDetail={roomResult}
+        navigate={navigate}
+        handlePlayAgain={handlePlayAgain}
+      />
     );
   }
-
   const currentQ = questions[currentQuestion];
   const options = getOptions(currentQ);
 

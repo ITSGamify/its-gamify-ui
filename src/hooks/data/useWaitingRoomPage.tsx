@@ -98,7 +98,9 @@ export const useWaitingRoomPage = () => {
   const handleOutRoom = useCallback(async () => {
     if (!connection) return;
     isExiting.current = true; // Đánh dấu đang exit
-    await connection.invoke("OutRoom", roomId, profile?.user.id);
+    await connection.invoke("OutRoom", roomId, profile?.user.id).then(() => {
+      intial_join.current = true;
+    });
     const route = getRoute(PATH.TOURNAMENT_ROOM, {
       tournamentId: roomDetail?.challenge_id,
     });
@@ -139,9 +141,82 @@ export const useWaitingRoomPage = () => {
 
   const num_of_question = questionsData?.length;
 
+  const opp_id =
+    roomDetail?.host_user_id === profile?.user.id
+      ? roomDetail?.opponent_user_id
+      : roomDetail?.host_user_id;
   const { data: opponentMetric, isFetching: isLoadingOpponentMetric } =
-    useGetUserMetric(roomDetail?.opponent_user_id || "");
+    useGetUserMetric(opp_id || "");
 
+  useEffect(() => {
+    let currentUrl = window.location.href;
+
+    const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
+      roomId: roomId,
+    });
+    const cleanup = () => {
+      connection
+        ?.invoke("OutRoom", roomId, profile?.user.id)
+        .then(() => {
+          intial_join.current = true;
+        })
+        .catch((err) => console.error("Error out room:", err));
+    };
+
+    const handleBeforeUnload = () => {
+      cleanup();
+    };
+
+    const handleUrlChange = () => {
+      if (currentUrl !== window.location.href) {
+        currentUrl = window.location.href;
+
+        // Kiểm tra xem URL mới có phải là route đến waiting room không
+        const newUrl = window.location.href;
+        const waitingRoomUrl = new URL(route, window.location.origin).href;
+
+        // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
+        if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
+          cleanup();
+        }
+      }
+    };
+
+    // Override history methods
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function (...args) {
+      originalPushState.apply(history, args);
+      handleUrlChange();
+    };
+
+    history.replaceState = function (...args) {
+      originalReplaceState.apply(history, args);
+      handleUrlChange();
+    };
+
+    // Event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handleUrlChange);
+
+    return () => {
+      // Restore original methods
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+
+      // Remove listeners
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, [
+    connection,
+    profile?.user.id,
+    roomDetail,
+    roomDetail?.id,
+    roomDetail?.status,
+    roomId,
+  ]);
   return {
     isLoading:
       isLoadingUserMetric ||

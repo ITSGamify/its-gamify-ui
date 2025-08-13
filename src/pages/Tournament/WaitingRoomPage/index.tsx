@@ -80,6 +80,11 @@ const WaitingRoomPage: React.FC = () => {
                     right: 8,
                     color: "primary.main",
                   }}
+                  disabled={
+                    roomDetail &&
+                    roomDetail.is_host_ready &&
+                    roomDetail.is_opponent_ready
+                  }
                 >
                   <EditIcon />
                 </IconButton>

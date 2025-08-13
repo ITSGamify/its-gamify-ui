@@ -47,7 +47,7 @@ export const useRoomModalForm = ({
       bet_points: yup
         .number()
         .typeError("Số điểm cược phải là số")
-        .min(50, "Số điểm cược tối thiểu là 10")
+        .min(50, "Số điểm cược tối thiểu là 50")
         .max(5000, "Số điểm cược tối đa là 5000")
         .required("Số điểm cược là bắt buộc"),
       time_per_question: yup

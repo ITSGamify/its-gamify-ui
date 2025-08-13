@@ -10,24 +10,21 @@ import {
   Divider,
   Typography,
   // Toolbar,
-  Collapse,
+  // Collapse,
   IconButton,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   Book as BookIcon,
-  People as PeopleIcon,
-  Assignment as AssignmentIcon,
-  Settings as SettingsIcon,
-  ExpandLess,
-  ExpandMore,
+  // ExpandLess,
+  // ExpandMore,
   ChevronLeft as ChevronLeftIcon,
-  MenuBook as MenuBookIcon,
-  Category as CategoryIcon,
   School as SchoolIcon,
+  SportsEsports as SportsEsportsIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
+import { PATH } from "@constants/path";
 
 interface SidebarProps {
   onClose: () => void;
@@ -46,11 +43,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [openCourses, setOpenCourses] = React.useState(false);
+  // const [openCourses, setOpenCourses] = React.useState(false);
 
-  const handleCoursesClick = () => {
-    setOpenCourses(!openCourses);
-  };
+  // const handleCoursesClick = () => {
+  //   setOpenCourses(!openCourses);
+  // };
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -60,43 +57,22 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
     {
       text: "Tổng quan",
       icon: <DashboardIcon />,
-      path: "/dashboard",
+      path: PATH.HOME,
     },
     {
       text: "Khóa học",
       icon: <BookIcon />,
-      children: [
-        {
-          text: "Danh sách khóa học",
-          icon: <MenuBookIcon />,
-          path: "/courses",
-        },
-        {
-          text: "Danh mục",
-          icon: <CategoryIcon />,
-          path: "/categories",
-        },
-      ],
+      path: PATH.COURSES,
     },
     {
-      text: "Học viên",
-      icon: <PeopleIcon />,
-      path: "/students",
+      text: "Đấu trường",
+      icon: <SportsEsportsIcon />,
+      path: PATH.TOURNAMENT,
     },
     {
-      text: "Giảng viên",
+      text: "Bảng xếp hạng",
       icon: <SchoolIcon />,
       path: "/teachers",
-    },
-    {
-      text: "Bài tập",
-      icon: <AssignmentIcon />,
-      path: "/assignments",
-    },
-    {
-      text: "Cài đặt",
-      icon: <SettingsIcon />,
-      path: "/settings",
     },
   ];
 
@@ -111,67 +87,67 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       <Box sx={{ overflow: "auto", height: "100%" }}>
         <List>
           {menuItems.map((item) => {
-            if (item.children) {
-              return (
-                <React.Fragment key={item.text}>
-                  <ListItem disablePadding>
-                    <ListItemButton onClick={handleCoursesClick}>
-                      <ListItemIcon
-                        sx={{
-                          color: openCourses
-                            ? theme.palette.primary.main
-                            : "inherit",
-                        }}
-                      >
-                        {item.icon}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.text}
-                        primaryTypographyProps={{
-                          fontWeight: openCourses ? 600 : 400,
-                          color: openCourses
-                            ? theme.palette.primary.main
-                            : "inherit",
-                        }}
-                      />
-                      {openCourses ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                  </ListItem>
-                  <Collapse in={openCourses} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {item.children.map((child) => (
-                        <ListItemButton
-                          key={child.text}
-                          sx={{ pl: 4 }}
-                          selected={isActive(child.path)}
-                          onClick={() => navigate(child.path)}
-                        >
-                          <ListItemIcon
-                            sx={{
-                              color: isActive(child.path)
-                                ? theme.palette.primary.main
-                                : "inherit",
-                              minWidth: 36,
-                            }}
-                          >
-                            {child.icon}
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={child.text}
-                            primaryTypographyProps={{
-                              fontWeight: isActive(child.path) ? 600 : 400,
-                              color: isActive(child.path)
-                                ? theme.palette.primary.main
-                                : "inherit",
-                            }}
-                          />
-                        </ListItemButton>
-                      ))}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              );
-            }
+            // if (item.children) {
+            //   return (
+            //     <React.Fragment key={item.text}>
+            //       <ListItem disablePadding>
+            //         <ListItemButton onClick={handleCoursesClick}>
+            //           <ListItemIcon
+            //             sx={{
+            //               color: openCourses
+            //                 ? theme.palette.primary.main
+            //                 : "inherit",
+            //             }}
+            //           >
+            //             {item.icon}
+            //           </ListItemIcon>
+            //           <ListItemText
+            //             primary={item.text}
+            //             primaryTypographyProps={{
+            //               fontWeight: openCourses ? 600 : 400,
+            //               color: openCourses
+            //                 ? theme.palette.primary.main
+            //                 : "inherit",
+            //             }}
+            //           />
+            //           {openCourses ? <ExpandLess /> : <ExpandMore />}
+            //         </ListItemButton>
+            //       </ListItem>
+            //       <Collapse in={openCourses} timeout="auto" unmountOnExit>
+            //         <List component="div" disablePadding>
+            //           {item.children.map((child) => (
+            //             <ListItemButton
+            //               key={child.text}
+            //               sx={{ pl: 4 }}
+            //               selected={isActive(child.path)}
+            //               onClick={() => navigate(child.path)}
+            //             >
+            //               <ListItemIcon
+            //                 sx={{
+            //                   color: isActive(child.path)
+            //                     ? theme.palette.primary.main
+            //                     : "inherit",
+            //                   minWidth: 36,
+            //                 }}
+            //               >
+            //                 {child.icon}
+            //               </ListItemIcon>
+            //               <ListItemText
+            //                 primary={child.text}
+            //                 primaryTypographyProps={{
+            //                   fontWeight: isActive(child.path) ? 600 : 400,
+            //                   color: isActive(child.path)
+            //                     ? theme.palette.primary.main
+            //                     : "inherit",
+            //                 }}
+            //               />
+            //             </ListItemButton>
+            //           ))}
+            //         </List>
+            //       </Collapse>
+            //     </React.Fragment>
+            //   );
+            // }
 
             return (
               <ListItem key={item.text} disablePadding>

@@ -1,11 +1,13 @@
 import { useGetChallengeQuestions } from "@services/question";
 import { useGetRoomDetail } from "@services/room";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import userSession from "@utils/user-session"; // Để lấy profile và xác định isHost
 import { useSignalR } from "@providers/SignalRContext";
 import { QuizQuestion } from "@interfaces/api/lesson";
 import { Room } from "@interfaces/api/challenge";
+import { PATH } from "@constants/path";
+import { getRoute } from "@utils/route";
 
 export const useMatchPage = () => {
   const [searchParams] = useSearchParams();
@@ -18,6 +20,7 @@ export const useMatchPage = () => {
   const [isAnswering, setIsAnswering] = useState(false);
   const [numOfCorrect, setNumOfCorrect] = useState(0);
   const [parsedRoom, setParsedRoom] = useState<Room | null>(null);
+  const [roomResult, setRoomResult] = useState<Room | null>(null);
 
   const { data: roomDetailFromApi, isFetching: isLoadingRoom } =
     useGetRoomDetail(roomId);
@@ -40,14 +43,6 @@ export const useMatchPage = () => {
     [questionsData]
   );
 
-  const isHost = profile?.user.id === roomDetail?.host_user_id;
-  const userScore = isHost
-    ? roomDetail?.host_score || 0
-    : roomDetail?.opponent_score || 0;
-  const opponentScore = isHost
-    ? roomDetail?.opponent_score || 0
-    : roomDetail?.host_score || 0;
-
   const getOptions = (question: QuizQuestion) => [
     question.answer_a,
     question.answer_b,
@@ -56,8 +51,14 @@ export const useMatchPage = () => {
   ];
 
   connection?.on("RoomUpdated", (message: string) => {
-    const roomData = JSON.parse(message);
+    const roomData = JSON.parse(message) as Room;
     setParsedRoom(roomData);
+    if (roomData.status === "FINISHED") {
+      setNumOfCorrect(0);
+      setShowResult(true);
+      setRoomResult(roomData);
+      setTimeLeft(roomData?.time_per_question || 60);
+    }
   });
 
   const currentQuestion = roomDetail?.current_question || 0;
@@ -78,8 +79,6 @@ export const useMatchPage = () => {
           ?.invoke("EndMatch", roomId, profile?.user.id, numOfCorrect)
           .catch((err) => console.error("Error ending match:", err));
       }
-      setNumOfCorrect(0);
-      setShowResult(true);
     }
   }, [
     connection,
@@ -170,33 +169,102 @@ export const useMatchPage = () => {
     if (!connection || !roomId || !profile?.user.id) return;
 
     try {
-      const isGameStarted = roomDetail?.status === "PLAYING";
-
-      if (isGameStarted && roomDetail?.status !== "FINISHED" && !showResult) {
-        await connection.invoke("EndMatch", roomId);
-      }
-
       await connection.invoke("OutRoom", roomId, profile.user.id);
-      console.log("Out_room");
     } catch (error) {
       console.error("Error leaving room:", error);
     }
-  }, [connection, roomId, profile?.user.id, roomDetail, showResult]);
+  }, [connection, roomId, profile?.user.id]);
 
   useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      handleLeaveRoom();
+    let currentUrl = window.location.href;
 
+    const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
+      roomId: roomDetail && roomDetail?.id,
+    });
+    const cleanup = () => {
       if (roomDetail?.status === "PLAYING" && !showResult) {
-        event.preventDefault();
-        event.returnValue = "Bạn có chắc chắn muốn thoát? Game đang diễn ra.";
-        return event.returnValue;
+        connection
+          ?.invoke("OutMatch", roomId, profile?.user.id, numOfCorrect)
+          .catch((err) => console.error("Error ending match:", err));
+      } else {
+        connection
+          ?.invoke("OutRoom", roomId, profile?.user.id)
+          .catch((err) => console.error("Error out room:", err));
+      }
+      initial.current = true;
+    };
+
+    const handleBeforeUnload = () => {
+      cleanup();
+    };
+
+    const handleUrlChange = () => {
+      if (currentUrl !== window.location.href) {
+        currentUrl = window.location.href;
+
+        // Kiểm tra xem URL mới có phải là route đến waiting room không
+        const newUrl = window.location.href;
+        const waitingRoomUrl = new URL(route, window.location.origin).href;
+
+        // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
+        if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
+          cleanup();
+        }
       }
     };
 
+    // Override history methods
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function (...args) {
+      originalPushState.apply(history, args);
+      handleUrlChange();
+    };
+
+    history.replaceState = function (...args) {
+      originalReplaceState.apply(history, args);
+      handleUrlChange();
+    };
+
+    // Event listeners
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [handleLeaveRoom, roomDetail?.status, showResult]);
+    window.addEventListener("popstate", handleUrlChange);
+
+    return () => {
+      // Restore original methods
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+
+      // Remove listeners
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, [
+    connection,
+    handleLeaveRoom,
+    numOfCorrect,
+    profile?.user.id,
+    roomDetail,
+    roomDetail?.id,
+    roomDetail?.status,
+    roomId,
+    showResult,
+  ]);
+  const navigate = useNavigate();
+
+  const handlePlayAgain = () => {
+    console.log("onclcik");
+    connection
+      ?.invoke("PlayAgain", roomId)
+      .then(() => {
+        const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
+          roomId: roomDetail?.id,
+        });
+        navigate(route);
+      })
+      .catch((err) => console.error("Error out room:", err));
+  };
 
   return {
     roomDetail,
@@ -206,11 +274,11 @@ export const useMatchPage = () => {
     selectedAnswer,
     showResult,
     isAnswering,
-    userScore,
-    opponentScore,
-    isHost,
     loading: isLoadingRoom || isLoadingQuestion,
     getOptions,
     handleAnswerSelect,
+    roomResult,
+    profile,
+    handlePlayAgain,
   };
 };

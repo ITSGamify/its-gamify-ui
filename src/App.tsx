@@ -15,7 +15,7 @@ import { SignalRProvider } from "@providers/SignalRContext";
 const toastConfig: ToastContainerProps = {
   limit: 5,
   icon: false,
-  autoClose: 5000,
+  autoClose: 2000,
   closeButton: false,
   position: "top-right",
   hideProgressBar: true,

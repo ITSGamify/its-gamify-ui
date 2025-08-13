@@ -352,7 +352,7 @@ const LeaderboardPage: React.FC = () => {
                           <i className="ri-medal-line text-orange-400" />
                         )}
                         <Typography variant="body1" fontWeight="medium">
-                          #{index}
+                          #{index + 1}
                         </Typography>
                       </Box>
                     </TableCell>

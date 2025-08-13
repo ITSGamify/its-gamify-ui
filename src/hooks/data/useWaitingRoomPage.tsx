@@ -151,9 +151,7 @@ export const useWaitingRoomPage = () => {
   useEffect(() => {
     let currentUrl = window.location.href;
 
-    const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
-      roomId: roomId,
-    });
+    const route = getRoute(PATH.TOURNAMENT_MATCH) + "?roomId=" + roomId;
     const cleanup = () => {
       connection
         ?.invoke("OutRoom", roomId, profile?.user.id)
@@ -167,20 +165,20 @@ export const useWaitingRoomPage = () => {
       cleanup();
     };
 
-    // const handleUrlChange = () => {
-    //   if (currentUrl !== window.location.href) {
-    //     currentUrl = window.location.href;
+    const handleUrlChange = () => {
+      if (currentUrl !== window.location.href) {
+        currentUrl = window.location.href;
 
-    //     // Kiểm tra xem URL mới có phải là route đến waiting room không
-    //     const newUrl = window.location.href;
-    //     const waitingRoomUrl = new URL(route, window.location.origin).href;
-
-    //     // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
-    //     if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
-    //       cleanup();
-    //     }
-    //   }
-    // };
+        // Kiểm tra xem URL mới có phải là route đến waiting room không
+        const newUrl = window.location.href;
+        const waitingRoomUrl = new URL(route, window.location.origin).href;
+        console.log(route);
+        // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
+        if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
+          cleanup();
+        }
+      }
+    };
 
     // Override history methods
     const originalPushState = history.pushState;
@@ -188,17 +186,17 @@ export const useWaitingRoomPage = () => {
 
     history.pushState = function (...args) {
       originalPushState.apply(history, args);
-      // handleUrlChange();
+      handleUrlChange();
     };
 
     history.replaceState = function (...args) {
       originalReplaceState.apply(history, args);
-      // handleUrlChange();
+      handleUrlChange();
     };
 
     // Event listeners
     window.addEventListener("beforeunload", handleBeforeUnload);
-    // window.addEventListener("popstate", handleUrlChange);
+    window.addEventListener("popstate", handleUrlChange);
 
     return () => {
       // Restore original methods
@@ -207,7 +205,7 @@ export const useWaitingRoomPage = () => {
 
       // Remove listeners
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // window.removeEventListener("popstate", handleUrlChange);
+      window.removeEventListener("popstate", handleUrlChange);
     };
   }, [
     connection,

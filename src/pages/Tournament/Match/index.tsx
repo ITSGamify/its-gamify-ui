@@ -121,9 +121,9 @@ const MatchResult: React.FC<{
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 {isHost ? hostUser?.full_name : opponentUser?.full_name}
               </Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary.main">
+              {/* <Typography variant="h5" fontWeight="bold" color="primary.main">
                 {userScore}
-              </Typography>
+              </Typography> */}
               <Typography variant="body2" color="text.secondary">
                 điểm
               </Typography>
@@ -152,9 +152,9 @@ const MatchResult: React.FC<{
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 {isHost ? opponentUser?.full_name : hostUser?.full_name}
               </Typography>
-              <Typography variant="h5" fontWeight="bold" color="info.main">
+              {/* <Typography variant="h5" fontWeight="bold" color="info.main">
                 {opponentScore}
-              </Typography>
+              </Typography> */}
               <Typography variant="body2" color="text.secondary">
                 điểm
               </Typography>

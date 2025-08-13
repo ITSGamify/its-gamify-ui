@@ -198,20 +198,20 @@ export const useMatchPage = () => {
       cleanup();
     };
 
-    // const handleUrlChange = () => {
-    //   if (currentUrl !== window.location.href) {
-    //     currentUrl = window.location.href;
+    const handleUrlChange = () => {
+      if (currentUrl !== window.location.href) {
+        currentUrl = window.location.href;
 
-    //     // Kiểm tra xem URL mới có phải là route đến waiting room không
-    //     const newUrl = window.location.href;
-    //     const waitingRoomUrl = new URL(route, window.location.origin).href;
+        // Kiểm tra xem URL mới có phải là route đến waiting room không
+        const newUrl = window.location.href;
+        const waitingRoomUrl = new URL(route, window.location.origin).href;
 
-    //     // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
-    //     if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
-    //       cleanup();
-    //     }
-    //   }
-    // };
+        // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
+        if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
+          cleanup();
+        }
+      }
+    };
 
     // Override history methods
     const originalPushState = history.pushState;
@@ -219,17 +219,17 @@ export const useMatchPage = () => {
 
     history.pushState = function (...args) {
       originalPushState.apply(history, args);
-      // handleUrlChange();
+      handleUrlChange();
     };
 
     history.replaceState = function (...args) {
       originalReplaceState.apply(history, args);
-      // handleUrlChange();
+      handleUrlChange();
     };
 
     // Event listeners
     window.addEventListener("beforeunload", handleBeforeUnload);
-    // window.addEventListener("popstate", handleUrlChange);
+    window.addEventListener("popstate", handleUrlChange);
 
     return () => {
       // Restore original methods
@@ -238,7 +238,7 @@ export const useMatchPage = () => {
 
       // Remove listeners
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // window.removeEventListener("popstate", handleUrlChange);
+      window.removeEventListener("popstate", handleUrlChange);
     };
   }, [
     connection,

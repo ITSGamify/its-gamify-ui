@@ -87,8 +87,8 @@ const UserProfilePage = () => {
 
   // Sắp xếp metrics theo start_date descending (mới nhất trước)
   const sortedMetrics =
-    detail && detail.user_metrics
-      ? [...detail.user_metrics].sort(
+    detail && detail.metrics
+      ? [...detail.metrics].sort(
           (a, b) =>
             new Date(b.quarter.start_date).getTime() -
             new Date(a.quarter.start_date).getTime()

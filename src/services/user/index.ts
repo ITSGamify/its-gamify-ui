@@ -1,6 +1,11 @@
 import { QUERY_KEYS } from "@constants/query";
 import { useQuery } from "@tanstack/react-query";
-import { getUserMetric, getHistories, getUserDetail } from "./request";
+import {
+  getUserMetric,
+  getHistories,
+  getUserDetail,
+  getUserStatistic,
+} from "./request";
 import { PaginationParams } from "@interfaces/dom/query";
 
 export const useGetUserMetric = (userId: string) => {
@@ -8,6 +13,19 @@ export const useGetUserMetric = (userId: string) => {
     queryKey: [QUERY_KEYS.ACCOUNT, userId],
     queryFn: () => getUserMetric(userId),
     enabled: !!userId,
+  });
+};
+
+export interface GetStatisticParam {
+  userId?: string;
+  quaterId: string;
+}
+
+export const useGetUserStatistic = (params: GetStatisticParam) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.ACCOUNT.STATISTIC, params],
+    queryFn: () => getUserStatistic(params),
+    enabled: !!params.quaterId && !!params.userId,
   });
 };
 

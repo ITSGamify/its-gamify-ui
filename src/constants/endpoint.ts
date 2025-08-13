@@ -54,6 +54,7 @@ export const END_POINTS = {
     USER_METRIC: `${BASE_KEYS.ACCOUNTS}/:userId/user-metrics`,
     CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
     DETAIL: `${BASE_KEYS.ACCOUNTS}/:userId`,
+    STATISTIC: `${BASE_KEYS.ACCOUNTS}/:userId/statistic`,
   },
   COURSE_RESULT: {
     DETAIL: `${BASE_KEYS.COURSE_RESULTS}/:resultId`,

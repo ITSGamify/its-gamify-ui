@@ -27,6 +27,7 @@ import LeaderboardPage from "@pages/Leaderboard";
 import TournamentPage from "@pages/Tournament";
 import { RoleEnum } from "@interfaces/api/user";
 import UserProfilePage from "@pages/Profile";
+import LearningProgressDashboard from "@pages/Leaderboard/LearningProgressDashboard";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;

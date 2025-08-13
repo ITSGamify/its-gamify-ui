@@ -8,6 +8,7 @@ export const QUERY_KEYS = {
   ACCOUNT: {
     BASE: BASE_KEYS.ACCOUNTS,
     DETAIL: `${BASE_KEYS.ACCOUNTS}/:userId`,
+    STATISTIC: `${BASE_KEYS.ACCOUNTS}/:userId/statistic`,
     CHALLENGE_HISTORIES: `${BASE_KEYS.ACCOUNTS}/:userId/challenge-histories`,
   },
   COURSE: {

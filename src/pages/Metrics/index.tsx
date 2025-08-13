@@ -1,4 +1,3 @@
-// src/pages/LeaderMetricsPage.tsx
 import React, { useState, useMemo } from "react";
 import {
   Box,
@@ -23,6 +22,8 @@ import {
   TextField,
   Pagination,
   Grid,
+  Drawer, // Thêm import Drawer
+  IconButton, // Thêm cho nút close
 } from "@mui/material";
 import { User } from "@interfaces/api/user";
 import { Quarter } from "@interfaces/api/course";
@@ -31,6 +32,12 @@ import { useGetQuarters } from "@services/quarter";
 import { useGetMetrics } from "@services/metric";
 import userSession from "@utils/user-session";
 
+// Import thêm icon (nếu chưa có)
+import CloseIcon from "@mui/icons-material/Close";
+import EmployeeHeader from "@components/ui/atoms/leader-board/EmployeeHeader";
+import ProgressStats from "@components/ui/atoms/leader-board/ProgressStats";
+import CourseTable from "@components/ui/atoms/leader-board/CourseTable";
+import { useGetUserStatistic } from "@services/user";
 const MetricsPage: React.FC = () => {
   const theme = useTheme();
 
@@ -53,6 +60,10 @@ const MetricsPage: React.FC = () => {
     q: searchTerm,
   });
 
+  // State mới cho Drawer
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [selectedMetric, setSelectedMetric] = useState<Metric | null>(null);
+
   const sortedQuarters = useMemo(() => {
     return (quarters?.data || []).sort(
       (a: Quarter, b: Quarter) =>
@@ -70,6 +81,24 @@ const MetricsPage: React.FC = () => {
     setSearchTerm(value);
     setCurrentPage(0);
   };
+
+  // Hàm xử lý click row: Mở drawer và set selected
+  const handleRowClick = (metric: Metric) => {
+    setSelectedMetric(metric);
+    setDrawerOpen(true);
+  };
+
+  // Hàm đóng drawer
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setSelectedMetric(null);
+  };
+
+  const { data: statistic } = useGetUserStatistic({
+    userId: selectedMetric?.user_id,
+    quaterId: selectedQuarterId,
+  });
+
   return (
     <Box sx={{ p: 3, pt: 0, maxWidth: "100%", overflowX: "auto" }}>
       <Typography variant="h4" fontWeight={600} gutterBottom>
@@ -147,7 +176,16 @@ const MetricsPage: React.FC = () => {
                     {metrics?.data.map((metric: Metric) => {
                       const user: User = metric.user;
                       return (
-                        <TableRow key={metric.id}>
+                        <TableRow
+                          key={metric.id}
+                          onClick={() => handleRowClick(metric)} // Thêm onClick để mở drawer
+                          sx={{
+                            cursor: "pointer",
+                            "&:hover": {
+                              backgroundColor: theme.palette.action.hover,
+                            },
+                          }} // Thêm hover effect
+                        >
                           <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                               <Avatar
@@ -210,6 +248,66 @@ const MetricsPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Drawer panel bên phải */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        sx={{
+          "& .MuiDrawer-paper": {
+            width: { xs: "100%", sm: 1000 }, // Responsive width
+            boxSizing: "border-box",
+            p: 3,
+          },
+        }}
+      >
+        {selectedMetric ? (
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <IconButton onClick={handleDrawerClose}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Typography variant="h3" fontWeight={600} sx={{ mb: 1 }}>
+              Thống kê chi tiết
+            </Typography>
+            {statistic && (
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 12 }}>
+                  <Card sx={{ borderRadius: 4, boxShadow: 1 }}>
+                    <CardContent>
+                      <EmployeeHeader
+                        name={statistic?.name}
+                        role={statistic.role}
+                        totalProgress={statistic.totalProgress}
+                        avatarInitials={statistic.avatarInitials}
+                      />
+                      <ProgressStats
+                        completed={statistic.completed}
+                        overdue={statistic.overdue}
+                        onViewAll={() => console.log("View all")}
+                        onRemind={() => console.log("Remind")}
+                      />
+                      <CourseTable courses={statistic.courses} />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            )}
+            {/* Nếu có thêm data (e.g., bio, courses list), thêm ở đây */}
+          </Box>
+        ) : (
+          <Typography>Không có dữ liệu</Typography>
+        )}
+      </Drawer>
     </Box>
   );
 };

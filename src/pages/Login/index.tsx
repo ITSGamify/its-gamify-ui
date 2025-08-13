@@ -56,8 +56,6 @@ const LoginPage: React.FC = () => {
           display: { xs: "none", md: "flex" },
           position: "relative",
           backgroundImage: `url(${bannerImage})`,
-          // backgroundImage:
-          // "url(https://source.unsplash.com/random/1200x900?education)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

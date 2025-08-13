@@ -26,7 +26,7 @@ import {
 // Import các component đã tạo
 import DashboardCard from "@components/ui/atoms/DashboardCard";
 import CourseCard from "@components/ui/atoms/CourseCard";
-import TaskManagement from "@components/ui/atoms/TaskManagement";
+// import TaskManagement from "@components/ui/atoms/TaskManagement";
 import LearningProgress from "@components/ui/atoms/LearningProgress";
 import { useHomePage } from "@hooks/data/useHomePage";
 import { getTimeOfDay } from "@utils/timeUtils";
@@ -90,9 +90,9 @@ const HomePage: React.FC = () => {
     getStats,
     handleClassify,
     classify,
-    progresses,
-    progressClassify,
-    handleClassifyProgress,
+    // progresses,
+    // progressClassify,
+    // handleClassifyProgress,
     handleViewAllCourses,
     participations,
     isLoadingParticipations,
@@ -247,13 +247,13 @@ const HomePage: React.FC = () => {
           </Box>
 
           {/* Task Management */}
-          <Box>
+          {/* <Box>
             <TaskManagement
               tasks={progresses}
               progressClassify={progressClassify}
               handleClassifyProgress={handleClassifyProgress}
             />
-          </Box>
+          </Box> */}
         </Grid>
 
         {/* Right Column */}

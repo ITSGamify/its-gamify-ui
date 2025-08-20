@@ -1,4 +1,3 @@
-import { useGetChallengeQuestions } from "@services/question";
 import { useGetRoomDetail } from "@services/room";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -21,6 +20,7 @@ export const useMatchPage = () => {
   const [numOfCorrect, setNumOfCorrect] = useState(0);
   const [parsedRoom, setParsedRoom] = useState<Room | null>(null);
   const [roomResult, setRoomResult] = useState<Room | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]); // State mới cho questions từ SignalR
 
   const { data: roomDetailFromApi, isFetching: isLoadingRoom } =
     useGetRoomDetail(roomId);
@@ -28,27 +28,13 @@ export const useMatchPage = () => {
   const roomDetail = parsedRoom || roomDetailFromApi;
   const [timeLeft, setTimeLeft] = useState(roomDetail?.time_per_question || 60); // Mặc định, sẽ set từ roomDetail.time_per_question
 
-  const getChallengeQuestionsReq = {
-    page: 0,
-    limit: roomDetail?.question_count || 12,
-    courseId: roomDetail?.challenge.course_id || "",
-    q: "",
-  };
-
-  const { data: questionsData, isFetching: isLoadingQuestion } =
-    useGetChallengeQuestions(getChallengeQuestionsReq);
-
-  const questions: QuizQuestion[] = useMemo(
-    () => questionsData || [],
-    [questionsData]
-  );
-
   const getOptions = (question: QuizQuestion) => [
     question.answer_a,
     question.answer_b,
     question.answer_c,
     question.answer_d,
   ];
+  const currentQuestion = roomDetail?.current_question_index || 0;
 
   connection?.on("RoomUpdated", (message: string) => {
     const roomData = JSON.parse(message) as Room;
@@ -59,58 +45,26 @@ export const useMatchPage = () => {
       setRoomResult(roomData);
       setTimeLeft(roomData?.time_per_question || 60);
     }
+
+    const newCurrentQuestion = roomData.current_question_index || 0;
+    if (newCurrentQuestion !== currentQuestion) {
+      setSelectedAnswer(null);
+      setIsAnswering(false);
+      setTimeLeft(roomData?.time_per_question || 60);
+    }
   });
 
-  const currentQuestion = roomDetail?.current_question || 0;
-
-  // Handle next question
-  const handleNextQuestion = useCallback(async () => {
-    setSelectedAnswer(null);
-    setIsAnswering(false);
-    setTimeLeft(roomDetail?.time_per_question || 15);
-
-    if (currentQuestion < questions.length - 1) {
-      connection
-        ?.invoke("MoveToNextQuestion", roomId)
-        .catch((err) => console.error("Error ending match:", err));
-    } else {
-      if (profile?.user.id == roomDetail?.host_user_id) {
-        connection
-          ?.invoke("EndMatch", roomId, profile?.user.id, numOfCorrect)
-          .catch((err) => console.error("Error ending match:", err));
-      }
-    }
-  }, [
-    connection,
-    currentQuestion,
-    numOfCorrect,
-    profile?.user.id,
-    questions.length,
-    roomDetail?.host_user_id,
-    roomDetail?.time_per_question,
-    roomId,
-  ]);
-
-  useEffect(() => {
-    if (roomDetail?.is_host_answer && roomDetail?.is_opponent_answer) {
-      handleNextQuestion();
-    }
-  }, [
-    connection,
-    currentQuestion,
-    handleNextQuestion,
-    questions.length,
-    roomDetail?.is_host_answer,
-    roomDetail?.is_opponent_answer,
-    roomId,
-  ]);
+  // Lấy danh sách người chơi active
+  const activePlayers = useMemo(() => {
+    return (roomDetail?.room_users || []).filter((user) => !user.is_out_room);
+  }, [roomDetail?.room_users]);
 
   // Timer effect (giữ nguyên, nhưng sẽ tách hiển thị trong component con)
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          return roomDetail?.time_per_question || 15;
+          return roomDetail?.time_per_question || 60;
         }
         return prev - 1;
       });
@@ -157,13 +111,27 @@ export const useMatchPage = () => {
 
   const initial = useRef(false);
 
+  // Khởi tạo questions bằng invoke InitialMatch chỉ lần đầu
   useEffect(() => {
-    if (!connection || !roomId || initial.current) return;
-    connection
-      .invoke("StartMatch", roomId)
-      .catch((err) => console.error("Error start match:", err));
-    initial.current = true;
-  }, [connection, roomId]);
+    if (!connection || !roomId || initial.current || questions.length > 0)
+      return;
+
+    const initMatch = async () => {
+      try {
+        // Giả sử invoke trả về array questions trực tiếp
+        const fetchedQuestions = await connection.invoke(
+          "InitialMatch",
+          roomId
+        );
+        setQuestions(fetchedQuestions || []);
+        initial.current = true;
+      } catch (err) {
+        console.error("Error initializing match:", err);
+      }
+    };
+
+    initMatch();
+  }, [connection, roomId, questions.length]);
 
   const handleLeaveRoom = useCallback(async () => {
     if (!connection || !roomId || !profile?.user.id) return;
@@ -254,9 +222,8 @@ export const useMatchPage = () => {
   const navigate = useNavigate();
 
   const handlePlayAgain = () => {
-    console.log("onclcik");
     connection
-      ?.invoke("PlayAgain", roomId)
+      ?.invoke("PlayAgain", roomId, profile?.user.id)
       .then(() => {
         const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, {
           roomId: roomDetail?.id,
@@ -274,11 +241,12 @@ export const useMatchPage = () => {
     selectedAnswer,
     showResult,
     isAnswering,
-    loading: isLoadingRoom || isLoadingQuestion,
+    loading: isLoadingRoom || questions.length === 0, // Cập nhật loading để bao gồm questions
     getOptions,
     handleAnswerSelect,
     roomResult,
     profile,
     handlePlayAgain,
+    activePlayers,
   };
 };

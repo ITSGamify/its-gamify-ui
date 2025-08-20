@@ -1,5 +1,5 @@
 import { PATH } from "@constants/path";
-import { Room } from "@interfaces/api/challenge";
+import { Room, RoomUser } from "@interfaces/api/challenge";
 import { useSignalR } from "@providers/SignalRContext";
 import { useGetChallengeQuestions } from "@services/question";
 import { useGetRoomDetail } from "@services/room";
@@ -19,7 +19,8 @@ export const useWaitingRoomPage = () => {
     useGetRoomDetail(roomId || "");
   const [parsedRoom, setParsedRoom] = useState<Room | null>(null);
   const [countdown, setCountdown] = useState(5);
-
+  const roomDetail = parsedRoom || roomDetailFromApi;
+  const [isStarting, setIsStarting] = useState(false);
   const { data: userMetric, isFetching: isLoadingUserMetric } =
     useGetUserMetric(profile?.user.id || "");
 
@@ -39,13 +40,13 @@ export const useWaitingRoomPage = () => {
     if (intial_join.current) return;
     const joinRoom = async () => {
       if (!connection || !profile?.user.id || !roomId) {
-        setErrorMessage("Không thể kết nối hoặc thiếu userId.");
+        setErrorMessage("Không thể kết nối.");
         return;
       }
+      intial_join.current = true;
 
       try {
         await connection.invoke("JoinRoom", roomId, profile.user.id);
-        intial_join.current = true;
       } catch {
         setErrorMessage("Lỗi khi tham gia phòng.");
       }
@@ -54,15 +55,8 @@ export const useWaitingRoomPage = () => {
     joinRoom();
   }, [connection, profile, roomId, setErrorMessage]);
 
-  // Ưu tiên sử dụng parsedRoom nếu có, ngược lại sử dụng roomDetailFromApi
-  const roomDetail = parsedRoom || roomDetailFromApi;
-
   useEffect(() => {
-    if (
-      roomDetail &&
-      roomDetail.is_host_ready &&
-      roomDetail.is_opponent_ready
-    ) {
+    if (roomDetail && roomDetail.status === "PLAYING") {
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -80,18 +74,22 @@ export const useWaitingRoomPage = () => {
     }
   }, [navigate, roomDetail, roomId]);
 
-  const handleReady = async (userId: string) => {
-    if (!connection || !userId || !roomId) {
-      setErrorMessage("Không thể kết nối hoặc thiếu userId.");
+  const handleStart = async () => {
+    if (!connection || !roomId) {
+      setErrorMessage("Không thể kết nối.");
       return;
     }
 
     try {
-      await connection.invoke("ReadyToJoin", roomId, userId);
+      setIsStarting(true);
+      await connection
+        .invoke("StartMatch", roomId)
+        .then(() => setIsStarting(false)); // Giả sử có method StartRoom trong SignalR
     } catch {
-      setErrorMessage("Lỗi khi sẵn sàng.");
+      setErrorMessage("Lỗi khi bắt đầu trận đấu.");
     }
   };
+
   const isExiting = useRef(false);
 
   // Trong handleOutRoom
@@ -100,11 +98,11 @@ export const useWaitingRoomPage = () => {
     isExiting.current = true; // Đánh dấu đang exit
     await connection.invoke("OutRoom", roomId, profile?.user.id).then(() => {
       intial_join.current = true;
+      const route = getRoute(PATH.TOURNAMENT_ROOM, {
+        tournamentId: roomDetail?.challenge_id,
+      });
+      navigate(route);
     });
-    const route = getRoute(PATH.TOURNAMENT_ROOM, {
-      tournamentId: roomDetail?.challenge_id,
-    });
-    navigate(route);
   }, [
     connection,
     navigate,
@@ -117,15 +115,21 @@ export const useWaitingRoomPage = () => {
     if (isExiting.current) return;
     const roomData = JSON.parse(message) as Room;
 
-    if (roomData.host_user_id === null || roomData.opponent_user_id === null) {
+    if (roomData.host_user_id === null || roomData.status === "WAITING") {
       setCountdown(5);
     }
 
-    if (
-      roomData.host_user_id === profile?.user.id ||
-      roomData.opponent_user_id === profile?.user.id
-    ) {
+    // Kiểm tra user hiện tại có trong room không
+    const isInRoom = roomData.room_users?.some(
+      (ru: RoomUser) => ru.user_id === profile?.user.id
+    );
+    if (isInRoom) {
       setParsedRoom(roomData);
+    } else {
+      // Nếu không còn trong room (bị out), redirect
+      navigate(
+        getRoute(PATH.TOURNAMENT_ROOM, { tournamentId: roomData.challenge_id })
+      );
     }
   });
 
@@ -139,14 +143,7 @@ export const useWaitingRoomPage = () => {
   const { data: questionsData, isFetching: isLoadingQuestion } =
     useGetChallengeQuestions(getChallengeQuestionsReq);
 
-  const num_of_question = questionsData?.length;
-
-  const opp_id =
-    roomDetail?.host_user_id === profile?.user.id
-      ? roomDetail?.opponent_user_id
-      : roomDetail?.host_user_id;
-  const { data: opponentMetric, isFetching: isLoadingOpponentMetric } =
-    useGetUserMetric(opp_id || "");
+  const num_of_question = questionsData?.pagination.total_items_count || 0;
 
   useEffect(() => {
     let currentUrl = window.location.href;
@@ -215,22 +212,19 @@ export const useWaitingRoomPage = () => {
     roomDetail?.status,
     roomId,
   ]);
+
   return {
-    isLoading:
-      isLoadingUserMetric ||
-      isLoadingRoom ||
-      isLoadingQuestion ||
-      isLoadingOpponentMetric,
+    isLoading: isLoadingUserMetric || isLoadingRoom || isLoadingQuestion,
     userMetric,
     roomDetail,
     openModal,
     handleOpenModal,
     handleCloseModal,
     countdown,
-    handleReady,
+    handleStart,
     isHost: roomDetail?.host_user_id == profile?.user.id,
     handleOutRoom,
     num_of_question,
-    opponentMetric,
+    isStarting,
   };
 };

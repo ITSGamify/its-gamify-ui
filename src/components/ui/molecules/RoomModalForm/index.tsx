@@ -58,7 +58,7 @@ export const RoomModalForm = ({
             Tạo Phòng Mới
           </Typography>
 
-          <Stack spacing={2}>
+          <Stack spacing={1}>
             <Box>
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Số Lượng Câu Hỏi
@@ -151,6 +151,36 @@ export const RoomModalForm = ({
                 sx={{ mt: 1 }}
               >
                 Tối thiểu: 50 điểm | Tối đa: 5.000 điểm
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Số người chơi tối đa
+              </Typography>
+              <Controller
+                name="max_players"
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    type="number"
+                    fullWidth
+                    variant="outlined"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={!!error}
+                    helperText={error?.message}
+                    inputProps={{ min: 2, max: 10 }}
+                    placeholder="Nhập số lượng người chơi"
+                  />
+                )}
+              />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 1 }}
+              >
+                Tối thiểu: 2 người | Tối đa: 10 người
               </Typography>
             </Box>
             {userMetric && (

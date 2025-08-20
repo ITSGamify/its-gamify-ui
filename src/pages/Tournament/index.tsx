@@ -128,12 +128,18 @@ const TournamentPage: React.FC = () => {
           >
             <CircularProgress />
           </Box>
-        ) : (
+        ) : challenges && challenges.length > 0 ? (
           challenges.map((challenge) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={challenge.id}>
               <TournamentCard challenge={challenge} />
             </Grid>
           ))
+        ) : (
+          <Box sx={{ width: "100%", textAlign: "center", py: 4 }}>
+            <Typography variant="body1" color="text.secondary">
+              Không tìm thấy thử thách nào phù hợp
+            </Typography>
+          </Box>
         )}
       </Grid>
 

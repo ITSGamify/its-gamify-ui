@@ -10,13 +10,20 @@ import {
   CircularProgress,
   LinearProgress,
   Container,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListItemIcon,
 } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import XIcon from "@mui/icons-material/X";
 import { PATH } from "@constants/path";
 import { useMatchPage } from "@hooks/data/useMatchPage";
-import { Room } from "@interfaces/api/challenge";
+import { Room, RoomUser } from "@interfaces/api/challenge";
 import { LoginResponse } from "@interfaces/api/auth";
+import { deepOrange, grey, amber } from "@mui/material/colors";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 // Component con chỉ để hiển thị timer (re-render riêng, không ảnh hưởng toàn bộ page)
 const TimerDisplay: React.FC<{ timeLeft: number }> = React.memo(
@@ -39,129 +46,158 @@ const TimerDisplay: React.FC<{ timeLeft: number }> = React.memo(
   }
 );
 
+// Component mới để hiển thị list người chơi trong phần chơi
+const PlayerList: React.FC<{
+  activePlayers: RoomUser[];
+  currentUserId: string;
+}> = React.memo(({ activePlayers, currentUserId }) => {
+  // Lọc ra chỉ hiển thị current user
+  const currentPlayer = activePlayers.find(
+    (player) => player.user_id === currentUserId
+  );
+
+  if (!currentPlayer) return null;
+  const metric = currentPlayer.user?.user_metrics?.[0];
+  return (
+    <List sx={{ display: "flex", justifyContent: "center" }}>
+      <ListItem
+        key={currentPlayer.id}
+        sx={{
+          width: "auto",
+          // bgcolor: "primary.light",
+          borderRadius: 1,
+          m: 1,
+          px: 1,
+        }}
+      >
+        <ListItemAvatar>
+          <Avatar
+            src={currentPlayer.user.avatar_url}
+            sx={{ bgcolor: "primary.main", width: 48, height: 48 }}
+          >
+            {currentPlayer.user.full_name[0]}
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={
+            <Typography variant="subtitle1" fontWeight="bold">
+              {currentPlayer.user.full_name}
+            </Typography>
+          }
+          secondary={
+            metric && (
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                color="primary.main"
+              >
+                {`${metric.win_num || 0} T - ${metric?.lose_num || 0} B`}
+              </Typography>
+            )
+          }
+        />
+        {currentPlayer.is_current_question_answered && (
+          <ListItemIcon>
+            <CheckCircleIcon color="success" />
+          </ListItemIcon>
+        )}
+      </ListItem>
+    </List>
+  );
+});
+
 const MatchResult: React.FC<{
   profile: LoginResponse;
   roomDetail: Room;
   navigate: NavigateFunction;
   handlePlayAgain: () => void;
 }> = React.memo(({ profile, roomDetail, navigate, handlePlayAgain }) => {
-  const isHost = profile?.user.id === roomDetail?.host_user_id;
-  const hostUser = roomDetail?.host_user;
-  const opponentUser = roomDetail?.opponent_user;
-  const userScore = isHost
-    ? roomDetail?.host_score || 0
-    : roomDetail?.opponent_score || 0;
-  const opponentScore = isHost
-    ? roomDetail?.opponent_score || 0
-    : roomDetail?.host_score || 0;
-  const userWon = userScore > opponentScore;
-  const userTie = userScore === opponentScore;
-  const userOut =
-    roomDetail.host_user_id === null || roomDetail.opponent_user_id === null;
+  // Lấy và sắp xếp RoomUser active theo current_score descending
+  const sortedPlayers = (roomDetail?.room_users || [])
+    .filter((user: RoomUser) => !user.is_out_room)
+    .sort((a: RoomUser, b: RoomUser) => b.current_score - a.current_score);
+
   return (
     <Container maxWidth="xl">
       <Box sx={{ maxWidth: "md", mx: "auto" }}>
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            color="text.primary"
-            gutterBottom
-          >
-            Kết Quả Trận Đấu
-          </Typography>
-        </Box>
-
         <Card sx={{ boxShadow: 3, p: 2 }}>
           <Box sx={{ textAlign: "center" }}>
             <Typography
               variant="h2"
               fontWeight="bold"
-              color={userWon || userOut ? "success.main" : "error.main"}
+              color="success.main"
               gutterBottom
             >
-              {userWon || userOut
-                ? "Chiến Thắng!"
-                : userTie
-                ? "Hòa"
-                : "Thất Bại!"}
+              Kết quả trận đấu
             </Typography>
-            <Box sx={{ width: 64, height: 64, mx: "auto" }}>
-              <i
-                className={`${
-                  userWon
-                    ? "ri-trophy-fill text-yellow-500"
-                    : "ri-emotion-sad-line text-gray-500"
-                } text-4xl`}
-              />
-            </Box>
           </Box>
+
+          <List>
+            {sortedPlayers.map((player: RoomUser, index: number) => {
+              const isCurrentUser = player.user_id === profile?.user.id;
+              // Highlight top 1,2,3 với màu nền khác nhau
+              let bgcolor = "inherit";
+              if (index === 0) bgcolor = amber[100]; // Vàng nhạt cho top 1
+              else if (index === 1) bgcolor = grey[200]; // Xám nhạt cho top 2
+              else if (index === 2) bgcolor = deepOrange[100]; // Cam nhạt cho top 3
+
+              // Nếu là người dùng hiện tại, thêm highlight border
+              const sxProps = {
+                bgcolor,
+                borderRadius: 1,
+                mb: 1,
+                ...(isCurrentUser && {
+                  border: 2,
+                  borderColor: "primary.main",
+                }),
+              };
+
+              return (
+                <ListItem key={player.id} sx={sxProps}>
+                  <ListItemAvatar>
+                    <EmojiEventsIcon
+                      sx={{
+                        color:
+                          index === 0
+                            ? "#FFD700" // Vàng cho top 1
+                            : index === 1
+                            ? "#C0C0C0" // Bạc cho top 2
+                            : index === 2
+                            ? "#CD7F32" // Đồng cho top 3
+                            : "transparent", // Không icon cho các vị trí khác
+                        mr: 1,
+                        visibility: index < 3 ? "visible" : "hidden",
+                      }}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {`${index + 1}. ${player.user.full_name}`}
+                      </Typography>
+                    }
+                    secondary={
+                      <Stack direction="row" spacing={2}>
+                        <Typography variant="body2" color="text.secondary">
+                          Điểm: {player.current_score}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Đúng: {player.correct_answers}
+                        </Typography>
+                      </Stack>
+                    }
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
 
           <Stack
             direction="row"
-            spacing={4}
+            spacing={2}
             justifyContent="center"
-            alignItems="center"
-            sx={{ mb: 4 }}
+            sx={{ mt: 4 }}
           >
-            <Box sx={{ textAlign: "center", width: 160 }}>
-              <Avatar
-                src={isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
-                sx={{
-                  bgcolor: "primary.main",
-                  width: 80,
-                  height: 80,
-                  mb: 2,
-                  fontSize: "2rem",
-                  mx: "auto",
-                }}
-              >
-                {isHost ? hostUser?.avatar_url : opponentUser?.avatar_url}
-              </Avatar>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                {isHost ? hostUser?.full_name : opponentUser?.full_name}
-              </Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary.main">
-                {userScore}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                điểm
-              </Typography>
-            </Box>
-
-            <Box sx={{ textAlign: "center" }}>
-              <Avatar sx={{ bgcolor: "grey.200", width: 48, height: 48 }}>
-                <XIcon color="disabled" />
-              </Avatar>
-            </Box>
-
-            <Box sx={{ textAlign: "center", width: 160 }}>
-              <Avatar
-                src={isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
-                sx={{
-                  bgcolor: "info.main",
-                  width: 80,
-                  height: 80,
-                  mb: 2,
-                  fontSize: "2rem",
-                  mx: "auto",
-                }}
-              >
-                {isHost ? opponentUser?.avatar_url : hostUser?.avatar_url}
-              </Avatar>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                {isHost ? opponentUser?.full_name : hostUser?.full_name}
-              </Typography>
-              <Typography variant="h5" fontWeight="bold" color="info.main">
-                {opponentScore}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                điểm
-              </Typography>
-            </Box>
-          </Stack>
-
-          <Stack direction="row" spacing={2} justifyContent="center">
             <Button
               variant="contained"
               color="primary"
@@ -200,12 +236,10 @@ const MatchPage: React.FC = () => {
     roomResult,
     profile,
     handlePlayAgain,
+    activePlayers,
   } = useMatchPage();
 
   const navigate = useNavigate();
-
-  const hostUser = roomDetail?.host_user;
-  const opponentUser = roomDetail?.opponent_user;
 
   if (loading || !roomDetail || questions.length === 0) {
     return (
@@ -235,59 +269,19 @@ const MatchPage: React.FC = () => {
   }
   const currentQ = questions[currentQuestion];
   const options = getOptions(currentQ);
-
   return (
     <Container maxWidth="xl">
-      <Box sx={{ maxWidth: "md", mx: "auto", py: 4 }}>
-        <Card sx={{ boxShadow: 3, p: 3, mb: 3 }}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ mb: 3 }}
-          >
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar
-                src={hostUser?.avatar_url}
-                sx={{ bgcolor: "primary.main", width: 48, height: 48 }}
-              >
-                {hostUser?.avatar_url}
-              </Avatar>
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {hostUser?.full_name}
-                </Typography>
-                {/* <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  color="primary.main"
-                >
-                  {roomDetail.host_score} điểm
-                </Typography> */}
-              </Box>
-            </Stack>
-
-            {/* Tách timer vào component con để hạn chế re-render */}
+      <Box sx={{ maxWidth: "md", mx: "auto", py: 2 }}>
+        <Card sx={{ boxShadow: 3, px: 2, mb: 3 }}>
+          {/* List người chơi */}
+          <PlayerList
+            activePlayers={activePlayers}
+            currentUserId={profile?.user.id || ""}
+          />
+          {/* Timer ở giữa */}
+          <Box sx={{ textAlign: "center", mb: 3 }}>
             <TimerDisplay timeLeft={timeLeft} />
-
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Box sx={{ textAlign: "right" }}>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {opponentUser?.full_name}
-                </Typography>
-                {/* <Typography variant="body1" fontWeight="bold" color="info.main">
-                  {roomDetail.opponent_score} điểm
-                </Typography> */}
-              </Box>
-              <Avatar
-                src={opponentUser?.avatar_url}
-                sx={{ bgcolor: "info.main", width: 48, height: 48 }}
-              >
-                {opponentUser?.avatar_url}
-              </Avatar>
-            </Stack>
-          </Stack>
-
+          </Box>
           <Box sx={{ textAlign: "center", mb: 2 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Câu hỏi {currentQuestion + 1} trên {roomDetail.question_count}

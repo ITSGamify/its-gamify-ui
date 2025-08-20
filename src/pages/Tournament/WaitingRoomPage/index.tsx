@@ -9,15 +9,22 @@ import {
   CircularProgress,
   Container,
   IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Badge,
 } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
-import XIcon from "@mui/icons-material/X";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import EditIcon from "@mui/icons-material/Edit";
+// import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import { RoomModalForm } from "@components/ui/molecules/RoomModalForm";
 import { useWaitingRoomPage } from "@hooks/data/useWaitingRoomPage";
+import { RoomUser } from "@interfaces/api/challenge";
+import DefaultAvatar from "@assets/images/default-profile.jpg";
 
 const WaitingRoomPage: React.FC = () => {
   const {
@@ -27,12 +34,12 @@ const WaitingRoomPage: React.FC = () => {
     handleOpenModal,
     handleCloseModal,
     countdown,
-    handleReady,
+    handleStart,
     isLoading,
     isHost,
     handleOutRoom,
     num_of_question,
-    opponentMetric,
+    isStarting,
   } = useWaitingRoomPage();
 
   if (isLoading) {
@@ -50,6 +57,10 @@ const WaitingRoomPage: React.FC = () => {
       </Box>
     );
   }
+
+  // Lấy list players active (giả sử roomDetail.room_users là array RoomUser)
+  const activePlayers =
+    roomDetail?.room_users?.filter((user: RoomUser) => !user.is_out_room) || [];
 
   return (
     <Container maxWidth="xl">
@@ -80,212 +91,101 @@ const WaitingRoomPage: React.FC = () => {
                     right: 8,
                     color: "primary.main",
                   }}
-                  disabled={
-                    roomDetail &&
-                    roomDetail.is_host_ready &&
-                    roomDetail.is_opponent_ready
-                  }
                 >
                   <EditIcon />
                 </IconButton>
               )}
-              <Stack
-                direction="row"
-                spacing={4}
-                justifyContent="center"
-                alignItems="center"
-                sx={{ mb: 4 }}
-              >
-                {roomDetail.host_user && (
-                  <Box sx={{ textAlign: "center", width: 160 }}>
-                    <Avatar
-                      src={roomDetail.host_user.avatar_url}
-                      sx={{
-                        bgcolor: "primary.main",
-                        width: 80,
-                        height: 80,
-                        mb: 2,
-                        fontSize: "2rem",
-                        mx: "auto",
-                      }}
-                    >
-                      {roomDetail.host_user.avatar_url}
-                    </Avatar>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      gutterBottom
-                    >
-                      {roomDetail.host_user.full_name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {`${userMetric?.win_num} T - ${userMetric?.lose_num} B`}
-                    </Typography>
-                    <Box sx={{ mt: 2 }}>
-                      {roomDetail.is_host_ready ? (
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          alignItems="center"
-                          justifyContent="center"
-                          color="success.main"
-                        >
-                          <Typography variant="body2" fontWeight="medium">
-                            Sẵn Sàng!
-                          </Typography>
-                        </Stack>
-                      ) : // Chỉ hiển thị button nếu user là host
-                      isHost ? (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() =>
-                            handleReady(
-                              isHost
-                                ? roomDetail?.host_user_id
-                                : roomDetail?.opponent_user_id || ""
-                            )
-                          }
-                          fullWidth
-                        >
-                          Sẵn Sàng
-                        </Button>
-                      ) : (
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          alignItems="center"
-                          justifyContent="center"
-                          color="warning.main"
-                          sx={{ py: 1 }}
-                        >
-                          <Typography variant="body2" fontWeight="medium">
-                            Đang Chờ...
-                          </Typography>
-                        </Stack>
-                      )}
-                    </Box>
-                  </Box>
-                )}
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                Người chơi ({activePlayers.length}/{roomDetail.max_players})
+              </Typography>
+              {isHost && (
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Mã phòng: {roomDetail.room_code}
+                </Typography>
+              )}
+              <List>
+                {activePlayers.map((player: RoomUser) => {
+                  const metric =
+                    player.user &&
+                    player.user.user_metrics &&
+                    player.user.user_metrics?.length > 0
+                      ? player.user.user_metrics[0]
+                      : null;
 
-                {roomDetail.opponent_user ? (
-                  <>
-                    <Box sx={{ textAlign: "center" }}>
-                      <Avatar
-                        sx={{ bgcolor: "grey.200", width: 48, height: 48 }}
-                      >
-                        <XIcon color="disabled" />
-                      </Avatar>
-                    </Box>
-                    <Box sx={{ textAlign: "center", width: 160 }}>
-                      <Avatar
-                        src={roomDetail.opponent_user.avatar_url}
-                        sx={{
-                          bgcolor: "info.main",
-                          width: 80,
-                          height: 80,
-                          mb: 2,
-                          fontSize: "2rem",
-                          mx: "auto",
-                        }}
-                      >
-                        {roomDetail.opponent_user.avatar_url}
-                      </Avatar>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        gutterBottom
-                      >
-                        {roomDetail.opponent_user.full_name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {`${opponentMetric?.win_num} T - ${opponentMetric?.lose_num} B`}
-                      </Typography>
-                      <Box sx={{ mt: 2 }}>
-                        {roomDetail.is_opponent_ready ? (
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            justifyContent="center"
-                            color="success.main"
-                            sx={{ py: 1 }}
-                          >
-                            <Typography variant="body2" fontWeight="medium">
-                              Sẵn Sàng!
-                            </Typography>
-                          </Stack>
-                        ) : // Chỉ hiển thị button nếu user là opponent (!isHost)
-                        !isHost ? (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() =>
-                              handleReady(
-                                isHost
-                                  ? roomDetail?.host_user_id
-                                  : roomDetail?.opponent_user_id || ""
-                              )
+                  return (
+                    <ListItem key={player.user_id}>
+                      <ListItemAvatar>
+                        <Badge
+                          badgeContent={
+                            player.user_id === roomDetail.host_user_id
+                              ? "Host"
+                              : 0
+                          }
+                          color="primary"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                        >
+                          <Avatar
+                            src={
+                              player.user && player.user.avatar_url
+                                ? player.user.avatar_url
+                                : DefaultAvatar
                             }
-                            fullWidth
+                            alt={
+                              player.user && player.user.full_name
+                                ? player.user.full_name
+                                : ""
+                            }
+                            sx={{
+                              bgcolor: "primary.main",
+                              width: 48,
+                              height: 48,
+                            }}
                           >
-                            Sẵn Sàng
-                          </Button>
-                        ) : (
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            justifyContent="center"
-                            color="warning.main"
-                            sx={{ py: 1 }}
-                          >
-                            <Typography variant="body2" fontWeight="medium">
-                              Đang Chờ...
+                            {player.user && player.user.full_name
+                              ? player.user.full_name[0].toUpperCase()
+                              : ""}
+                          </Avatar>
+                        </Badge>
+                      </ListItemAvatar>
+                      <ListItemText primary={player.user.full_name} />
+                      <Box sx={{ ml: "auto" }}>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          alignItems="center"
+                          color="warning.main"
+                        >
+                          {/* <HourglassEmptyIcon fontSize="small" /> */}
+                          {metric && (
+                            <Typography
+                              variant="body1"
+                              color="textPrimary"
+                              fontWeight="medium"
+                            >
+                              {`${metric.win_num || 0} T - ${
+                                metric?.lose_num || 0
+                              } B`}
                             </Typography>
-                          </Stack>
-                        )}
+                          )}
+                        </Stack>
                       </Box>
-                    </Box>
-                  </>
-                ) : (
-                  // Nếu chưa có opponent, hiển thị placeholder (tùy chỉnh nếu cần)
-                  <Box sx={{ textAlign: "center", width: 160 }}>
-                    <Avatar
-                      sx={{
-                        bgcolor: "grey.300",
-                        width: 80,
-                        height: 80,
-                        mb: 2,
-                        mx: "auto",
-                      }}
-                    >
-                      {/* Placeholder cho opponent chưa join */}
-                    </Avatar>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      gutterBottom
-                    >
-                      Chờ Đối Thủ
-                    </Typography>
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      justifyContent="center"
-                      color="warning.main"
-                      sx={{ py: 1, mt: 2 }}
-                    >
-                      <Typography variant="body2" fontWeight="medium">
-                        Đang Chờ...
-                      </Typography>
-                    </Stack>
-                  </Box>
-                )}
-              </Stack>
-              {roomDetail.is_host_ready && roomDetail.is_opponent_ready && (
-                <Box sx={{ textAlign: "center" }}>
+                    </ListItem>
+                  );
+                })}
+              </List>
+
+              {roomDetail.status === "PLAYING" ? (
+                <Box sx={{ textAlign: "center", mt: 4 }}>
+                  <Typography variant="body1" color="text.secondary">
+                    Trận đấu bắt đầu trong...
+                  </Typography>
                   <Typography
                     variant="h1"
                     fontWeight="bold"
@@ -294,20 +194,28 @@ const WaitingRoomPage: React.FC = () => {
                   >
                     {countdown}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    Trận đấu bắt đầu trong...
-                  </Typography>
                 </Box>
-              )}
-              {(!roomDetail.is_host_ready || !roomDetail.is_opponent_ready) && (
-                <Box sx={{ textAlign: "center" }}>
+              ) : (
+                <Box sx={{ textAlign: "center", mt: 4 }}>
                   <Typography
                     variant="body1"
                     color="text.secondary"
                     sx={{ mb: 2 }}
                   >
-                    Nhấn "Sẵn Sàng" khi bạn đã chuẩn bị bắt đầu quiz
+                    {isHost
+                      ? "Nhấn 'Bắt Đầu' để khởi động trận đấu"
+                      : "Chờ chủ phòng bắt đầu trận đấu"}
                   </Typography>
+                  {isHost && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleStart}
+                      disabled={isStarting}
+                    >
+                      {isStarting ? "Đang bắt đầu..." : "Bắt Đầu"}
+                    </Button>
+                  )}
                 </Box>
               )}
             </Card>

@@ -269,10 +269,11 @@ const MatchHistoryPage: React.FC = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Ngày</TableCell>
-                      <TableCell>Đối Thủ</TableCell>
+                      <TableCell>NGười chiến thắng</TableCell>
+                      <TableCell>Xếp hạng</TableCell>
                       <TableCell>Giải Đấu</TableCell>
                       <TableCell>Kết Quả</TableCell>
-                      <TableCell>Điểm Số</TableCell>
+                      <TableCell>Điểm cược</TableCell>
                       {/* <TableCell>Thời Gian</TableCell> */}
                     </TableRow>
                   </TableHead>
@@ -294,9 +295,14 @@ const MatchHistoryPage: React.FC = () => {
                               }}
                             >
                               <Typography variant="body1" fontWeight="medium">
-                                {match.opponent.full_name}
+                                {match.winner.full_name}
                               </Typography>
                             </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body1" color="text.primary">
+                              {match.rank}
+                            </Typography>
                           </TableCell>
                           <TableCell>
                             <Typography variant="body1" color="text.primary">
@@ -328,17 +334,9 @@ const MatchHistoryPage: React.FC = () => {
                                   : "error.main"
                               }
                             >
-                              {match.your_score}
-                            </Typography>
-                            <Typography
-                              variant="body1"
-                              color="text.secondary"
-                              sx={{ mx: 0.5 }}
-                            >
-                              -
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {match.opp_score}
+                              {`${match.status === "WIN" ? "" : "- "} ${
+                                match.points
+                              }`}
                             </Typography>
                           </TableCell>
                           {/* <TableCell>

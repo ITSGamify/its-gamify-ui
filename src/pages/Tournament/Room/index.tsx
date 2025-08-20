@@ -23,6 +23,8 @@ import { useRoomPage } from "@hooks/data/useRoomPage";
 import { Room } from "@interfaces/api/challenge";
 import { formatDateToVietnamese } from "@utils/date";
 import { RoomModalForm } from "@components/ui/molecules/RoomModalForm";
+import JoinRoomModal from "@components/ui/molecules/JoinRoomModal";
+import DefaultAvatar from "@assets/images/default-profile.jpg";
 
 const RoomsPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -55,13 +57,7 @@ const RoomsPage = () => {
   };
 
   const getParticipation = (room: Room) => {
-    if (room.host_user && room.opponent_user) return "2/2";
-
-    if (!room.host_user && room.opponent_user) return "1/2";
-
-    if (room.host_user && !room.opponent_user) return "1/2";
-
-    return "0/2";
+    return `${room.room_users.length}/${room.max_players}`;
   };
 
   const {
@@ -72,6 +68,9 @@ const RoomsPage = () => {
     handleOpenRoom,
     rooms,
     handleBackToPrevious,
+    showJoinRoom,
+    selectedRoomId,
+    handleCloseJoinModal,
     handleJoinRoom,
     tournamentId,
     userMetric,
@@ -80,8 +79,7 @@ const RoomsPage = () => {
 
   // Tính tổng số người chơi hiện tại và tổng capacity dựa trên trạng thái phòng (giả sử mỗi phòng max 2 người)
   const totalPlayers = rooms.reduce(
-    (sum, room) =>
-      sum + (room.host_user ? 1 : 0) + (room.opponent_user ? 1 : 0),
+    (sum, room) => sum + room.room_users.length,
     0
   );
   const totalCapacity = rooms.length * 2;
@@ -206,7 +204,7 @@ const RoomsPage = () => {
                       >
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Avatar
-                            src={room.host_user.avatar_url || ""}
+                            src={room.host_user.avatar_url || DefaultAvatar}
                             sx={{
                               bgcolor: "primary.main",
                               mr: 2,
@@ -214,7 +212,7 @@ const RoomsPage = () => {
                               height: 48,
                             }}
                           >
-                            {room.host_user.avatar_url || ""}
+                            {room.host_user.full_name[0].toUpperCase() || ""}
                           </Avatar>
                           <Box>
                             <Typography variant="subtitle1" fontWeight="medium">
@@ -297,9 +295,7 @@ const RoomsPage = () => {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={() =>
-                                handleJoinRoom(room.id, room.bet_points)
-                              }
+                              onClick={() => handleJoinRoom(room)}
                             >
                               Tham gia Phòng
                             </Button>
@@ -309,6 +305,11 @@ const RoomsPage = () => {
                         {room.status === "PLAYING" && (
                           <Button variant="contained" disabled>
                             Đang Diễn Ra
+                          </Button>
+                        )}
+                        {room.status === "FULL" && (
+                          <Button variant="contained" disabled>
+                            Phòng đã đầy
                           </Button>
                         )}
                       </Box>
@@ -327,7 +328,7 @@ const RoomsPage = () => {
                 </Typography>
                 <Stack spacing={1}>
                   <Typography variant="body2" color="text.secondary">
-                    Trận đấu quiz 1v1 thời gian thực
+                    Trận đấu nhóm theo thời gian thực
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Người thắng lấy hết điểm cược
@@ -416,6 +417,12 @@ const RoomsPage = () => {
         challengeId={tournamentId || null}
         userMetric={userMetric || null}
         num_of_question={num_of_question}
+      />
+
+      <JoinRoomModal
+        open={showJoinRoom}
+        roomId={selectedRoomId}
+        onClose={handleCloseJoinModal}
       />
     </Container>
   );

@@ -1,13 +1,14 @@
 // src/components/layout/ErrorLayout/index.tsx
 import React from "react";
 import { Box, Container, Typography, Button, Paper } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 interface ErrorLayoutProps {
   code: string;
   title: string;
   description: string;
   illustration?: React.ReactNode;
+  onClick?: () => void;
+  onBack?: () => void;
 }
 
 const ErrorLayout: React.FC<ErrorLayoutProps> = ({
@@ -15,9 +16,9 @@ const ErrorLayout: React.FC<ErrorLayoutProps> = ({
   title,
   description,
   illustration,
+  onBack,
+  onClick,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <Box
       sx={{
@@ -86,7 +87,7 @@ const ErrorLayout: React.FC<ErrorLayoutProps> = ({
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={() => navigate("/")}
+                onClick={onClick}
               >
                 Về trang chủ
               </Button>
@@ -94,7 +95,7 @@ const ErrorLayout: React.FC<ErrorLayoutProps> = ({
                 variant="outlined"
                 color="primary"
                 size="large"
-                onClick={() => navigate(-1)}
+                onClick={onBack}
               >
                 Quay lại
               </Button>

@@ -34,6 +34,8 @@ import { COMPLETED, ENROLLED, SAVED } from "@constants/course";
 import { Participation } from "@interfaces/api/course";
 import { differenceInDays, format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@constants/path";
 // Styled components
 const PageTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
@@ -107,6 +109,8 @@ const HomePage: React.FC = () => {
           : "normal",
     }));
   }, [participations]);
+
+  const navigate = useNavigate();
   return (
     <Container maxWidth="xl" sx={{ pt: 0, pb: 3, px: 3 }}>
       {/* Header */}
@@ -117,6 +121,7 @@ const HomePage: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<SchoolIcon />}
+            onClick={() => navigate(PATH.COURSES)}
           >
             Khám phá khóa học
           </Button>
@@ -137,6 +142,7 @@ const HomePage: React.FC = () => {
                 trong quý này. Tiếp tục cố gắng nhé!
               </Typography>
               <Button
+                onClick={() => navigate(PATH.COURSES)}
                 variant="contained"
                 sx={{
                   bgcolor: "white",

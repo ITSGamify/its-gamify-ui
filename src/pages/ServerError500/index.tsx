@@ -3,10 +3,20 @@ import React from "react";
 import ErrorLayout from "@components/layout/ErrorLayout";
 import { Box, useTheme } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@constants/path";
 
 const ServerError500: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
+  const handleBackToHome = () => {
+    navigate(PATH.HOME);
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
   const illustration = (
     <Box
       sx={{
@@ -33,6 +43,8 @@ const ServerError500: React.FC = () => {
       title="Lỗi máy chủ"
       description="Xin lỗi, đã xảy ra lỗi từ phía máy chủ. Chúng tôi đang khắc phục sự cố này. Vui lòng thử lại sau."
       illustration={illustration}
+      onClick={handleBackToHome}
+      onBack={handleBack}
     />
   );
 };

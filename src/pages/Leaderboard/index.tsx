@@ -25,46 +25,14 @@ import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined";
-// import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
-// import StraightOutlinedIcon from "@mui/icons-material/StraightOutlined";
-// import WhatshotOutlinedIcon from "@mui/icons-material/WhatshotOutlined";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import { amber, grey, deepOrange } from "@mui/material/colors";
 import { useLeaderBoardPage } from "@hooks/data/useLeaderBoardPage";
 import { Quarter } from "@interfaces/api/course";
 import { formatDateShort } from "@utils/date";
 
 const LeaderboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overall");
-
-  // const achievements = [
-  //   {
-  //     name: "Nguyễn Văn Hùng",
-  //     achievement: "Chuỗi Thắng Dài Nhất",
-  //     value: "15 trận thắng",
-  //     icon: <WhatshotOutlinedIcon color="error" />,
-  //     color: "text-red-500",
-  //   },
-  //   {
-  //     name: "Trần Thị Lan",
-  //     achievement: "Trả Lời Nhanh Nhất",
-  //     value: "0.8s trung bình",
-  //     icon: <BoltOutlinedIcon sx={{ color: "#effa19" }} />,
-  //     color: "text-yellow-500",
-  //   },
-  //   {
-  //     name: "Lê Minh Tuấn",
-  //     achievement: "Chính Xác Nhất",
-  //     value: "94% độ chính xác",
-  //     icon: <PercentOutlinedIcon sx={{ color: "#2f9104" }} />,
-  //     color: "text-green-500",
-  //   },
-  //   {
-  //     name: "Phạm Thị Hồng",
-  //     achievement: "Cải Thiện Nhiều Nhất",
-  //     value: "+580 điểm",
-  //     icon: <StraightOutlinedIcon sx={{ color: "#1b75e3" }} />,
-  //     color: "text-blue-500",
-  //   },
-  // ];
 
   const {
     generalMetric,
@@ -242,7 +210,7 @@ const LeaderboardPage: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
-                  {generalMetric?.average_correct}%
+                  {generalMetric?.average_correct.toFixed(2)}%
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Trung bình công ty
@@ -342,14 +310,14 @@ const LeaderboardPage: React.FC = () => {
                       <Box
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
+                        {index === 0 && (
+                          <EmojiEventsIcon sx={{ color: amber[500] }} /> // Vàng cho top 1
+                        )}
                         {index === 1 && (
-                          <i className="ri-trophy-fill text-yellow-500" />
+                          <EmojiEventsIcon sx={{ color: grey[400] }} /> // Xám cho top 2
                         )}
                         {index === 2 && (
-                          <i className="ri-medal-line text-grey-400" />
-                        )}
-                        {index === 3 && (
-                          <i className="ri-medal-line text-orange-400" />
+                          <EmojiEventsIcon sx={{ color: deepOrange[400] }} /> // Cam cho top 3
                         )}
                         <Typography variant="body1" fontWeight="medium">
                           #{index + 1}
@@ -361,13 +329,14 @@ const LeaderboardPage: React.FC = () => {
                         sx={{ display: "flex", alignItems: "center", gap: 2 }}
                       >
                         <Avatar
+                          src={player.user.avatar_url}
                           sx={{
                             bgcolor: "primary.main",
                             width: 40,
                             height: 40,
                           }}
                         >
-                          {player.user.avatar_url}
+                          {player.user.full_name[0].toUpperCase() || ""}
                         </Avatar>
                         <Box>
                           <Typography
@@ -444,61 +413,6 @@ const LeaderboardPage: React.FC = () => {
             </Table>
           </TableContainer>
         </Card>
-
-        {/* <Card sx={{ boxShadow: 3 }}>
-          <Box sx={{ p: 3, borderBottom: 1, borderColor: "divider" }}>
-            <Typography variant="h6" fontWeight="bold" color="text.primary">
-              Thành Tựu Đặc Biệt
-            </Typography>
-          </Box>
-          <Box sx={{ p: 3 }}>
-            <Grid container spacing={2}>
-              {achievements.map((achievement, index) => (
-                <Grid size={{ xs: 12, md: 6 }} key={index}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      p: 2,
-                      bgcolor: "grey.100",
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: "white",
-                        color: achievement.color.replace("text-", ""),
-                      }}
-                    >
-                      {achievement.icon}
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography
-                        variant="body1"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {achievement.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {achievement.achievement}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      sx={{ textAlign: "right" }}
-                    >
-                      {achievement.value}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </Card> */}
       </Box>
     </Container>
   );

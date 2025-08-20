@@ -8,6 +8,11 @@ import {
   Paper,
   Typography,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import {
   ArrowBack as PrevIcon,
@@ -42,6 +47,7 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
     initialTimeLeft || quiz.duration * 60
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false); // State cho modal xác nhận
 
   const questionsPerPage = 2;
 
@@ -113,6 +119,22 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
 
     return () => clearInterval(timer);
   }, [handleSubmit, timeLeft]);
+
+  // Handle mở modal xác nhận
+  const handleOpenConfirm = () => {
+    setOpenConfirm(true);
+  };
+
+  // Handle đóng modal
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  // Handle xác nhận nộp bài
+  const handleConfirmSubmit = () => {
+    // setOpenConfirm(false);
+    handleSubmit();
+  };
 
   return (
     <Box>
@@ -192,7 +214,7 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
               fullWidth
               size="large"
               startIcon={<SubmitIcon />}
-              onClick={handleSubmit}
+              onClick={handleOpenConfirm} // Mở modal thay vì submit trực tiếp
               disabled={isSubmitting}
               sx={{ py: 1.5, mb: 3 }}
             >
@@ -222,6 +244,32 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Modal xác nhận nộp bài */}
+      <Dialog
+        open={openConfirm}
+        onClose={handleCloseConfirm}
+        aria-labelledby="confirm-submit-dialog-title"
+        aria-describedby="confirm-submit-dialog-description"
+      >
+        <DialogTitle id="confirm-submit-dialog-title">
+          Xác nhận nộp bài
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-submit-dialog-description">
+            Bạn có chắc chắn muốn nộp bài kiểm tra không? Sau khi nộp, bạn không
+            thể thay đổi đáp án.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirm} color="primary">
+            Hủy
+          </Button>
+          <Button onClick={handleConfirmSubmit} color="primary" autoFocus>
+            {isSubmitting ? "Đang nộp bài..." : "Xác nhận"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

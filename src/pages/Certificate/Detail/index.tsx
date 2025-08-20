@@ -17,7 +17,7 @@ const CertificateDetailPage: React.FC = () => {
           onClick={() => setShowFullscreen(true)}
           sx={{ mr: 2 }}
         >
-          View Fullscreen
+          Toàn màn hinh
         </Button>
       </Box>
 

@@ -12,13 +12,11 @@ import { useNavigate } from "react-router-dom";
 import CourseMainContent from "@components/ui/molecules/course-detail/CourseDetailMainContent";
 import CourseContentSidebar from "@components/ui/molecules/course-detail/CourseDetailSidebar";
 import { useCourseDetail } from "@hooks/data/useCourseDetail";
+import { getRoute } from "@utils/route";
+import { PATH } from "@constants/path";
 
 const CourseDetailPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   const {
     modules,
@@ -30,8 +28,12 @@ const CourseDetailPage: React.FC = () => {
     completedLearningProgresses,
     isMoving,
     handleMoveToNext,
+    handleBack,
   } = useCourseDetail();
-
+  const handleBackToOverview = () => {
+    const route = getRoute(PATH.COURSES_OVERVIEW, { courseId: course?.id });
+    navigate(route);
+  };
   return (
     <Box sx={{ bgcolor: "background.default", px: 3 }}>
       <Container maxWidth="xl" sx={{ py: 0 }}>
@@ -55,7 +57,7 @@ const CourseDetailPage: React.FC = () => {
             >
               <Grid>
                 <Box display="flex" alignItems="center">
-                  <IconButton onClick={handleBack} sx={{ mr: 1 }}>
+                  <IconButton onClick={handleBackToOverview} sx={{ mr: 1 }}>
                     <ArrowBackIcon />
                   </IconButton>
                   <Typography variant="h3" fontWeight="600">
@@ -75,6 +77,7 @@ const CourseDetailPage: React.FC = () => {
                   isMoving={isMoving}
                   handleMoveToNext={handleMoveToNext}
                   learningProgresses={learningProgresses}
+                  handleBack={handleBack}
                 />
               </Grid>
 

@@ -47,7 +47,7 @@ import { formatToMB } from "@utils/file";
 import { formatDateToVietnamese } from "@utils/date";
 import { useNavigate } from "react-router-dom";
 import { Lesson } from "@interfaces/api/lesson";
-// import { VideoPlayer } from "@components/ui/atoms/Video";
+import { VideoPlayer } from "@components/ui/atoms/Video";
 
 //#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
@@ -145,12 +145,15 @@ const CourseOverviewPage: React.FC = () => {
     inCompleteLessons,
     completedLearningProgresses,
     allLessons,
+    bookmarked,
+    toggleBookmark,
   } = useCourseOverview();
 
   const handleBack = () => {
     navigate(-1);
   };
 
+  console.log(bookmarked);
   const getLessonItem = (lesson: Lesson) => {
     const isCompleted = completedLearningProgresses.some(
       (progress) => progress.lesson_id === lesson.id
@@ -247,17 +250,15 @@ const CourseOverviewPage: React.FC = () => {
         <Grid container spacing={4}>
           {/* Left Column */}
           <Grid size={{ xs: 12, md: 8 }}>
-            {/* <VideoPlayer
-              videoUrl={course?.introduction_video || ""}
-              title={course?.title || ""}
-            /> */}
-
             <CourseImage
               image={course?.thumbnail_image}
               title={course?.title}
               sx={{ objectFit: "contain", backgroundSize: "contain" }}
             />
-
+            <VideoPlayer
+              videoUrl={course?.introduction_video || ""}
+              title={course?.title || ""}
+            />
             <Box mt={4}>
               <StyledTabs
                 value={tabValue}
@@ -727,8 +728,8 @@ const CourseOverviewPage: React.FC = () => {
                             ? `${inCompleteLessons.reduce(
                                 (acc, lesson) => acc + lesson.duration,
                                 0
-                              )} h`
-                            : "0 h"}
+                              )} phút`
+                            : "0 phút"}
                         </Typography>
                       </Box>
                     </Box>
@@ -752,15 +753,18 @@ const CourseOverviewPage: React.FC = () => {
                     : "Tham gia khóa học"}
                 </Button>
 
-                <Box display="flex" justifyContent="space-between">
-                  <Button
-                    startIcon={<BookmarkIcon />}
-                    variant="outlined"
-                    sx={{ width: "100%" }}
-                  >
-                    Lưu
-                  </Button>
-                </Box>
+                {course && (
+                  <Box display="flex" justifyContent="space-between">
+                    <Button
+                      startIcon={<BookmarkIcon />}
+                      variant="outlined"
+                      sx={{ width: "100%" }}
+                      onClick={() => toggleBookmark(course.id)}
+                    >
+                      {bookmarked.includes(course.id) ? "Đã lưu" : "Lưu"}
+                    </Button>
+                  </Box>
+                )}
               </CardContent>
             </Card>
 

@@ -1,5 +1,9 @@
 import { Room } from "@interfaces/api/challenge";
-import { RequestUpdateRoomParams, RoomRequestParams } from ".";
+import {
+  RequestJoinRoomParams,
+  RequestUpdateRoomParams,
+  RoomRequestParams,
+} from ".";
 import { request } from "@config/axios";
 import { getRoute } from "@utils/route";
 import { END_POINTS } from "@constants/endpoint";
@@ -20,6 +24,17 @@ export const updateRoom = async (
   return request({
     url: getRoute(END_POINTS.ROOM.DETAIL, { roomId }),
     method: HTTP_METHODS.PUT,
+    data,
+  });
+};
+
+export const joinRoom = async (
+  payload: RequestJoinRoomParams
+): Promise<void> => {
+  const { id: roomId, ...data } = payload;
+  return request({
+    url: getRoute(END_POINTS.ROOM.JOIN_ROOM, { roomId }),
+    method: HTTP_METHODS.POST,
     data,
   });
 };

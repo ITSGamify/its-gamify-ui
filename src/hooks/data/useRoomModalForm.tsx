@@ -26,6 +26,7 @@ export interface RoomModalForm {
   bet_points: number;
   challenge_id: string;
   host_user_id: string;
+  max_players: number;
 }
 
 export const useRoomModalForm = ({
@@ -56,6 +57,12 @@ export const useRoomModalForm = ({
         .min(10, "Thời gian cho mỗi câu hỏi tối thiểu là 10 giây")
         .max(60, "Thời gian cho mỗi câu hỏi tối đa là 60 giây")
         .required("Thời gian cho mỗi câu hỏi là bắt buộc"),
+      max_players: yup
+        .number()
+        .typeError("Số người chơi tối đa là số")
+        .min(2, "Số người chơi tối thiểu là 2 giây")
+        .max(10, "Số người chơi tối đa là 10 giây")
+        .required("Số người chơi là bắt buộc"),
       challenge_id: yup.string().required("Challenge ID là bắt buộc"),
       host_user_id: yup.string().required("Host user ID là bắt buộc"),
     });
@@ -66,9 +73,10 @@ export const useRoomModalForm = ({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      question_count: room?.question_count || 10,
+      question_count: room?.question_count || 1,
       time_per_question: room?.time_per_question || 60,
       bet_points: room?.bet_points || 100,
+      max_players: room?.max_players || 10,
       host_user_id: room?.host_user_id || profile?.user.id,
       challenge_id: room?.challenge_id || challengeId || "",
     },
@@ -88,6 +96,7 @@ export const useRoomModalForm = ({
         bet_points: formData.bet_points,
         challenge_id: formData.challenge_id,
         host_user_id: formData.host_user_id,
+        max_players: formData.max_players,
       };
 
       const onSuccess = () => {

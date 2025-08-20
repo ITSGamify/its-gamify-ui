@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createRoom, updateRoom, getRoomDetail } from "./request";
+import { createRoom, updateRoom, getRoomDetail, joinRoom } from "./request";
 import { QUERY_KEYS } from "@constants/query";
 
 export interface RoomRequestParams {
@@ -8,6 +8,7 @@ export interface RoomRequestParams {
   bet_points: number;
   challenge_id: string;
   host_user_id: string;
+  max_players: number;
 }
 
 export interface RequestUpdateRoomParams extends RoomRequestParams {
@@ -16,6 +17,10 @@ export interface RequestUpdateRoomParams extends RoomRequestParams {
   // is_host_ready: boolean;
   // is_opponent_ready: boolean;
   // is_abandoned: boolean;
+}
+export interface RequestJoinRoomParams {
+  id: string;
+  room_code: string;
 }
 
 export const useCreateRoom = (onSuccess?: () => void) => {
@@ -36,6 +41,13 @@ export const useGetRoomDetail = (roomId: string) => {
 export const useUpdateRoom = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: (payload: RequestUpdateRoomParams) => updateRoom(payload),
+    onSuccess,
+  });
+};
+
+export const useJoinRoom = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: (payload: RequestJoinRoomParams) => joinRoom(payload),
     onSuccess,
   });
 };

@@ -6,6 +6,7 @@ import {
   getCourseParticipations,
   getCourses,
   joinCourse,
+  upsertCourseCollection,
 } from "./request";
 import { PaginationParams } from "@interfaces/dom/query";
 
@@ -53,5 +54,12 @@ export const useGetCourseModules = (courseId: string) => {
     queryKey: [QUERY_KEYS.COURSE.COURSE_SECTIONS, courseId],
     queryFn: () => getCourseModules(courseId),
     enabled: !!courseId,
+  });
+};
+
+export const useUpsertCourseCollection = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: (courseId: string) => upsertCourseCollection(courseId),
+    onSuccess,
   });
 };

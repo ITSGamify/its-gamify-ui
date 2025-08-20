@@ -12,6 +12,10 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { getRoute } from "@utils/route";
 import { PATH } from "@constants/path";
+import { LoginResponse } from "@interfaces/api/auth";
+import ToastContent from "@components/ui/atoms/Toast";
+import { toast } from "react-toastify";
+import { RoleEnum } from "@interfaces/api/user";
 
 export interface AuthenticationFormValues {
   email: string;
@@ -90,6 +94,15 @@ export const useLoginPage = () => {
 
       await login(formData, {
         onSuccess: (data) => {
+          const user = data as LoginResponse;
+          if (
+            user.user.role == RoleEnum.ADMIN ||
+            user.user.role == RoleEnum.TRAINER ||
+            user.user.role == RoleEnum.MANAGER
+          )
+            return toast.error(ToastContent, {
+              data: { message: "Tài khoản không hợp lệ!" },
+            });
           userSession.storeUserProfile(data);
           reset();
           const route = getRoute(PATH.LANDING);

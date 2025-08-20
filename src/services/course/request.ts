@@ -52,3 +52,12 @@ export const getCourseModules = async (
     method: HTTP_METHODS.GET,
   });
 };
+
+export const upsertCourseCollection = async (
+  courseId: string
+): Promise<void> => {
+  return request({
+    url: getRoute(END_POINTS.COURSE.COURSE_COLLECTIONS, { courseId }),
+    method: HTTP_METHODS.PUT,
+  });
+};

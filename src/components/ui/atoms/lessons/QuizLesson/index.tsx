@@ -45,6 +45,7 @@ const QuizLesson = ({
   handleMoveToNext,
   participation,
   learning_progress,
+  handleBack,
 }: LessonContentProps) => {
   const navigate = useNavigate();
 
@@ -128,6 +129,7 @@ const QuizLesson = ({
           color="inherit"
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
+          onClick={handleBack}
         >
           Trước
         </NavButton>

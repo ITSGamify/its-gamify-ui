@@ -82,6 +82,7 @@ const PracticeLesson = ({
   isMoving,
   handleMoveToNext,
   participation,
+  handleBack,
 }: LessonContentProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const theme = useTheme();
@@ -450,6 +451,7 @@ const PracticeLesson = ({
           color="inherit"
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
+          onClick={handleBack}
         >
           Trước
         </NavButton>

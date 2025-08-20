@@ -12,6 +12,7 @@ import {
   Chip,
 } from "@mui/material";
 import { Question, Answer, QuizAnswer, QuizMode } from "@interfaces/api/quiz";
+import { alpha } from "@mui/material/styles"; // Thêm import alpha để tạo màu nhạt hơn
 
 interface QuestionDisplayProps {
   questions: Question[];
@@ -69,11 +70,11 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     let border = "none";
 
     if (isCorrect) {
-      backgroundColor = theme.palette.success.light;
-      border = `2px solid ${theme.palette.success.main}`;
+      backgroundColor = alpha(theme.palette.success.light, 0.3); // Làm nhạt hơn bằng alpha
+      border = `1px solid ${alpha(theme.palette.success.main, 0.5)}`; // Border mỏng và nhạt hơn
     } else if (isSelected && selectedAnswer !== correctAnswer) {
-      backgroundColor = theme.palette.error.light;
-      border = `2px solid ${theme.palette.error.main}`;
+      backgroundColor = alpha(theme.palette.error.light, 0.2); // Làm nhạt hơn bằng alpha
+      border = `1px solid ${alpha(theme.palette.error.main, 0.5)}`; // Border mỏng và nhạt hơn
     }
 
     return {
@@ -102,7 +103,15 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
     return (
       <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-        <Typography sx={{ flexGrow: 1 }}>{label}</Typography>
+        <Typography
+          sx={{
+            flexGrow: 1,
+            fontWeight: isCorrect ? "bold" : "normal", // Làm chữ đậm hơn nếu là đáp án đúng
+            color: isCorrect ? "#242020" : "#8f1a1a", // Màu đen cho đáp án đúng
+          }}
+        >
+          {label}
+        </Typography>
         {isCorrect && (
           <Chip label="Đúng" color="success" size="small" sx={{ ml: 1 }} />
         )}

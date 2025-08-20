@@ -6,7 +6,6 @@ import {
   VolumeOff as VolumeOffIcon,
   Pause as PauseIcon,
   PlayArrow as PlayArrowIcon,
-  Settings as SettingsIcon,
 } from "@mui/icons-material";
 
 //#region  Styled components
@@ -152,10 +151,6 @@ export const VideoPlayer: React.FC<{ videoUrl: string; title: string }> = ({
 
           <VideoControlButton onClick={handleFullscreen}>
             <FullscreenIcon />
-          </VideoControlButton>
-
-          <VideoControlButton>
-            <SettingsIcon />
           </VideoControlButton>
         </Box>
       </VideoControls>

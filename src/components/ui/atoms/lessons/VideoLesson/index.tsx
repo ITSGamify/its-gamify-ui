@@ -1,14 +1,21 @@
 // src/pages/course/components/lessons/VideoLesson.tsx
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, IconButton, Slider, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Slider,
+  Paper,
+  Button,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import {
   PlayArrow,
   Pause,
   VolumeUp,
-  SettingsOutlined,
   FullscreenOutlined,
   PictureInPictureAlt,
+  Speed,
 } from "@mui/icons-material";
 import {
   LessonContentProps,
@@ -52,17 +59,32 @@ const TimeDisplay = styled(Typography)(({ theme }) => ({
   minWidth: 40,
 }));
 
+const SpeedButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.common.white,
+  minWidth: "auto",
+  padding: theme.spacing(0, 1),
+  fontSize: "0.75rem",
+  backgroundColor: "rgba(255, 255, 255, 0.1)",
+  "&:hover": {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  height: 24,
+  marginLeft: theme.spacing(1),
+}));
+
 const VideoLesson = ({
   lesson,
   isMoving,
   handleMoveToNext,
   participation,
   learning_progress,
+  handleBack,
 }: LessonContentProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1); // Thêm state cho tốc độ phát
   const [currentTime, setCurrentTime] = useState(
     learning_progress &&
       videoRef.current?.duration &&
@@ -146,6 +168,16 @@ const VideoLesson = ({
 
   const handleVolumeChange = (event: Event, newValue: number | number[]) => {
     setVolume(newValue as number);
+  };
+
+  // Hàm xử lý thay đổi tốc độ phát
+  const handleSpeedChange = () => {
+    if (videoRef.current) {
+      // Chuyển đổi giữa tốc độ bình thường và x2
+      const newSpeed = playbackSpeed === 1 ? 2 : 1;
+      videoRef.current.playbackRate = newSpeed;
+      setPlaybackSpeed(newSpeed);
+    }
   };
 
   const handleTimeUpdate = () => {
@@ -337,12 +369,17 @@ const VideoLesson = ({
                 <TimeDisplay>
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </TimeDisplay>
+                {/* Nút điều chỉnh tốc độ phát */}
+                <SpeedButton
+                  variant="text"
+                  onClick={handleSpeedChange}
+                  startIcon={<Speed fontSize="small" />}
+                >
+                  {playbackSpeed}x
+                </SpeedButton>
               </Box>
 
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton size="small" sx={{ color: "white" }}>
-                  <SettingsOutlined fontSize="small" />
-                </IconButton>
                 <IconButton
                   size="small"
                   sx={{ color: "white" }}
@@ -389,6 +426,7 @@ const VideoLesson = ({
           color="inherit"
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
+          onClick={handleBack}
         >
           Trước
         </NavButton>

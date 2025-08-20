@@ -1,8 +1,8 @@
 // src/pages/course/components/lessons/ArticleLesson.tsx
 import React, { useState } from "react";
-import { Box, Typography, Tabs, Tab, IconButton } from "@mui/material";
+import { Box, Typography, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+// import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
   LessonContentProps,
   NavButton,
@@ -27,37 +27,37 @@ const SlideImage = styled("img")({
   objectFit: "cover",
 });
 
-const SlideNavButton = styled(IconButton)(() => ({
-  position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
-  backgroundColor: "rgba(255, 255, 255, 0.5)",
-  "&:hover": {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-  },
-  zIndex: 1,
-}));
+// const SlideNavButton = styled(IconButton)(() => ({
+//   position: "absolute",
+//   top: "50%",
+//   transform: "translateY(-50%)",
+//   backgroundColor: "rgba(255, 255, 255, 0.5)",
+//   "&:hover": {
+//     backgroundColor: "rgba(255, 255, 255, 0.8)",
+//   },
+//   zIndex: 1,
+// }));
 
-const SlideIndicators = styled(Box)(({ theme }) => ({
-  position: "absolute",
-  bottom: theme.spacing(2),
-  left: "50%",
-  transform: "translateX(-50%)",
-  display: "flex",
-  gap: theme.spacing(1),
-}));
+// const SlideIndicators = styled(Box)(({ theme }) => ({
+//   position: "absolute",
+//   bottom: theme.spacing(2),
+//   left: "50%",
+//   transform: "translateX(-50%)",
+//   display: "flex",
+//   gap: theme.spacing(1),
+// }));
 
-const SlideIndicator = styled(Box)<{ active?: boolean }>(
-  ({ theme, active }) => ({
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    backgroundColor: active
-      ? theme.palette.primary.main
-      : "rgba(255, 255, 255, 0.5)",
-    cursor: "pointer",
-  })
-);
+// const SlideIndicator = styled(Box)<{ active?: boolean }>(
+//   ({ theme, active }) => ({
+//     width: 8,
+//     height: 8,
+//     borderRadius: "50%",
+//     backgroundColor: active
+//       ? theme.palette.primary.main
+//       : "rgba(255, 255, 255, 0.5)",
+//     cursor: "pointer",
+//   })
+// );
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   textTransform: "none",
@@ -104,22 +104,23 @@ const ArticleLesson = ({
   isMoving,
   handleMoveToNext,
   participation,
+  handleBack,
 }: LessonContentProps) => {
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [activeSlide] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const slides = lesson.image_files || [];
 
-  const handleSlideChange = (index: number) => {
-    setActiveSlide(index);
-  };
+  // const handleSlideChange = (index: number) => {
+  //   setActiveSlide(index);
+  // };
 
-  const handlePrevSlide = () => {
-    setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  };
+  // const handlePrevSlide = () => {
+  //   setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  // };
 
-  const handleNextSlide = () => {
-    setActiveSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  };
+  // const handleNextSlide = () => {
+  //   setActiveSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  // };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -144,16 +145,16 @@ const ArticleLesson = ({
             />
 
             {/* Navigation Buttons */}
-            <SlideNavButton onClick={handlePrevSlide} sx={{ left: 16 }}>
+            {/* <SlideNavButton onClick={handlePrevSlide} sx={{ left: 16 }}>
               <ChevronLeft />
             </SlideNavButton>
 
             <SlideNavButton onClick={handleNextSlide} sx={{ right: 16 }}>
               <ChevronRight />
-            </SlideNavButton>
+            </SlideNavButton> */}
 
             {/* Slide Indicators */}
-            <SlideIndicators>
+            {/* <SlideIndicators>
               {slides.map((slide, index) => (
                 <SlideIndicator
                   key={slide.id}
@@ -161,7 +162,7 @@ const ArticleLesson = ({
                   onClick={() => handleSlideChange(index)}
                 />
               ))}
-            </SlideIndicators>
+            </SlideIndicators> */}
           </SliderContainer>
         )}
 
@@ -183,8 +184,8 @@ const ArticleLesson = ({
           >
             <StyledTab label="Mô tả" />
             <StyledTab label="Đánh giá" />
-            <StyledTab label="Thảo luận" />
-            <StyledTab label="Tài nguyên" />
+            {/* <StyledTab label="Thảo luận" />
+            <StyledTab label="Tài nguyên" /> */}
           </Tabs>
         </Box>
 
@@ -235,6 +236,7 @@ const ArticleLesson = ({
           color="inherit"
           sx={{ borderColor: "divider", color: "text.secondary" }}
           disabled={isMoving}
+          onClick={handleBack}
         >
           Trước
         </NavButton>

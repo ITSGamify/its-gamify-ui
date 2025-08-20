@@ -120,6 +120,19 @@ export const useCourseDetail = () => {
   const isCourseCompleted =
     allLessons.length === completedLearningProgresses.length;
 
+  const handleBack = useCallback(() => {
+    const currentIndex = allLessons.findIndex(
+      (lesson) => lesson.id === current_lesson_id
+    );
+
+    if (currentIndex == 0) return;
+
+    if (currentIndex > 0) {
+      const previousLesson = allLessons[currentIndex - 1];
+      setSearchParams({ lessonId: previousLesson.id });
+    }
+  }, [allLessons, current_lesson_id, setSearchParams]);
+
   const handleMoveToNext = useCallback(
     async (param: ProgressRequestParams, shouldNavigate: boolean = true) => {
       await upsertProgress(param, {
@@ -194,5 +207,6 @@ export const useCourseDetail = () => {
     completedLearningProgresses,
     isMoving,
     handleMoveToNext,
+    handleBack,
   };
 };

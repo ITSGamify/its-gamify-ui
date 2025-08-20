@@ -5,6 +5,7 @@ import {
   useGetCourseDetail,
   useGetCourseParticipations,
   useJoinCourse,
+  useUpsertCourseCollection,
 } from "@services/course";
 import { getRoute } from "@utils/route";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -97,6 +98,35 @@ export const useCourseOverview = () => {
     }
   }, [courseId, joinCourse, navigate, isJoinedCourse]);
 
+  const [bookmarked, setBookmarked] = useState<string[]>([]);
+
+  // Cập nhật state bookmarked khi courseDetail thay đổi
+  useEffect(() => {
+    if (courseDetail?.course_collections) {
+      setBookmarked(
+        courseDetail.course_collections.map(
+          (collection) => collection.course_id
+        )
+      );
+    }
+  }, [courseDetail]);
+
+  const { mutateAsync: upsertCourseCollection } = useUpsertCourseCollection();
+
+  const toggleBookmark = useCallback(
+    async (courseId: string) => {
+      await upsertCourseCollection(courseId, {
+        onSuccess: () => {
+          if (bookmarked.includes(courseId)) {
+            setBookmarked(bookmarked.filter((id) => id !== courseId));
+          } else {
+            setBookmarked([...bookmarked, courseId]);
+          }
+        },
+      });
+    },
+    [bookmarked, upsertCourseCollection]
+  );
   return {
     course: courseDetail,
     participations: courseParticipations,
@@ -105,5 +135,7 @@ export const useCourseOverview = () => {
     inCompleteLessons,
     completedLearningProgresses,
     allLessons,
+    bookmarked,
+    toggleBookmark,
   };
 };

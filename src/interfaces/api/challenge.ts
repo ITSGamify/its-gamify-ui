@@ -26,28 +26,35 @@ export interface Room {
   host_user_id: string;
   host_user: User;
   status: RoomStatus;
-  opponent_user_id: string | null;
-  opponent_user: User;
-  is_host_ready: boolean;
-  is_opponent_ready: boolean;
-  is_abandoned: boolean;
+  room_code: string;
   created_date: string;
-  host_score: number;
-  opponent_score: number;
-  current_question: number;
-  is_opponent_answer: number;
-  is_host_answer: number;
+  current_question_index: number;
+  current_question_id: string;
+  room_users: RoomUser[];
+  max_players: number;
+}
+
+export interface RoomUser {
+  id: string;
+  user_id: string;
+  user: User;
+  is_out_room: boolean;
+  current_score: number;
+  correct_answers: number;
+  is_current_question_answered: boolean;
 }
 
 export type HistoryStatus = "WIN" | "LOSE" | "DRAW";
 export interface History {
   id: string;
   your_score: number;
-  opp_score: number;
+  winner_score: number;
   user_id: string;
   user: User;
-  opponent_id: string;
-  opponent: User;
+  winner_id: string;
+  winner: User;
+  rank: number;
+  points: number;
   challenge_id: string;
   challenge: Challenge;
   status: HistoryStatus;

@@ -43,6 +43,13 @@ export interface Course {
   quarter?: Quarter;
   image_files: StorageFile[] | null;
   course_results: CourseResult[];
+  course_collections: CourseCollection[];
+}
+
+export interface CourseCollection {
+  id: string;
+  user_id: string;
+  course_id: string;
 }
 
 export interface Quarter {

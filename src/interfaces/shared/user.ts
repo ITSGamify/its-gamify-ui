@@ -1,9 +1,10 @@
 // src/types/user.ts
 export enum RoleEnum {
-  ADMIN = "admin",
-  EMPLOYEE = "employee",
-  LEADER = "leader",
-  TRAINER = "trainer",
+  ADMIN = "ADMIN",
+  EMPLOYEE = "EMPLOYEE",
+  LEADER = "LEADER",
+  TRAINER = "TRAININGSTAFF",
+  MANAGER = "MANAGER",
 }
 
 export interface User {

@@ -3,10 +3,20 @@ import React from "react";
 import ErrorLayout from "@components/layout/ErrorLayout";
 import { Box, useTheme } from "@mui/material";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@constants/path";
 
 const NotFound404: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
+  const handleBackToHome = () => {
+    navigate(PATH.HOME);
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
   const illustration = (
     <Box
       sx={{
@@ -33,6 +43,8 @@ const NotFound404: React.FC = () => {
       title="Trang không tìm thấy"
       description="Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển."
       illustration={illustration}
+      onClick={handleBackToHome}
+      onBack={handleBack}
     />
   );
 };

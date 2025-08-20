@@ -1,5 +1,6 @@
 import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
+import { Room } from "@interfaces/api/challenge";
 import { useGetChallengeDetail, useGetRooms } from "@services/challenge";
 import { useGetChallengeQuestions } from "@services/question";
 import { useGetUserMetric } from "@services/user";
@@ -23,6 +24,13 @@ export const useRoomPage = () => {
   const profile = userSession.getUserProfile();
 
   const [showCreateRoom, setShowCreateRoom] = useState(false);
+  const [showJoinRoom, setShowJoinRoom] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState<string>("");
+
+  const handleCloseJoinModal = () => {
+    setSelectedRoomId("");
+    setShowJoinRoom(false);
+  };
 
   const { data: challengeDetail, isFetching: isLoadingChallenge } =
     useGetChallengeDetail(tournamentId || "");
@@ -51,19 +59,27 @@ export const useRoomPage = () => {
     navigate(PATH.TOURNAMENT);
   };
 
-  const handleJoinRoom = async (roomId: string, bet_points: number) => {
+  const handleJoinRoom = async (room: Room) => {
     try {
       if (
         userMetric?.point_in_quarter &&
-        bet_points > userMetric?.point_in_quarter
+        room.bet_points > userMetric?.point_in_quarter
       ) {
         toast.warning(ToastContent, {
           data: { message: "Bạn không đủ điểm cược!" },
         });
         return;
       }
-      const route = getRoute(PATH.TOURNAMENT_WAITING_ROOM, { roomId: roomId });
-      navigate(route);
+
+      if (room.room_users.length >= room.max_players) {
+        toast.warning(ToastContent, {
+          data: { message: "Phòng đã đầy!" },
+        });
+        return;
+      }
+
+      setSelectedRoomId(room.id);
+      setShowJoinRoom(true);
     } catch (err) {
       console.error("Error joining room: ", err);
     }
@@ -93,7 +109,7 @@ export const useRoomPage = () => {
   const { data: questionsData, isFetching: isLoadingQuestion } =
     useGetChallengeQuestions(getChallengeQuestionsReq);
 
-  const num_of_question = questionsData?.length;
+  const num_of_question = questionsData?.pagination.total_items_count || 0;
 
   return {
     rooms: roomRes?.data || [],
@@ -108,8 +124,11 @@ export const useRoomPage = () => {
     handleOpenRoom,
     userMetric,
     handleBackToPrevious,
-    handleJoinRoom,
     tournamentId,
     num_of_question,
+    showJoinRoom,
+    selectedRoomId,
+    handleCloseJoinModal,
+    handleJoinRoom,
   };
 };

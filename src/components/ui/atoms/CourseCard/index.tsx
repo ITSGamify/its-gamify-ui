@@ -1,5 +1,5 @@
 // src/components/CourseCard.tsx
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Card,
   CardMedia,
@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { Course } from "@interfaces/api/course";
 import { getRoute } from "@utils/route";
+import { useUpsertCourseCollection } from "@services/course";
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -69,14 +70,26 @@ const CourseCard = ({
   isCompleted = false,
 }: CourseCardProps) => {
   const theme = useTheme();
-  const [bookmarked, setBookmarked] = useState<string[]>([]);
-  const toggleBookmark = (courseId: string) => {
-    if (bookmarked.includes(courseId)) {
-      setBookmarked(bookmarked.filter((id) => id !== courseId));
-    } else {
-      setBookmarked([...bookmarked, courseId]);
-    }
-  };
+  const [bookmarked, setBookmarked] = useState<string[]>([
+    ...course.course_collections.map((collection) => collection.course_id),
+  ]);
+
+  const { mutateAsync: upsertCourseCollection } = useUpsertCourseCollection();
+
+  const toggleBookmark = useCallback(
+    async (courseId: string) => {
+      await upsertCourseCollection(courseId, {
+        onSuccess: () => {
+          if (bookmarked.includes(courseId)) {
+            setBookmarked(bookmarked.filter((id) => id !== courseId));
+          } else {
+            setBookmarked([...bookmarked, courseId]);
+          }
+        },
+      });
+    },
+    [bookmarked, upsertCourseCollection]
+  );
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -160,7 +173,10 @@ const CourseCard = ({
               backgroundColor: "rgba(255, 255, 255, 0.9)",
             },
           }}
-          onClick={() => toggleBookmark(course.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleBookmark(course.id);
+          }}
         >
           {bookmarked.includes(course.id) ? (
             <BookmarkIcon color="primary" />

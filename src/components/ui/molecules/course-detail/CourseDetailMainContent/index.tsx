@@ -30,6 +30,7 @@ export interface LessonContentProps {
   ) => void;
   participation: Participation;
   learning_progress: LearningProgress | null;
+  handleBack?: () => void;
 }
 
 interface CourseMainContentProps {
@@ -41,6 +42,7 @@ interface CourseMainContentProps {
     param: ProgressRequestParams,
     shouldNavigate?: boolean
   ) => void;
+  handleBack?: () => void;
 }
 
 const CourseMainContent = ({
@@ -49,6 +51,7 @@ const CourseMainContent = ({
   learningProgresses,
   isMoving,
   handleMoveToNext,
+  handleBack,
 }: CourseMainContentProps) => {
   const { data: lesson } = useGetLesson(lessonId);
 
@@ -74,6 +77,7 @@ const CourseMainContent = ({
           lesson={lesson}
           participation={participation}
           learning_progress={learning_progress}
+          handleBack={handleBack}
         />
       )}
     </>

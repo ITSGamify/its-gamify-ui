@@ -17,6 +17,7 @@ export const BASE_KEYS = {
   ROOM: "rooms",
   QUESTION: "questions",
   REVIEW: "course-reviews",
+  NOTIFICATION: "notifications",
 };
 
 export const END_POINTS = {
@@ -89,5 +90,9 @@ export const END_POINTS = {
   },
   DEPARTMENT: {
     BASE: BASE_KEYS.DEPARTMENTS,
+  },
+  NOTIFICATION: {
+    BASE: BASE_KEYS.NOTIFICATION,
+    DETAIL: `${BASE_KEYS.NOTIFICATION}/:notificationId`,
   },
 };

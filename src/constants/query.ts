@@ -58,6 +58,10 @@ export const QUERY_KEYS = {
   QUESTION: {
     BASE: BASE_KEYS.QUESTION,
   },
+  NOTIFICATION: {
+    BASE: BASE_KEYS.NOTIFICATION,
+    DETAIL: `${BASE_KEYS.NOTIFICATION}/:notificationId`,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

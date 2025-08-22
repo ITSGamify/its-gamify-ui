@@ -11,6 +11,7 @@ import * as signalR from "@microsoft/signalr";
 import ToastContent from "@components/ui/atoms/Toast";
 import { toast } from "react-toastify";
 import { API_URL } from "@config/env";
+import userSession from "@utils/user-session";
 // import userSession from "@utils/user-session";
 
 interface SignalRContextType {
@@ -39,7 +40,7 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
   // const [message, setMessage] = useState<string | null>(null);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const isConnectingRef = useRef(false);
-  // const profile = userSession.getUserProfile();
+  const profile = userSession.getUserProfile();
 
   useEffect(() => {
     // Tránh tạo nhiều kết nối khi component re-render
@@ -56,16 +57,6 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
     connectionRef.current = newConnection;
     setConnection(newConnection);
 
-    // Đăng ký các event listeners
-    // newConnection.on("UserJoined", (message: string) => {
-    //   toast.success(ToastContent, {
-    //     data: {
-    //       message: `Người chơi đã tham gia!`,
-    //     },
-    //   });
-    //   setMessage(message);
-    // });
-
     newConnection.on("Error", (message: string) => {
       setErrorMessage(message);
       toast.error(ToastContent, {
@@ -81,10 +72,6 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
         },
       });
     });
-
-    // Thêm các event khác nếu cần (ví dụ: "OpponentLeft", "HostChanged" từ code C#)
-    // newConnection.on("OpponentLeft", () => { /* Xử lý */ });
-    // newConnection.on("HostChanged", (newHostId: string) => { /* Xử lý */ });
 
     // Bắt đầu kết nối
     const startConnection = async () => {
@@ -125,7 +112,7 @@ export const SignalRProvider = ({ children }: { children: ReactNode }) => {
 
       stopConnection();
     };
-  }, []);
+  }, [profile?.user.id]);
 
   return (
     <SignalRContext.Provider

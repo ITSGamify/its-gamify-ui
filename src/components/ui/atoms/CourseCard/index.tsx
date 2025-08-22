@@ -12,7 +12,7 @@ import {
   styled,
   useTheme,
   IconButton,
-  alpha,
+  // alpha,
   Rating,
 } from "@mui/material";
 import {
@@ -47,14 +47,14 @@ const CategoryChip = styled(Chip)(() => ({
   height: "24px",
 }));
 
-const LevelChip = styled(Chip)(({ theme }) => ({
-  borderRadius: "16px",
-  fontWeight: 600,
-  fontSize: "0.75rem",
-  height: "24px",
-  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-  color: theme.palette.primary.main,
-}));
+// const LevelChip = styled(Chip)(({ theme }) => ({
+//   borderRadius: "16px",
+//   fontWeight: 600,
+//   fontSize: "0.75rem",
+//   height: "24px",
+//   backgroundColor: alpha(theme.palette.primary.main, 0.1),
+//   color: theme.palette.primary.main,
+// }));
 
 interface CourseCardProps {
   course: Course;
@@ -187,9 +187,6 @@ const CourseCard = ({
       </Box>
 
       <CardContent sx={{ flexGrow: 1, p: 1, paddingBottom: "10px !important" }}>
-        <Box sx={{ mb: 1 }}>
-          <LevelChip label={"Cơ bản"} size="small" />
-        </Box>
         <Typography variant="h6" component="div" gutterBottom noWrap>
           {course.title}
         </Typography>

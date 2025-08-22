@@ -12,7 +12,6 @@ interface ProgressStatsProps {
 const ProgressStats: React.FC<ProgressStatsProps> = ({
   completed,
   overdue,
-  onViewAll,
   onRemind,
 }) => {
   return (
@@ -44,13 +43,6 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({
           sx={{ textTransform: "none" }}
         >
           Nhắc nhở
-        </Button>
-        <Button
-          variant="text"
-          onClick={onViewAll}
-          sx={{ textTransform: "none" }}
-        >
-          Xem tất cả
         </Button>
       </Box>
     </Box>

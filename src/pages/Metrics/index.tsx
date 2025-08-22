@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   Box,
   Card,
@@ -38,6 +38,9 @@ import EmployeeHeader from "@components/ui/atoms/leader-board/EmployeeHeader";
 import ProgressStats from "@components/ui/atoms/leader-board/ProgressStats";
 import CourseTable from "@components/ui/atoms/leader-board/CourseTable";
 import { useGetUserStatistic } from "@services/user";
+import { useCreateNotification } from "@services/notification";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 const MetricsPage: React.FC = () => {
   const theme = useTheme();
 
@@ -98,6 +101,27 @@ const MetricsPage: React.FC = () => {
     userId: selectedMetric?.user_id,
     quaterId: selectedQuarterId,
   });
+
+  const { mutateAsync: createNotification } = useCreateNotification();
+
+  const handleRemind = useCallback(
+    async (userId: string) => {
+      await createNotification(
+        {
+          user_id: userId,
+          type: "REMIND_COURSE",
+        },
+        {
+          onSuccess: () => {
+            toast.success(ToastContent, {
+              data: { message: "Đã gửi thông báo nhắc nhở thành công!" },
+            });
+          },
+        }
+      );
+    },
+    [createNotification]
+  );
 
   return (
     <Box sx={{ p: 3, pt: 0, maxWidth: "100%", overflowX: "auto" }}>
@@ -294,7 +318,7 @@ const MetricsPage: React.FC = () => {
                         completed={statistic.completed}
                         overdue={statistic.overdue}
                         onViewAll={() => console.log("View all")}
-                        onRemind={() => console.log("Remind")}
+                        onRemind={() => handleRemind(selectedMetric.user_id)}
                       />
                       <CourseTable courses={statistic.courses} />
                     </CardContent>
@@ -302,7 +326,6 @@ const MetricsPage: React.FC = () => {
                 </Grid>
               </Grid>
             )}
-            {/* Nếu có thêm data (e.g., bio, courses list), thêm ở đây */}
           </Box>
         ) : (
           <Typography>Không có dữ liệu</Typography>

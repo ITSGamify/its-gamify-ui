@@ -1,5 +1,5 @@
 // src/components/layout/Header/index.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -36,6 +36,18 @@ import userSession from "@utils/user-session";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import { RoleEnum } from "@interfaces/api/user";
+import {
+  useInfiniteNotifications,
+  useUpdateAllNotification,
+  useUpdateNotification,
+} from "@services/notification";
+import { Notification } from "@interfaces/api/notification";
+import { formatDate } from "@utils/date";
+import { useSignalR } from "@providers/SignalRContext";
+import { toast } from "react-toastify";
+import ToastContent from "../Toast";
+import { CheckCircle, Star, Notifications } from "@mui/icons-material";
+
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   color: theme.palette.text.primary,
@@ -97,7 +109,7 @@ const navigationLinks = [
   { path: PATH.TOURNAMENT, label: "Đấu trường" },
   { path: PATH.LEADER_BOARD, label: "Bảng xếp hạng" },
 ];
-
+const MAX_TITLE_LENGTH = 50;
 interface HeaderProps {
   onToggleDrawer: () => void;
   isDrawerOpen: boolean;
@@ -144,6 +156,28 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
   // Menu ID
   const menuId = "primary-account-menu";
   const notificationMenuId = "notification-menu";
+
+  const { connection } = useSignalR();
+
+  connection?.on("NotificationMessage", (notificationJson: string) => {
+    const notification: Notification = JSON.parse(notificationJson);
+    if (notification.user_id === profile?.user.id) {
+      setNotification((prev) => {
+        const notificationExists = prev.some((n) => n.id === notification.id);
+
+        if (notificationExists) {
+          return [...prev];
+        } else {
+          toast.success(ToastContent, {
+            data: {
+              message: notification.message,
+            },
+          });
+          return [notification, ...prev];
+        }
+      });
+    }
+  });
 
   // Profile Menu
   const renderMenu = (
@@ -229,7 +263,50 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
     </Menu>
   );
 
-  // Notification Menu
+  const { mutateAsync: updateNotification } = useUpdateNotification();
+  const { mutateAsync: readAllNotifications } = useUpdateAllNotification();
+  const [notifications, setNotification] = useState<Notification[]>([]);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending: isLoadingNotifications,
+  } = useInfiniteNotifications(10);
+
+  useEffect(() => {
+    if (data) {
+      const allNotifications = data.pages.flatMap((page) => page.data || []);
+      setNotification(allNotifications);
+    }
+  }, [data]);
+
+  const handleNotificationClick = async (notificationId: string) => {
+    await updateNotification(
+      { notificationId, is_read: true },
+      {
+        onSuccess: (notification) => {
+          setNotification((prev) =>
+            prev.map((n) =>
+              n.id === notification.id ? { ...n, is_read: true } : n
+            )
+          );
+        },
+      }
+    );
+  };
+
+  const handleReadAllNotifications = async () => {
+    await readAllNotifications(
+      { is_read: true },
+      {
+        onSuccess: () => {
+          setNotification((prev) => prev.map((n) => ({ ...n, is_read: true })));
+        },
+      }
+    );
+  };
+
   const renderNotificationMenu = (
     <Menu
       anchorEl={notificationAnchorEl}
@@ -261,42 +338,118 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
           Thông báo
         </Typography>
-        <Typography
-          variant="body2"
-          color="primary"
-          sx={{ cursor: "pointer", fontWeight: 500 }}
-        >
-          Đánh dấu tất cả đã đọc
-        </Typography>
+        {notifications && notifications.length > 0 && (
+          <Typography
+            variant="body2"
+            color="primary"
+            sx={{ cursor: "pointer", fontWeight: 500 }}
+            onClick={handleReadAllNotifications}
+          >
+            Đánh dấu tất cả đã đọc
+          </Typography>
+        )}
       </Box>
       <Divider />
       <Box sx={{ maxHeight: 320, overflow: "auto" }}>
-        {[1, 2, 3].map((item) => (
-          <MenuItem
-            key={item}
-            onClick={handleNotificationMenuClose}
-            sx={{ py: 1.5 }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                Khóa học mới đã được thêm
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                2 giờ trước
-              </Typography>
-            </Box>
-          </MenuItem>
-        ))}
+        {isLoadingNotifications ? (
+          <Box sx={{ p: 2, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              Đang tải...
+            </Typography>
+          </Box>
+        ) : notifications.length === 0 ? (
+          <Box sx={{ p: 2, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              Không có thông báo
+            </Typography>
+          </Box>
+        ) : (
+          <>
+            {notifications.map((notification) => {
+              // Xác định icon dựa trên type
+              let IconComponent;
+              switch (
+                notification.type // Giả sử notification có trường 'type'
+              ) {
+                case "COURSE_COMPLETED":
+                  IconComponent = CheckCircle;
+                  break;
+                case "POINTS_BONUS":
+                  IconComponent = Star;
+                  break;
+                case "REMIND_COURSE":
+                  IconComponent = Notifications;
+                  break;
+                default:
+                  IconComponent = Notifications; // Icon mặc định nếu type không khớp
+              }
+
+              // Cắt ngắn title nếu quá dài
+              const displayTitle =
+                notification.title &&
+                notification.title.length > MAX_TITLE_LENGTH
+                  ? `${notification.title.slice(0, MAX_TITLE_LENGTH)}...`
+                  : notification.title || "Tiêu đề thông báo";
+
+              return (
+                <MenuItem
+                  key={notification.id}
+                  onClick={() => {
+                    handleNotificationClick(notification.id);
+                    handleNotificationMenuClose();
+                  }}
+                  sx={{
+                    py: 1.5,
+                    backgroundColor: notification.is_read
+                      ? "inherit"
+                      : "action.hover", // Nền khác cho chưa đọc
+                  }}
+                >
+                  <ListItemIcon>
+                    <IconComponent
+                      fontSize="small"
+                      color={notification.is_read ? "action" : "primary"} // Màu khác cho chưa đọc
+                    />
+                  </ListItemIcon>
+                  <ListItemText>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: notification.is_read ? "normal" : "bold", // Bold cho chưa đọc
+                      }}
+                    >
+                      {displayTitle}
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        {notification.created_date
+                          ? formatDate(notification.created_date)
+                          : "Thời gian không xác định"}
+                      </Typography>
+                      {notification.is_read && (
+                        <Typography variant="caption" color="text.secondary">
+                          Đã xem
+                        </Typography>
+                      )}
+                    </Box>
+                  </ListItemText>
+                </MenuItem>
+              );
+            })}
+            {hasNextPage && (
+              <MenuItem
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                sx={{ justifyContent: "center" }}
+              >
+                <Typography color="primary" sx={{ fontWeight: 500 }}>
+                  {isFetchingNextPage ? "Đang tải..." : "Tải thêm"}
+                </Typography>
+              </MenuItem>
+            )}
+          </>
+        )}
       </Box>
-      <Divider />
-      <MenuItem
-        onClick={handleNotificationMenuClose}
-        sx={{ justifyContent: "center" }}
-      >
-        <Typography color="primary" sx={{ fontWeight: 500 }}>
-          Xem tất cả
-        </Typography>
-      </MenuItem>
     </Menu>
   );
 
@@ -366,7 +519,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
                 aria-haspopup="true"
                 onClick={handleNotificationMenuOpen}
               >
-                <StyledBadge badgeContent={3} color="error">
+                <StyledBadge
+                  badgeContent={notifications.filter((n) => !n.is_read).length}
+                  color="error"
+                >
                   <NotificationsIcon />
                 </StyledBadge>
               </IconButton>

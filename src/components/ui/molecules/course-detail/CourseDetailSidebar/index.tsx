@@ -1,5 +1,5 @@
 // src/pages/course/components/CourseContentSidebar.tsx
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Box,
   Typography,
@@ -11,6 +11,7 @@ import {
   Paper,
   Grid,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   PlayCircleOutline as PlayCircleOutlineIcon,
@@ -23,7 +24,7 @@ import { styled } from "@mui/material/styles";
 import { Lesson, Module } from "@interfaces/api/lesson";
 import { useSearchParams } from "react-router-dom";
 import { LearningProgress } from "@interfaces/api/learningProgress";
-
+import LockOutlineIcon from "@mui/icons-material/LockOutline";
 // Styled components
 const ProgressIndicator = styled(Box)<{ value: number }>(
   ({ theme, value }) => ({
@@ -59,21 +60,21 @@ interface CourseContentSidebarProps {
   learningProgresses: LearningProgress[] | undefined;
   current_lesson_id: string;
   completedLearningProgresses: LearningProgress[];
+  allLessons: Lesson[];
+  inCompleteLessons: Lesson[];
 }
 
 const CourseContentSidebar = ({
   modules,
   current_lesson_id,
   completedLearningProgresses,
+  allLessons,
+  inCompleteLessons,
 }: CourseContentSidebarProps) => {
   const [expandedChapters, setExpandedChapters] = useState<
     Record<string, boolean>
   >({});
   const [, setSearchParams] = useSearchParams();
-
-  const handleLessonClick = (lessonId: string) => {
-    setSearchParams({ lessonId });
-  };
 
   const toggleChapter = (chapterId: string) => {
     setExpandedChapters((prev) => ({
@@ -110,25 +111,72 @@ const CourseContentSidebar = ({
     return Math.round((completedLessonsInModule / totalLessons) * 100);
   };
 
-  const getLessonIcon = (lesson: Lesson) => {
-    const isCompleted = completedLearningProgresses.some(
-      (progress) =>
-        progress.lesson_id === lesson.id && progress.status === "COMPLETED"
-    );
+  const shouldLockLesson = useCallback(
+    (lessonId: string): boolean => {
+      const currentIndex = allLessons.findIndex((l) => l.id === lessonId);
+      const last_index = allLessons.length - 1;
+      const isLastLesson = currentIndex === last_index;
 
-    if (isCompleted) {
-      return <CheckCircleIcon color="primary" />;
-    }
+      if (
+        isLastLesson &&
+        (inCompleteLessons.length > 1 ||
+          (inCompleteLessons.length === 1 &&
+            inCompleteLessons[0].id !== lessonId))
+      ) {
+        return true;
+      }
 
-    switch (lesson.type) {
-      case "article":
-        return <ArticleOutlined color="primary" />;
-      case "quiz":
-        return <QuestionAnswerIcon color="action" />;
-      default:
-        return <PlayCircleOutlineIcon color="action" />;
-    }
-  };
+      return false;
+    },
+    [allLessons, inCompleteLessons]
+  );
+  const handleLessonClick = useCallback(
+    (lessonId: string) => {
+      if (shouldLockLesson(lessonId)) {
+        return;
+      }
+
+      setSearchParams({ lessonId });
+    },
+    [setSearchParams, shouldLockLesson]
+  );
+  const getLessonIcon = useCallback(
+    (lesson: Lesson) => {
+      const currentIndex = allLessons.findIndex(
+        (lesson) => lesson.id === lesson.id
+      );
+      const last_index = allLessons.length - 1;
+      const isLastLesson = currentIndex === last_index;
+
+      if (
+        isLastLesson &&
+        (inCompleteLessons.length > 1 ||
+          (inCompleteLessons.length > 1 &&
+            inCompleteLessons[0].id !== lesson.id))
+      ) {
+        return <LockOutlineIcon color="primary" />;
+      }
+
+      const isCompleted = completedLearningProgresses.some(
+        (progress) =>
+          progress.lesson_id === lesson.id && progress.status === "COMPLETED"
+      );
+
+      if (isCompleted) {
+        return <CheckCircleIcon color="primary" />;
+      }
+
+      switch (lesson.type) {
+        case "article":
+          return <ArticleOutlined color="primary" />;
+        case "quiz":
+          return <QuestionAnswerIcon color="action" />;
+        default:
+          return <PlayCircleOutlineIcon color="action" />;
+      }
+    },
+    [allLessons, completedLearningProgresses, inCompleteLessons]
+  );
 
   return (
     <Paper sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -160,7 +208,7 @@ const CourseContentSidebar = ({
               }}
               onClick={() => toggleChapter(module.id)}
             >
-              <Grid>
+              <Grid size={{ xs: 10, sm: 11 }}>
                 <Box display="flex" alignItems="center">
                   <ProgressIndicator value={getProgress(module)} sx={{ mr: 2 }}>
                     <Typography
@@ -171,12 +219,23 @@ const CourseContentSidebar = ({
                       {getProgress(module)}%
                     </Typography>
                   </ProgressIndicator>
-                  <Typography variant="subtitle1" fontWeight="600">
-                    {module.title}
-                  </Typography>
+                  <Tooltip title={module.title} arrow>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="600"
+                      noWrap
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {module.title}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </Grid>
-              <Grid>
+              <Grid size={{ xs: 2, sm: 1 }} sx={{ textAlign: "right" }}>
                 <IconButton size="small">
                   <ExpandMoreIcon
                     sx={{
@@ -221,12 +280,23 @@ const CourseContentSidebar = ({
                       {getLessonIcon(lesson)}
                     </ListItemIcon>
                     <ListItemText
-                      primary={lesson.title}
+                      primary={
+                        <Tooltip title={lesson.title} arrow>
+                          <Typography
+                            variant="body2"
+                            fontWeight={400}
+                            noWrap
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {lesson.title}
+                          </Typography>
+                        </Tooltip>
+                      }
                       secondary={`${lesson.duration} phút`}
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        fontWeight: lesson.id === "lesson-1-2" ? 600 : 400,
-                      }}
                       secondaryTypographyProps={{
                         variant: "caption",
                       }}

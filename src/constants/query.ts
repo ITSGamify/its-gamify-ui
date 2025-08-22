@@ -17,6 +17,7 @@ export const QUERY_KEYS = {
     COURSE_PARTICIPATIONS: `${BASE_KEYS.COURSES}/:courseId/course-participations`,
     COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
     COURSE_COLLECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-collections`,
+    COURSE_REVIEWS: `${BASE_KEYS.COURSES}/:courseId/course-reviews`,
   },
   PARTICIPATIONS: {
     BASE: BASE_KEYS.COURSE_PARTICIPATIONS,

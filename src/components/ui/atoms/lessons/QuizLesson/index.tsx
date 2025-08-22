@@ -13,6 +13,8 @@ import { ProgressRequestParams } from "@services/progress";
 import { useNavigate } from "react-router-dom";
 import { getRoute } from "@utils/route";
 import { PATH } from "@constants/path";
+import { toast } from "react-toastify";
+import ToastContent from "../../Toast";
 
 const QuizContainer = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -46,6 +48,8 @@ const QuizLesson = ({
   participation,
   learning_progress,
   handleBack,
+  inCompleteLessons,
+  isLastLesson,
 }: LessonContentProps) => {
   const navigate = useNavigate();
 
@@ -60,6 +64,17 @@ const QuizLesson = ({
   };
 
   const handleStartQuiz = useCallback(() => {
+    if (
+      inCompleteLessons.length > 1 ||
+      (inCompleteLessons.length === 1 && inCompleteLessons[0].id !== lesson.id)
+    ) {
+      toast.warning(ToastContent, {
+        data: {
+          message: "Bạn cần hoàn thành các bài học trước để làm bài kiểm tra.",
+        },
+      });
+      return;
+    }
     localStorage.setItem("courseId", participation.course_id);
     const path = getRoute(PATH.QUIZ, { quizId: lesson.quiz_id || "" });
     navigate(
@@ -67,11 +82,12 @@ const QuizLesson = ({
         `?type=LESSON&typeId=${lesson.id}&participationId=${participation.id}`
     );
   }, [
-    lesson.quiz_id,
+    inCompleteLessons,
     lesson.id,
-    navigate,
-    participation.id,
+    lesson.quiz_id,
     participation.course_id,
+    participation.id,
+    navigate,
   ]);
 
   return (
@@ -123,26 +139,28 @@ const QuizLesson = ({
           </StartButton>
         </QuizContainer>
       </Box>
-      <NavigationContainer>
-        <NavButton
-          variant="outlined"
-          color="inherit"
-          sx={{ borderColor: "divider", color: "text.secondary" }}
-          disabled={isMoving}
-          onClick={handleBack}
-        >
-          Trước
-        </NavButton>
+      {isLastLesson && (
+        <NavigationContainer>
+          <NavButton
+            variant="outlined"
+            color="inherit"
+            sx={{ borderColor: "divider", color: "text.secondary" }}
+            disabled={isMoving}
+            onClick={handleBack}
+          >
+            Trước
+          </NavButton>
 
-        <NavButton
-          variant="contained"
-          color="primary"
-          disabled={isMoving}
-          onClick={() => handleMoveToNext(params)}
-        >
-          Tiếp theo
-        </NavButton>
-      </NavigationContainer>
+          <NavButton
+            variant="contained"
+            color="primary"
+            disabled={isMoving}
+            onClick={() => handleMoveToNext(params)}
+          >
+            Tiếp theo
+          </NavButton>
+        </NavigationContainer>
+      )}
     </>
   );
 };

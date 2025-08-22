@@ -34,6 +34,8 @@ const CertificatesPage: React.FC = () => {
     searchInput,
     handleViewCertificate,
     resetSearch,
+    handleFilterChange,
+    filter,
   } = useCourseResultPage();
 
   return (
@@ -104,12 +106,12 @@ const CertificatesPage: React.FC = () => {
             <FormControl size="small" sx={{ minWidth: 150 }}>
               <InputLabel>Sắp xếp theo</InputLabel>
               <Select
-                value={""}
+                value={filter}
                 label="Sắp xếp theo"
-                // onChange={handleSortChange}
+                onChange={(e) => handleFilterChange(e.target.value)}
               >
-                <MenuItem value="date">Ngày hoàn thành</MenuItem>
-                <MenuItem value="name">Tên khóa học</MenuItem>
+                <MenuItem value="COMPLETEDDATE">Ngày hoàn thành</MenuItem>
+                <MenuItem value="COURSENAME">Tên khóa học</MenuItem>
               </Select>
             </FormControl>
           </Box>

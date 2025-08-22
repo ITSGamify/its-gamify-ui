@@ -27,7 +27,8 @@ import LeaderboardPage from "@pages/Leaderboard";
 import TournamentPage from "@pages/Tournament";
 import { RoleEnum } from "@interfaces/api/user";
 import UserProfilePage from "@pages/Profile";
-import LearningProgressDashboard from "@pages/Leaderboard/LearningProgressDashboard";
+// import LearningProgressDashboard from "@pages/Leaderboard/LearningProgressDashboard";
+import CourseCompletionPage from "@pages/Course/Completed";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
@@ -135,6 +136,10 @@ const router = createBrowserRouter(
         {
           path: PATH.COURSES_DETAIL,
           element: <CourseDetailPage />,
+        },
+        {
+          path: PATH.COURSES_COMPLETED,
+          element: <CourseCompletionPage />,
         },
         {
           path: PATH.CERTIFICATE,

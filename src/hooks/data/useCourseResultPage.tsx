@@ -31,15 +31,22 @@ export const useCourseResultPage = () => {
     getInitialSorted(searchParams, defaultSort)
   );
 
+  const [filter, setFilter] = useState<string>("COMPLETEDDATE");
+
+  const handleFilterChange = (value: string) => {
+    setFilter(value);
+  };
+
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const activeSearchInput = searchParams.get("q");
   const profile = userSession.getUserProfile();
 
-  const getAccountsReq = {
+  const getCourseResultsReq = {
     page: activePage,
     limit: DEFAULT_TABLE_LIMIT,
     q: activeSearchInput || "",
     userId: profile?.user.id || "",
+    filterString: filter,
     order_by: sortedColumns.map((sort) => ({
       order_column: sort.column ?? undefined,
       order_dir: sort.direction ?? undefined,
@@ -71,7 +78,7 @@ export const useCourseResultPage = () => {
     setSearchParams(searchParams);
   };
 
-  const { data, isFetching } = useGetCourseResults(getAccountsReq);
+  const { data, isFetching } = useGetCourseResults(getCourseResultsReq);
 
   const course_results = data?.data || [];
   const pagination = data?.pagination;
@@ -98,5 +105,7 @@ export const useCourseResultPage = () => {
     searchInput,
     handleViewCertificate,
     resetSearch,
+    handleFilterChange,
+    filter,
   };
 };

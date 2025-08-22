@@ -1,11 +1,12 @@
 import { request } from "@config/axios";
-import { GetCourseParams, RequestJoinCourseParams } from ".";
+import { GetCourseParams, GetReviewParams, RequestJoinCourseParams } from ".";
 import { PaginatedResponse } from "@interfaces/dom/query";
 import { getRoute } from "@utils/route";
 import { HTTP_METHODS } from "@constants/request";
 import { END_POINTS } from "@constants/endpoint";
 import { Course, Participation } from "@interfaces/api/course";
 import { Module } from "@interfaces/api/lesson";
+import { CourseReview } from "@interfaces/api/review";
 
 export const getCourses = async (
   params?: GetCourseParams
@@ -59,5 +60,17 @@ export const upsertCourseCollection = async (
   return request({
     url: getRoute(END_POINTS.COURSE.COURSE_COLLECTIONS, { courseId }),
     method: HTTP_METHODS.PUT,
+  });
+};
+
+export const getCourseReviews = async (
+  params: GetReviewParams
+): Promise<PaginatedResponse<CourseReview>> => {
+  return request({
+    url: getRoute(END_POINTS.COURSE.COURSE_REVIEWS, {
+      courseId: params.courseId,
+    }),
+    method: HTTP_METHODS.GET,
+    params,
   });
 };

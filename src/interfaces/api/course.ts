@@ -3,6 +3,7 @@ import { Department } from "./department";
 import { StorageFile } from "./file";
 import { LearningProgress } from "./learningProgress";
 import { Module } from "./lesson";
+import { CourseReview } from "./review";
 
 export type ParticipationStatus = "ENROLLED" | "COMPLETED";
 
@@ -81,6 +82,8 @@ export interface Participation {
   created_date: Date;
   deadline: Date;
   learning_progresses: LearningProgress[];
+  course_review: CourseReview | null;
+  user: User;
 }
 
 export interface CourseResult {
@@ -94,4 +97,5 @@ export interface CourseResult {
   scrore: number;
   is_passed: boolean;
   completed_date: string;
+  course_number: string;
 }

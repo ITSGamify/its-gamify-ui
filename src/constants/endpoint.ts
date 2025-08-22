@@ -16,6 +16,7 @@ export const BASE_KEYS = {
   CHALLENGE: "challenges",
   ROOM: "rooms",
   QUESTION: "questions",
+  REVIEW: "course-reviews",
 };
 
 export const END_POINTS = {
@@ -28,6 +29,7 @@ export const END_POINTS = {
     COURSE_PARTICIPATIONS: `${BASE_KEYS.COURSES}/:courseId/course-participations`,
     COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
     COURSE_COLLECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-collections`,
+    COURSE_REVIEWS: `${BASE_KEYS.COURSES}/:courseId/course-reviews`,
   },
   PARTICIPATIONS: {
     BASE: BASE_KEYS.COURSE_PARTICIPATIONS,
@@ -78,7 +80,14 @@ export const END_POINTS = {
     DETAIL: `${BASE_KEYS.ROOM}/:roomId`,
     JOIN_ROOM: `${BASE_KEYS.ROOM}/:roomId/join-room`,
   },
+  REVIEW: {
+    BASE: BASE_KEYS.REVIEW,
+    DETAIL: `${BASE_KEYS.REVIEW}/:reviewId`,
+  },
   QUESTION: {
     BASE: BASE_KEYS.QUESTION,
+  },
+  DEPARTMENT: {
+    BASE: BASE_KEYS.DEPARTMENTS,
   },
 };

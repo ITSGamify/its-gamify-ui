@@ -42,6 +42,9 @@ const LeaderboardPage: React.FC = () => {
     setSelectedQuarterId,
     sortedQuarters,
     isLoadingQuarters,
+    departments,
+    isLoadingDapartment,
+    handleSelectDepartment,
   } = useLeaderBoardPage();
 
   const calculateWinRate = (wins: number, losses: number) => {
@@ -268,25 +271,36 @@ const LeaderboardPage: React.FC = () => {
             >
               <Button
                 variant={activeTab === "overall" ? "contained" : "text"}
-                onClick={() => setActiveTab("overall")}
+                onClick={() => {
+                  setActiveTab("overall");
+                  handleSelectDepartment("");
+                }}
                 sx={{ borderRadius: 50, textTransform: "none" }}
               >
                 Tổng Thể
               </Button>
-              <Button
-                variant={activeTab === "software" ? "contained" : "text"}
-                onClick={() => setActiveTab("software")}
-                sx={{ borderRadius: 50, textTransform: "none" }}
-              >
-                Phần Mềm
-              </Button>
-              <Button
-                variant={activeTab === "marketing" ? "contained" : "text"}
-                onClick={() => setActiveTab("marketing")}
-                sx={{ borderRadius: 50, textTransform: "none" }}
-              >
-                Marketing
-              </Button>
+              {isLoadingDapartment ? (
+                <Button
+                  disabled
+                  sx={{ borderRadius: 50, textTransform: "none" }}
+                >
+                  <Skeleton width={80} />
+                </Button>
+              ) : (
+                departments.map((department) => (
+                  <Button
+                    key={department.id}
+                    variant={activeTab === department.id ? "contained" : "text"}
+                    onClick={() => {
+                      setActiveTab(department.id);
+                      handleSelectDepartment(department.id);
+                    }}
+                    sx={{ borderRadius: 50, textTransform: "none" }}
+                  >
+                    {department.name}
+                  </Button>
+                ))
+              )}
             </Box>
           </Box>
 

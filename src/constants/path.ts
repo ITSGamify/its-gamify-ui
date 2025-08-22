@@ -5,6 +5,7 @@ export const PATH = {
   COURSES: "/courses",
   COURSES_OVERVIEW: "/courses/overview/:courseId",
   COURSES_DETAIL: "/courses/detail/:courseId",
+  COURSES_COMPLETED: "/courses/completed/:courseId",
   QUIZ: "/quizzes/:quizId",
   TOURNAMENT: "/tournaments",
   TOURNAMENT_ROOM: "/tournaments/:tournamentId",

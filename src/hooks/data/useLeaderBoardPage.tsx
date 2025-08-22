@@ -1,6 +1,7 @@
 import { Quarter } from "@interfaces/api/course";
 import { OrderDirection } from "@interfaces/dom/query";
 import { TableColumns } from "@interfaces/dom/table";
+import { useGetDeparments } from "@services/department";
 import { useGetGeneralMetric, useGetTop10Metrics } from "@services/metric";
 import { useGetQuarters } from "@services/quarter";
 import { getInitialSorted } from "@utils/url";
@@ -26,6 +27,16 @@ export const useLeaderBoardPage = () => {
     limit: 100,
   });
 
+  const { data: depData, isFetching: isLoadingDapartment } = useGetDeparments({
+    page: 0,
+    limit: 1000,
+  });
+
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
+  const handleSelectDepartment = (departmentId: string) => {
+    setSelectedDepartmentId(departmentId);
+  };
+
   const [selectedQuarterId, setSelectedQuarterId] = useState<string>("");
   const sortedQuarters = useMemo(() => {
     return (quarters?.data || []).sort(
@@ -45,7 +56,7 @@ export const useLeaderBoardPage = () => {
   const { data: top10Metrics, isLoading: isLoadingTop10Metrics } =
     useGetTop10Metrics({
       quarterId: selectedQuarterId,
-      departmentId: "",
+      departmentId: selectedDepartmentId,
       page: 0,
       limit: 10,
       q: "",
@@ -63,5 +74,8 @@ export const useLeaderBoardPage = () => {
     setSelectedQuarterId,
     sortedQuarters,
     isLoadingQuarters,
+    departments: depData?.data || [],
+    isLoadingDapartment,
+    handleSelectDepartment,
   };
 };

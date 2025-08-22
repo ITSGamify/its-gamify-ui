@@ -25,9 +25,17 @@ export const useHistoryPage = () => {
     getInitialSorted(searchParams, defaultSort)
   );
   const setParam = createParamSetter(searchParams);
+  const [selectedFilter, setSelectedFilter] = useState("ALL");
 
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const activeSearchInput = searchParams.get("q");
+
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+    setActivePage(DEFAULT_TABLE_PAGE_NUMBER);
+    searchParams.delete("q");
+    setSearchParams(searchParams);
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -56,6 +64,7 @@ export const useHistoryPage = () => {
     userId: profile?.user.id,
     page: activePage,
     limit: 10,
+    filterString: selectedFilter,
     q: activeSearchInput || "",
     order_by: sortedColumns.map((sort) => ({
       order_column: sort.column ?? undefined,
@@ -82,5 +91,7 @@ export const useHistoryPage = () => {
     handleSearch,
     handleSearchResults,
     searchInput,
+    selectedFilter,
+    handleFilterChange,
   };
 };

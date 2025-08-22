@@ -14,6 +14,7 @@ import CourseContentSidebar from "@components/ui/molecules/course-detail/CourseD
 import { useCourseDetail } from "@hooks/data/useCourseDetail";
 import { getRoute } from "@utils/route";
 import { PATH } from "@constants/path";
+import CourseCompletionModal from "@components/ui/molecules/CourseCompletionModal";
 
 const CourseDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,6 +30,12 @@ const CourseDetailPage: React.FC = () => {
     isMoving,
     handleMoveToNext,
     handleBack,
+    inCompleteLessons,
+    allLessons,
+    isOpenModal,
+    handleCloseModal,
+    courseId,
+    participationId,
   } = useCourseDetail();
   const handleBackToOverview = () => {
     const route = getRoute(PATH.COURSES_OVERVIEW, { courseId: course?.id });
@@ -78,6 +85,8 @@ const CourseDetailPage: React.FC = () => {
                   handleMoveToNext={handleMoveToNext}
                   learningProgresses={learningProgresses}
                   handleBack={handleBack}
+                  inCompleteLessons={inCompleteLessons}
+                  allLessons={allLessons}
                 />
               </Grid>
 
@@ -88,12 +97,20 @@ const CourseDetailPage: React.FC = () => {
                   modules={modules}
                   learningProgresses={learningProgresses}
                   completedLearningProgresses={completedLearningProgresses}
+                  inCompleteLessons={inCompleteLessons}
+                  allLessons={allLessons}
                 />
               </Grid>
             </Grid>
           </>
         )}
       </Container>
+      <CourseCompletionModal
+        open={isOpenModal}
+        onClose={handleCloseModal}
+        courseId={courseId}
+        participantId={participationId}
+      />
     </Box>
   );
 };

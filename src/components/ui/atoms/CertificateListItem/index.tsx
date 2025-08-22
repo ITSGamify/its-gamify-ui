@@ -130,11 +130,11 @@ const CertificateListItem: React.FC<CertificateListItemProps> = ({
                   Số chứng chỉ
                 </Typography>
                 <Typography
-                  variant="body1"
+                  variant="h4"
                   fontWeight={500}
                   sx={{ fontFamily: "monospace" }}
                 >
-                  #111111
+                  #{certificate.course_number}
                 </Typography>
               </Box>
             </Box>

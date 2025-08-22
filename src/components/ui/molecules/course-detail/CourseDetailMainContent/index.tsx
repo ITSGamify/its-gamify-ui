@@ -31,6 +31,8 @@ export interface LessonContentProps {
   participation: Participation;
   learning_progress: LearningProgress | null;
   handleBack?: () => void;
+  inCompleteLessons: Lesson[];
+  isLastLesson: boolean;
 }
 
 interface CourseMainContentProps {
@@ -43,6 +45,8 @@ interface CourseMainContentProps {
     shouldNavigate?: boolean
   ) => void;
   handleBack?: () => void;
+  inCompleteLessons: Lesson[];
+  allLessons: Lesson[];
 }
 
 const CourseMainContent = ({
@@ -52,12 +56,18 @@ const CourseMainContent = ({
   isMoving,
   handleMoveToNext,
   handleBack,
+  inCompleteLessons,
+  allLessons,
 }: CourseMainContentProps) => {
   const { data: lesson } = useGetLesson(lessonId);
 
   const learning_progress =
     learningProgresses.find((x) => x.lesson_id == lessonId) || null;
-
+  const currentIndex = allLessons.findIndex(
+    (lesson) => lesson.id === lesson.id
+  );
+  const last_index = allLessons.length - 1;
+  const isLastLesson = currentIndex === last_index;
   const stepForms: Record<string, (props: LessonContentProps) => JSX.Element> =
     {
       [ARTICLE]: ArticleLesson,
@@ -78,6 +88,8 @@ const CourseMainContent = ({
           participation={participation}
           learning_progress={learning_progress}
           handleBack={handleBack}
+          inCompleteLessons={inCompleteLessons}
+          isLastLesson={isLastLesson}
         />
       )}
     </>

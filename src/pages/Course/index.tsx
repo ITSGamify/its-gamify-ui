@@ -145,7 +145,7 @@ const CoursePage: React.FC = () => {
           }}
         >
           <Tab value={ALL} label="Tất cả" />
-          <Tab value={ENROLLED} label="Đã tham gia" />
+          <Tab value={ENROLLED} label="Đang tham gia" />
           <Tab value={COMPLETED} label="Đã hoàn thành" />
           <Tab value={SAVED} label="Đã lưu" />
         </Tabs>

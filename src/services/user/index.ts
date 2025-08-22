@@ -39,6 +39,7 @@ export const useGetUserDetail = (userId: string) => {
 
 export interface GetHistoriesParams extends PaginationParams {
   userId?: string;
+  filterString: string;
 }
 
 export const useGetHistories = (params?: GetHistoriesParams) => {

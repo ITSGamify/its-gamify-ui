@@ -5,6 +5,7 @@ import { getCourseResultDetail, getCourseResults } from "./request";
 
 export interface GetCourseResultParams extends PaginationParams {
   userId: string;
+  filterString: string;
 }
 
 export const useGetCourseResults = (params: GetCourseResultParams) => {

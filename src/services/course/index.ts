@@ -7,12 +7,16 @@ import {
   getCourses,
   joinCourse,
   upsertCourseCollection,
+  getCourseReviews,
 } from "./request";
 import { PaginationParams } from "@interfaces/dom/query";
 
 export interface GetCourseParams extends PaginationParams {
   categories?: string;
   classify?: string;
+}
+export interface GetReviewParams extends PaginationParams {
+  courseId: string;
 }
 
 export interface RequestJoinCourseParams {
@@ -61,5 +65,13 @@ export const useUpsertCourseCollection = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: (courseId: string) => upsertCourseCollection(courseId),
     onSuccess,
+  });
+};
+
+export const useGetCourseReviews = (params: GetReviewParams) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COURSE.COURSE_REVIEWS, params.courseId, params],
+    queryFn: () => getCourseReviews(params),
+    enabled: !!params && !!params.courseId,
   });
 };

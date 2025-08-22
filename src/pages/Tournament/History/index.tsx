@@ -1,5 +1,5 @@
 // src/pages/Tournament/History/index.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -39,9 +39,9 @@ const MatchHistoryPage: React.FC = () => {
     handleSearch,
     handleSearchResults,
     searchInput,
+    selectedFilter,
+    handleFilterChange,
   } = useHistoryPage();
-
-  const [selectedFilter, setSelectedFilter] = useState("all");
 
   // Calculate stats based on histories data
   const stats = {
@@ -57,12 +57,6 @@ const MatchHistoryPage: React.FC = () => {
       : 0,
   };
 
-  const filteredMatches = histories
-    ? histories.filter((match) => {
-        if (selectedFilter === "all") return true;
-        return match.status === selectedFilter;
-      })
-    : [];
   return (
     <Container maxWidth="xl">
       <Box sx={{ maxWidth: "xl", mx: "auto" }}>
@@ -239,9 +233,9 @@ const MatchHistoryPage: React.FC = () => {
 
             <Box sx={{ display: "flex", gap: 1 }}>
               {[
-                { value: "all", label: "Tất Cả" },
-                { value: "win", label: "Thắng" },
-                { value: "loss", label: "Thua" },
+                { value: "ALL", label: "Tất Cả" },
+                { value: "WIN", label: "Thắng" },
+                { value: "LOSE", label: "Thua" },
               ].map((filter) => (
                 <Button
                   key={filter.value}
@@ -249,7 +243,7 @@ const MatchHistoryPage: React.FC = () => {
                     selectedFilter === filter.value ? "contained" : "outlined"
                   }
                   color="primary"
-                  onClick={() => setSelectedFilter(filter.value)}
+                  onClick={() => handleFilterChange(filter.value)}
                   sx={{ borderRadius: 50, textTransform: "none" }}
                 >
                   {filter.label}
@@ -274,12 +268,11 @@ const MatchHistoryPage: React.FC = () => {
                       <TableCell>Giải Đấu</TableCell>
                       <TableCell>Kết Quả</TableCell>
                       <TableCell>Điểm cược</TableCell>
-                      {/* <TableCell>Thời Gian</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredMatches.length > 0 ? (
-                      filteredMatches.map((match) => (
+                    {histories.length > 0 ? (
+                      histories.map((match) => (
                         <TableRow key={match.id} hover>
                           <TableCell>
                             <Typography variant="body1" fontWeight="medium">
@@ -339,11 +332,6 @@ const MatchHistoryPage: React.FC = () => {
                               }`}
                             </Typography>
                           </TableCell>
-                          {/* <TableCell>
-                            <Typography variant="body1" color="text.primary">
-                              10 s
-                            </Typography>
-                          </TableCell> */}
                         </TableRow>
                       ))
                     ) : (

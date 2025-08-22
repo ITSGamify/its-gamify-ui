@@ -14,7 +14,7 @@ export const useCourseDetail = () => {
   const navigate = useNavigate();
   const { courseId = "" } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [learningProgresses, setLearningProgresses] = useState<
     LearningProgress[]
   >([]);
@@ -39,7 +39,14 @@ export const useCourseDetail = () => {
     if (participation?.learning_progresses) {
       setLearningProgresses(participation.learning_progresses);
     }
-  }, [participation]);
+    if (
+      participation &&
+      participation.status === "COMPLETED" &&
+      !participation?.course_review
+    ) {
+      setIsOpenModal(true);
+    }
+  }, [course, participation]);
 
   const addLearningProgress = useCallback((progress: LearningProgress) => {
     setLearningProgresses((prevProgresses) => {
@@ -195,6 +202,9 @@ export const useCourseDetail = () => {
       upsertProgress,
     ]
   );
+  const handleCloseModal = useCallback(() => {
+    setIsOpenModal(false);
+  }, []);
 
   return {
     modules,
@@ -208,5 +218,11 @@ export const useCourseDetail = () => {
     isMoving,
     handleMoveToNext,
     handleBack,
+    inCompleteLessons,
+    allLessons,
+    isOpenModal,
+    handleCloseModal,
+    courseId,
+    participationId: participation?.id || "",
   };
 };

@@ -111,7 +111,7 @@ const MatchResult: React.FC<{
   roomDetail: Room;
   navigate: NavigateFunction;
   handlePlayAgain: () => void;
-}> = React.memo(({ profile, roomDetail, navigate, handlePlayAgain }) => {
+}> = React.memo(({ profile, roomDetail, navigate }) => {
   // Lấy và sắp xếp RoomUser active theo current_score descending
   const sortedPlayers = (roomDetail?.room_users || [])
     .filter((user: RoomUser) => !user.is_out_room)
@@ -171,6 +171,7 @@ const MatchResult: React.FC<{
                     />
                   </ListItemAvatar>
                   <ListItemText
+                    disableTypography
                     primary={
                       <Typography variant="subtitle1" fontWeight="bold">
                         {`${index + 1}. ${player.user.full_name}`}
@@ -198,7 +199,7 @@ const MatchResult: React.FC<{
             justifyContent="center"
             sx={{ mt: 4 }}
           >
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               onClick={() => {
@@ -206,7 +207,7 @@ const MatchResult: React.FC<{
               }}
             >
               Chơi Lại
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               color="secondary"

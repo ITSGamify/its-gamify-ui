@@ -11,7 +11,6 @@ import {
   CardMedia,
   Tab,
   Tabs,
-  Avatar,
   styled,
   List,
   ListItem,
@@ -39,8 +38,6 @@ import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
-import { TextField, InputAdornment, Paper } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 
 import { useCourseOverview } from "@hooks/data/useCourseOverview";
 import { formatToMB } from "@utils/file";
@@ -48,6 +45,7 @@ import { formatDateToVietnamese } from "@utils/date";
 import { useNavigate } from "react-router-dom";
 import { Lesson } from "@interfaces/api/lesson";
 import { VideoPlayer } from "@components/ui/atoms/Video";
+import { CourseReviews } from "@components/ui/atoms/CourseReviews";
 
 //#region  Styled components
 const PageHeader = styled(Box)(({ theme }) => ({
@@ -153,7 +151,6 @@ const CourseOverviewPage: React.FC = () => {
     navigate(-1);
   };
 
-  console.log(bookmarked);
   const getLessonItem = (lesson: Lesson) => {
     const isCompleted = completedLearningProgresses.some(
       (progress) => progress.lesson_id === lesson.id
@@ -255,10 +252,7 @@ const CourseOverviewPage: React.FC = () => {
               title={course?.title}
               sx={{ objectFit: "contain", backgroundSize: "contain" }}
             />
-            <VideoPlayer
-              videoUrl={course?.introduction_video || ""}
-              title={course?.title || ""}
-            />
+
             <Box mt={4}>
               <StyledTabs
                 value={tabValue}
@@ -267,6 +261,7 @@ const CourseOverviewPage: React.FC = () => {
                 scrollButtons="auto"
               >
                 <Tab label="Tổng quan" />
+                <Tab label="Giới thiệu" />
                 <Tab label="Nội dung" />
                 <Tab label="Tài liệu" />
                 <Tab label="Đánh giá" />
@@ -283,6 +278,21 @@ const CourseOverviewPage: React.FC = () => {
                   </Box>
                 )}
                 {tabValue === 1 && (
+                  <Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      mb={2}
+                    >
+                      <VideoPlayer
+                        videoUrl={course?.introduction_video || ""}
+                        title={course?.title || ""}
+                      />
+                    </Box>
+                  </Box>
+                )}
+                {tabValue === 2 && (
                   <Box>
                     <Box
                       display="flex"
@@ -370,7 +380,7 @@ const CourseOverviewPage: React.FC = () => {
                     </Box>
                   </Box>
                 )}
-                {tabValue === 2 && (
+                {tabValue === 3 && (
                   <Box>
                     <SectionTitle variant="h6">Tài liệu khóa học</SectionTitle>
                     <Typography
@@ -419,241 +429,8 @@ const CourseOverviewPage: React.FC = () => {
                     </List>
                   </Box>
                 )}
-                {tabValue === 3 && (
-                  <Box>
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      mb={3}
-                    >
-                      <Box>
-                        <SectionTitle variant="h6">
-                          Đánh giá từ học viên
-                        </SectionTitle>
-                        <Typography variant="body2" color="text.secondary">
-                          {10} đánh giá • Xếp hạng trung bình {5}/5
-                        </Typography>
-                      </Box>
-                    </Box>
-                    {/* Rating distribution */}
-                    <Card
-                      sx={{
-                        p: 3,
-                        mb: 4,
-                        borderRadius: "15px",
-                        boxShadow: theme.shadows[1],
-                      }}
-                    >
-                      <Grid container spacing={2} alignItems="center">
-                        <Grid size={{ xs: 12, md: 4 }}>
-                          <Box textAlign="center">
-                            <Typography
-                              variant="h2"
-                              color="primary.main"
-                              fontWeight={700}
-                            >
-                              {5}
-                            </Typography>
-                            <Rating
-                              value={5}
-                              precision={0.1}
-                              readOnly
-                              size="large"
-                            />
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              mt={1}
-                            >
-                              {10} đánh giá
-                            </Typography>
-                          </Box>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, md: 8 }}>
-                          {[5, 4, 3, 2, 1].map((rating) => (
-                            <Box
-                              key={rating}
-                              display="flex"
-                              alignItems="center"
-                              mb={1}
-                            >
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ width: 15 }}
-                              >
-                                {rating}
-                              </Typography>
-                              <Box sx={{ mx: 1 }}>
-                                <Rating value={rating} readOnly size="small" />
-                              </Box>
-                              <LinearProgress
-                                variant="determinate"
-                                value={
-                                  rating === 5
-                                    ? 75
-                                    : rating === 4
-                                    ? 20
-                                    : rating === 3
-                                    ? 5
-                                    : 0
-                                }
-                                sx={{
-                                  height: 8,
-                                  borderRadius: 1,
-                                  width: "100%",
-                                  backgroundColor:
-                                    theme.palette.background.default,
-                                  "& .MuiLinearProgress-bar": {
-                                    backgroundColor:
-                                      rating >= 4
-                                        ? theme.palette.success.main
-                                        : rating >= 3
-                                        ? theme.palette.warning.main
-                                        : theme.palette.error.main,
-                                  },
-                                }}
-                              />
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ ml: 1, width: 30 }}
-                              >
-                                {rating === 5
-                                  ? "75%"
-                                  : rating === 4
-                                  ? "20%"
-                                  : rating === 3
-                                  ? "5%"
-                                  : "0%"}
-                              </Typography>
-                            </Box>
-                          ))}
-                        </Grid>
-                      </Grid>
-                    </Card>
-                    {/* Comment input */}
-                    <Paper
-                      sx={{
-                        p: 2,
-                        mb: 4,
-                        borderRadius: "15px",
-                        boxShadow: theme.shadows[1],
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={600}
-                        gutterBottom
-                      >
-                        Đánh giá của bạn
-                      </Typography>
-
-                      {/* Thêm phần đánh giá số sao */}
-                      <Box display="flex" alignItems="center" mb={2}>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mr={2}
-                        >
-                          Xếp hạng:
-                        </Typography>
-                        <Rating defaultValue={5} precision={1} size="large" />
-                      </Box>
-
-                      <Box display="flex" alignItems="flex-start">
-                        <Avatar
-                          src="/avatars/avatar.jpg"
-                          alt="Your Avatar"
-                          sx={{ mr: 2 }}
-                        />
-                        <TextField
-                          fullWidth
-                          multiline
-                          rows={3}
-                          placeholder="Viết bình luận của bạn..."
-                          variant="outlined"
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton color="primary">
-                                  <SendIcon />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Box>
-                    </Paper>
-
-                    {/* Sample reviews section */}
-                    <Box mt={4}>
-                      <Typography variant="h6" fontWeight={600} gutterBottom>
-                        Đánh giá gần đây
-                      </Typography>
-
-                      {[1, 2, 3].map((review) => (
-                        <Box
-                          key={review}
-                          sx={{
-                            mb: 3,
-                            pb: 3,
-                            borderBottom:
-                              review < 3
-                                ? `1px solid ${theme.palette.divider}`
-                                : "none",
-                          }}
-                        >
-                          <Box display="flex" mb={1}>
-                            <Avatar
-                              src={`/avatars/student${review + 3}.jpg`}
-                              alt={`Học viên ${review + 3}`}
-                              sx={{ mr: 2 }}
-                            />
-                            <Box>
-                              <Typography variant="subtitle2">
-                                Học viên {review + 3}
-                              </Typography>
-                              <Box display="flex" alignItems="center">
-                                <Rating
-                                  value={
-                                    review === 1 ? 5 : review === 2 ? 4 : 5
-                                  }
-                                  readOnly
-                                  size="small"
-                                />
-                                <Typography
-                                  variant="caption"
-                                  color="text.secondary"
-                                  ml={1}
-                                >
-                                  {review === 1
-                                    ? "2 tháng trước"
-                                    : review === 2
-                                    ? "3 tuần trước"
-                                    : "1 tuần trước"}
-                                </Typography>
-                              </Box>
-                            </Box>
-                          </Box>
-
-                          <Typography variant="body2" paragraph>
-                            {review === 1
-                              ? "Khóa học rất hay và chi tiết. Giảng viên giải thích dễ hiểu và có nhiều ví dụ thực tế. Tôi đã học được rất nhiều kỹ năng mới từ khóa học này và đã áp dụng vào công việc của mình. Rất đáng giá!"
-                              : review === 2
-                              ? "Nội dung khóa học khá tốt, tuy nhiên có một số phần hơi nhanh và khó theo dõi. Mong rằng sẽ có thêm bài tập thực hành để củng cố kiến thức."
-                              : "Tuyệt vời! Đây là một trong những khóa học hay nhất về Figma mà tôi từng học. Cảm ơn giảng viên đã chia sẻ nhiều mẹo và thủ thuật hữu ích."}
-                          </Typography>
-                        </Box>
-                      ))}
-
-                      <Button variant="outlined" color="primary" fullWidth>
-                        Xem thêm bình luận
-                      </Button>
-                    </Box>
-                  </Box>
+                {tabValue === 4 && (
+                  <CourseReviews courseId={course?.id || ""} />
                 )}
               </Box>
             </Box>

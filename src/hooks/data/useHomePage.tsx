@@ -72,24 +72,28 @@ export const useHomePage = () => {
         value: userMetric?.course_participated_num || 0,
         icon: <SchoolIcon />,
         color: "primary",
+        isLoading: isLoadingUserMetric,
       },
       {
         title: "Khóa học đã hoàn thành",
         value: userMetric?.course_completed_num || 0,
         icon: <EmojiEventsIcon />,
         color: "warning",
+        isLoading: isLoadingUserMetric,
       },
       {
-        title: "Số thử thách đã tham gia",
+        title: "Số trận đã tham gia",
         value: userMetric?.challenge_participate_num || 0,
         icon: <AssignmentIcon />,
         color: "info",
+        isLoading: isLoadingUserMetric,
       },
       {
         title: "Sô điểm đã đạt được trong quý",
         value: userMetric?.point_in_quarter || 0,
         icon: <VerifiedIcon />,
         color: "success",
+        isLoading: isLoadingUserMetric,
       },
     ];
   }, [userMetric]);

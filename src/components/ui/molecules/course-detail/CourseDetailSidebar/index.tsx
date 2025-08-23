@@ -142,18 +142,7 @@ const CourseContentSidebar = ({
   );
   const getLessonIcon = useCallback(
     (lesson: Lesson) => {
-      const currentIndex = allLessons.findIndex(
-        (lesson) => lesson.id === lesson.id
-      );
-      const last_index = allLessons.length - 1;
-      const isLastLesson = currentIndex === last_index;
-
-      if (
-        isLastLesson &&
-        (inCompleteLessons.length > 1 ||
-          (inCompleteLessons.length > 1 &&
-            inCompleteLessons[0].id !== lesson.id))
-      ) {
+      if (shouldLockLesson(lesson.id)) {
         return <LockOutlineIcon color="primary" />;
       }
 
@@ -175,7 +164,7 @@ const CourseContentSidebar = ({
           return <PlayCircleOutlineIcon color="action" />;
       }
     },
-    [allLessons, completedLearningProgresses, inCompleteLessons]
+    [completedLearningProgresses, shouldLockLesson]
   );
 
   return (

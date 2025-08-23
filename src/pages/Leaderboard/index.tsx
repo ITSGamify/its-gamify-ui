@@ -30,6 +30,8 @@ import { amber, grey, deepOrange } from "@mui/material/colors";
 import { useLeaderBoardPage } from "@hooks/data/useLeaderBoardPage";
 import { Quarter } from "@interfaces/api/course";
 import { formatDateShort } from "@utils/date";
+import userSession from "@utils/user-session";
+import { alpha } from "@mui/material/styles";
 
 const LeaderboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overall");
@@ -46,6 +48,8 @@ const LeaderboardPage: React.FC = () => {
     isLoadingDapartment,
     handleSelectDepartment,
   } = useLeaderBoardPage();
+
+  const profile = userSession.getUserProfile();
 
   const calculateWinRate = (wins: number, losses: number) => {
     const totalGames = wins + losses;
@@ -318,111 +322,138 @@ const LeaderboardPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {top10Metrics.map((player, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        {index === 0 && (
-                          <EmojiEventsIcon sx={{ color: amber[500] }} /> // Vàng cho top 1
-                        )}
-                        {index === 1 && (
-                          <EmojiEventsIcon sx={{ color: grey[400] }} /> // Xám cho top 2
-                        )}
-                        {index === 2 && (
-                          <EmojiEventsIcon sx={{ color: deepOrange[400] }} /> // Cam cho top 3
-                        )}
+                {top10Metrics.map((player, index) => {
+                  return (
+                    <TableRow
+                      key={index}
+                      hover
+                      sx={{
+                        backgroundColor:
+                          player.user_id === profile?.user.id
+                            ? (theme) => theme.palette.action.disabledBackground
+                            : "inherit",
+                        borderLeft:
+                          player.user_id === profile?.user.id
+                            ? (theme) =>
+                                `4px solid ${theme.palette.primary.main}` // Sử dụng callback function để truy cập theme
+                            : "none",
+                        "&:hover": {
+                          backgroundColor:
+                            player.user_id === profile?.user.id
+                              ? (theme) =>
+                                  alpha(theme.palette.primary.main, 0.1) // Sử dụng alpha để giảm độ đậm
+                              : (theme) => theme.palette.action.hover,
+                        },
+                      }}
+                    >
+                      <TableCell>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          {index === 0 && (
+                            <EmojiEventsIcon sx={{ color: amber[500] }} /> // Vàng cho top 1
+                          )}
+                          {index === 1 && (
+                            <EmojiEventsIcon sx={{ color: grey[400] }} /> // Xám cho top 2
+                          )}
+                          {index === 2 && (
+                            <EmojiEventsIcon sx={{ color: deepOrange[400] }} /> // Cam cho top 3
+                          )}
+                          <Typography variant="body1" fontWeight="medium">
+                            #{index + 1}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
+                          <Avatar
+                            src={player.user.avatar_url}
+                            sx={{
+                              bgcolor: "primary.main",
+                              width: 40,
+                              height: 40,
+                            }}
+                          >
+                            {player.user.full_name[0].toUpperCase() || ""}
+                          </Avatar>
+                          <Box>
+                            <Typography
+                              variant="body1"
+                              fontWeight="medium"
+                              color="text.primary"
+                            >
+                              {player.user.full_name}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
                         <Typography variant="body1" fontWeight="medium">
-                          #{index + 1}
+                          {player.point_in_quarter.toLocaleString()}
                         </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                      >
-                        <Avatar
-                          src={player.user.avatar_url}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body1" fontWeight="medium">
+                          {player.course_completed_num}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography
+                          component="span"
+                          color="success.main"
+                          fontWeight="medium"
+                        >
+                          {player.win_num}
+                        </Typography>
+                        <Typography
+                          component="span"
+                          color="text.secondary"
+                          sx={{ mx: 0.5 }}
+                        >
+                          /
+                        </Typography>
+                        <Typography
+                          component="span"
+                          color="error.main"
+                          fontWeight="medium"
+                        >
+                          {player.lose_num}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body1" fontWeight="medium">
+                          {calculateWinRate(player.win_num, player.lose_num)}%
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box
                           sx={{
-                            bgcolor: "primary.main",
-                            width: 40,
-                            height: 40,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
                           }}
                         >
-                          {player.user.full_name[0].toUpperCase() || ""}
-                        </Avatar>
-                        <Box>
+                          {player.win_streak > 0 && (
+                            <i className="ri-fire-line text-red-500 text-sm" />
+                          )}
                           <Typography
                             variant="body1"
                             fontWeight="medium"
-                            color="text.primary"
+                            color={
+                              player.win_streak > 0
+                                ? "error.main"
+                                : "text.secondary"
+                            }
                           >
-                            {player.user.full_name}
+                            {player.win_streak}
                           </Typography>
                         </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body1" fontWeight="medium">
-                        {player.point_in_quarter.toLocaleString()}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body1" fontWeight="medium">
-                        {player.course_completed_num}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography
-                        component="span"
-                        color="success.main"
-                        fontWeight="medium"
-                      >
-                        {player.win_num}
-                      </Typography>
-                      <Typography
-                        component="span"
-                        color="text.secondary"
-                        sx={{ mx: 0.5 }}
-                      >
-                        /
-                      </Typography>
-                      <Typography
-                        component="span"
-                        color="error.main"
-                        fontWeight="medium"
-                      >
-                        {player.lose_num}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body1" fontWeight="medium">
-                        {calculateWinRate(player.win_num, player.lose_num)}%
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                      >
-                        {player.win_streak > 0 && (
-                          <i className="ri-fire-line text-red-500 text-sm" />
-                        )}
-                        <Typography
-                          variant="body1"
-                          fontWeight="medium"
-                          color={
-                            player.win_streak > 0
-                              ? "error.main"
-                              : "text.secondary"
-                          }
-                        >
-                          {player.win_streak}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

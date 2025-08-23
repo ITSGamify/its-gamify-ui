@@ -23,7 +23,8 @@ import {
   Pagination,
   Grid,
   Drawer, // Thêm import Drawer
-  IconButton, // Thêm cho nút close
+  IconButton,
+  CircularProgress, // Thêm cho nút close
 } from "@mui/material";
 import { User } from "@interfaces/api/user";
 import { Quarter } from "@interfaces/api/course";
@@ -97,10 +98,11 @@ const MetricsPage: React.FC = () => {
     setSelectedMetric(null);
   };
 
-  const { data: statistic } = useGetUserStatistic({
-    userId: selectedMetric?.user_id,
-    quaterId: selectedQuarterId,
-  });
+  const { data: statistic, isPending: isLoadingStatistic } =
+    useGetUserStatistic({
+      userId: selectedMetric?.user_id,
+      quaterId: selectedQuarterId,
+    });
 
   const { mutateAsync: createNotification } = useCreateNotification();
 
@@ -303,7 +305,18 @@ const MetricsPage: React.FC = () => {
             <Typography variant="h3" fontWeight={600} sx={{ mb: 1 }}>
               Thống kê chi tiết
             </Typography>
-            {statistic && (
+            {isLoadingStatistic ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50vh",
+                }}
+              >
+                <CircularProgress size={60} color="primary" />
+              </Box>
+            ) : statistic ? (
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 12 }}>
                   <Card sx={{ borderRadius: 4, boxShadow: 1 }}>
@@ -325,6 +338,8 @@ const MetricsPage: React.FC = () => {
                   </Card>
                 </Grid>
               </Grid>
+            ) : (
+              <Typography>Không có dữ liệu thống kê</Typography>
             )}
           </Box>
         ) : (

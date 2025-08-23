@@ -23,6 +23,7 @@ export const BASE_KEYS = {
 export const END_POINTS = {
   LOGIN: "/auth",
   LOGOUT: "/auth/logout",
+  ROLES: BASE_KEYS.ROLES,
   COURSE: {
     BASE: BASE_KEYS.COURSES,
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
@@ -94,5 +95,11 @@ export const END_POINTS = {
   NOTIFICATION: {
     BASE: BASE_KEYS.NOTIFICATION,
     DETAIL: `${BASE_KEYS.NOTIFICATION}/:notificationId`,
+  },
+  STORAGE_FILES: {
+    UPLOAD: `${BASE_KEYS.STORAGE_FILES}`,
+    INITIAL_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/initiate-upload`,
+    GENERATE_PRESIGNED_URL: `${BASE_KEYS.STORAGE_FILES}/s3/generate-presigned-url`,
+    COMPLETED_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/complete-upload`,
   },
 };

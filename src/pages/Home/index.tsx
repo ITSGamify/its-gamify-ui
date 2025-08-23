@@ -98,6 +98,7 @@ const HomePage: React.FC = () => {
     handleViewAllCourses,
     participations,
     isLoadingParticipations,
+    isLoadingUserMetric,
   } = useHomePage();
 
   const enhancedParticipations = useMemo(() => {
@@ -170,6 +171,7 @@ const HomePage: React.FC = () => {
               color={stat.color}
               progress={stat.progress}
               subtitle={stat.subtitle}
+              isLoading={isLoadingUserMetric}
             />
           </Grid>
         ))}

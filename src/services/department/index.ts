@@ -8,7 +8,7 @@ export interface GetDepartmentParams extends PaginationParams {
   name?: string;
 }
 
-export const useGetDeparments = (params?: GetDepartmentParams) => {
+export const useGetDepartments = (params?: GetDepartmentParams) => {
   return useQuery({
     queryKey: [QUERY_KEYS.DEPARTMENT.BASE, params],
     queryFn: () => getDepartments(params),

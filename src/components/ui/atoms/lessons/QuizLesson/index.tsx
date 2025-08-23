@@ -139,18 +139,17 @@ const QuizLesson = ({
           </StartButton>
         </QuizContainer>
       </Box>
-      {isLastLesson && (
-        <NavigationContainer>
-          <NavButton
-            variant="outlined"
-            color="inherit"
-            sx={{ borderColor: "divider", color: "text.secondary" }}
-            disabled={isMoving}
-            onClick={handleBack}
-          >
-            Trước
-          </NavButton>
-
+      <NavigationContainer>
+        <NavButton
+          variant="outlined"
+          color="inherit"
+          sx={{ borderColor: "divider", color: "text.secondary" }}
+          disabled={isMoving}
+          onClick={handleBack}
+        >
+          Trước
+        </NavButton>
+        {isLastLesson && (
           <NavButton
             variant="contained"
             color="primary"
@@ -159,8 +158,8 @@ const QuizLesson = ({
           >
             Tiếp theo
           </NavButton>
-        </NavigationContainer>
-      )}
+        )}
+      </NavigationContainer>
     </>
   );
 };

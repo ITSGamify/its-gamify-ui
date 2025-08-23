@@ -18,7 +18,7 @@ export const useGetUserMetric = (userId: string) => {
 
 export interface GetStatisticParam {
   userId?: string;
-  quaterId: string;
+  quaterId?: string;
 }
 
 export const useGetUserStatistic = (params: GetStatisticParam) => {

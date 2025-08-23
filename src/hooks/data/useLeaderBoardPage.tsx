@@ -1,7 +1,7 @@
 import { Quarter } from "@interfaces/api/course";
 import { OrderDirection } from "@interfaces/dom/query";
 import { TableColumns } from "@interfaces/dom/table";
-import { useGetDeparments } from "@services/department";
+import { useGetDepartments } from "@services/department";
 import { useGetGeneralMetric, useGetTop10Metrics } from "@services/metric";
 import { useGetQuarters } from "@services/quarter";
 import { getInitialSorted } from "@utils/url";
@@ -27,7 +27,7 @@ export const useLeaderBoardPage = () => {
     limit: 100,
   });
 
-  const { data: depData, isFetching: isLoadingDapartment } = useGetDeparments({
+  const { data: depData, isFetching: isLoadingDapartment } = useGetDepartments({
     page: 0,
     limit: 1000,
   });

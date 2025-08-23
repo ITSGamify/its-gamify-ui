@@ -7,6 +7,7 @@ import {
   Box,
   LinearProgress,
   styled,
+  Skeleton,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { DashboardCardProps } from "@interfaces/shared/home";
@@ -29,7 +30,7 @@ const IconBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== "color",
 })<{ color?: string }>(({ theme }) => ({
   width: 48,
-  height: 48,
+  height: 40,
   borderRadius: "50%",
   display: "flex",
   alignItems: "center",
@@ -47,42 +48,80 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   color = "primary",
   progress,
   subtitle,
+  isLoading = false,
 }) => {
   return (
     <StyledCard color={color}>
       <CardContent>
         <Box display="flex" justifyContent="space-between" mb={2}>
           <Box>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              {title}
-            </Typography>
-            <Typography variant="h4">{value}</Typography>
-            {subtitle && (
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                {subtitle}
-              </Typography>
+            {isLoading ? (
+              <>
+                <Skeleton variant="text" width={120} height={20} />
+                <Skeleton variant="text" width={80} height={40} />
+                {subtitle && (
+                  <Skeleton variant="text" width={150} height={16} />
+                )}
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  {title}
+                </Typography>
+                <Typography variant="h4">{value}</Typography>
+                {subtitle && (
+                  <Typography variant="body2" color="text.secondary" mt={0.5}>
+                    {subtitle}
+                  </Typography>
+                )}
+              </>
             )}
           </Box>
-          <IconBox color={color}>{icon}</IconBox>
+          {isLoading ? (
+            <Skeleton variant="circular" width={48} height={40} />
+          ) : (
+            <IconBox color={color}>{icon}</IconBox>
+          )}
         </Box>
 
-        {progress !== undefined && (
+        {(progress !== undefined || isLoading) && (
           <Box mt={2}>
-            <Box display="flex" justifyContent="space-between" mb={0.5}>
-              <Typography variant="caption" color="text.secondary">
-                Tiến độ
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {progress}%
-              </Typography>
-            </Box>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              color={color as any}
-              sx={{ height: 6, borderRadius: 3 }}
-            />
+            {isLoading ? (
+              <>
+                <Box display="flex" justifyContent="space-between" mb={0.5}>
+                  <Skeleton variant="text" width={60} height={16} />
+                  <Skeleton variant="text" width={30} height={16} />
+                </Box>
+                <Skeleton
+                  variant="rectangular"
+                  height={6}
+                  width="100%"
+                  sx={{ borderRadius: 3 }}
+                />
+              </>
+            ) : (
+              <>
+                <Box display="flex" justifyContent="space-between" mb={0.5}>
+                  <Typography variant="caption" color="text.secondary">
+                    Tiến độ
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {progress}%
+                  </Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={progress}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  color={color as any}
+                  sx={{ height: 6, borderRadius: 3 }}
+                />
+              </>
+            )}
           </Box>
         )}
       </CardContent>

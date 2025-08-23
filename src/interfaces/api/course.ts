@@ -1,5 +1,4 @@
 import { User } from "@interfaces/shared/user";
-import { Department } from "./department";
 import { StorageFile } from "./file";
 import { LearningProgress } from "./learningProgress";
 import { Module } from "./lesson";
@@ -17,7 +16,6 @@ export interface Course {
   title: string;
   sessions: number;
   department_id: string;
-  deparment?: Department;
   reviews: number;
   category_id?: string;
   category?: Category;

@@ -18,6 +18,7 @@ export interface DashboardCardProps {
   color?: ColorType;
   progress?: number;
   subtitle?: string;
+  isLoading: boolean;
 }
 
 // Course types

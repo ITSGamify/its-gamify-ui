@@ -12,7 +12,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  Button,
+  // Button,
   styled,
   Divider,
   Fade,
@@ -29,6 +29,9 @@ import {
   useGetCourses,
 } from "@services/course";
 import { Course } from "@interfaces/api/course";
+import { getRoute } from "@utils/route";
+import { PATH } from "@constants/path";
+import { useNavigate } from "react-router-dom";
 
 const LearningProgress: React.FC = () => {
   const theme = useTheme();
@@ -126,7 +129,11 @@ const LearningProgress: React.FC = () => {
 
   const isLoading =
     isLoadingCourse || isLoadingParticipation || isLoadingCourseDetail;
-
+  const navigate = useNavigate();
+  const handleContinueLearning = (lessonId: string) => {
+    const route = getRoute(PATH.COURSES_DETAIL, { courseId: course?.id || "" });
+    navigate(route + `?lessonId=${lessonId}`);
+  };
   return (
     <StyledCard>
       <CardHeader
@@ -228,6 +235,11 @@ const LearningProgress: React.FC = () => {
                     completed={lesson.completed}
                     current={lesson.current}
                     locked={lesson.locked}
+                    onClick={() => {
+                      if (!lesson.locked) {
+                        handleContinueLearning(lesson.id);
+                      }
+                    }}
                   >
                     <ListItemIcon>
                       {lesson.completed ? (
@@ -261,7 +273,7 @@ const LearningProgress: React.FC = () => {
               ))}
             </List>
 
-            <Box mt={3} display="flex" justifyContent="center">
+            {/* <Box mt={3} display="flex" justifyContent="center">
               <Button
                 variant="contained"
                 color="primary"
@@ -270,7 +282,7 @@ const LearningProgress: React.FC = () => {
               >
                 Tiếp tục học
               </Button>
-            </Box>
+            </Box> */}
           </>
         )}
       </CardContent>

@@ -62,6 +62,9 @@ export const QUERY_KEYS = {
     BASE: BASE_KEYS.NOTIFICATION,
     DETAIL: `${BASE_KEYS.NOTIFICATION}/:notificationId`,
   },
+  BADGES: {
+    BASE: BASE_KEYS.BADGE,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

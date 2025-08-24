@@ -18,6 +18,7 @@ export const BASE_KEYS = {
   QUESTION: "questions",
   REVIEW: "course-reviews",
   NOTIFICATION: "notifications",
+  BADGE: "badges",
 };
 
 export const END_POINTS = {
@@ -101,5 +102,8 @@ export const END_POINTS = {
     INITIAL_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/initiate-upload`,
     GENERATE_PRESIGNED_URL: `${BASE_KEYS.STORAGE_FILES}/s3/generate-presigned-url`,
     COMPLETED_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/complete-upload`,
+  },
+  BADGES: {
+    BASE: BASE_KEYS.BADGE,
   },
 };

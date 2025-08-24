@@ -48,9 +48,11 @@ export const RoomModalForm = ({
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: 4,
+            p: 3, // Giảm padding từ 4 xuống 3 để thu nhỏ chiều dọc
             width: "100%",
-            maxWidth: 600,
+            maxWidth: 500, // Giảm maxWidth từ 600 xuống 500 để form gọn hơn
+            maxHeight: "80vh", // Thêm maxHeight để tránh tràn màn hình dọc
+            overflowY: "auto", // Cho phép scroll nếu nội dung quá dài
             borderRadius: 1,
           }}
         >
@@ -85,7 +87,7 @@ export const RoomModalForm = ({
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5 }} // Giảm margin top từ 1 xuống 0.5 để tiết kiệm không gian
               >
                 Tối thiểu: 1 | Tối đa: {num_of_question || 20}
               </Typography>
@@ -118,7 +120,7 @@ export const RoomModalForm = ({
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5 }} // Giảm margin top
               >
                 Tối thiểu: 10 giây | Tối đa: 60 giây
               </Typography>
@@ -148,7 +150,7 @@ export const RoomModalForm = ({
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5 }} // Giảm margin top
               >
                 Tối thiểu: 50 điểm | Tối đa: 5.000 điểm
               </Typography>
@@ -178,18 +180,18 @@ export const RoomModalForm = ({
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5 }} // Giảm margin top
               >
                 Tối thiểu: 2 người | Tối đa: 10 người
               </Typography>
             </Box>
             {userMetric && (
-              <Card variant="outlined" sx={{ p: 2, bgcolor: "grey.50" }}>
+              <Card variant="outlined" sx={{ p: 1.5, bgcolor: "grey.50" }}>
                 <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    mb: 1,
+                    mb: 0.5, // Giảm margin bottom
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
@@ -215,7 +217,7 @@ export const RoomModalForm = ({
             )}
           </Stack>
 
-          <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+          <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
             <Button
               variant="outlined"
               fullWidth

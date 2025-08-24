@@ -24,6 +24,7 @@ import {
   Search as SearchIcon,
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
+  MilitaryTech as MilitaryTechIcon,
 } from "@mui/icons-material";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -230,6 +231,17 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
           <WorkspacePremiumIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Chứng chỉ</ListItemText>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate(PATH.BADGE);
+        }}
+      >
+        <ListItemIcon>
+          <MilitaryTechIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Thành tích</ListItemText>
       </MenuItem>
       <MenuItem
         onClick={() => {

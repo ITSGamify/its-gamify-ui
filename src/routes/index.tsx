@@ -29,6 +29,7 @@ import { RoleEnum } from "@interfaces/api/user";
 import UserProfilePage from "@pages/Profile";
 // import LearningProgressDashboard from "@pages/Leaderboard/LearningProgressDashboard";
 import CourseCompletionPage from "@pages/Course/Completed";
+import BadgePage from "@pages/Badge";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => <ServerError500 />;
@@ -180,6 +181,10 @@ const router = createBrowserRouter(
         {
           path: PATH.PROFILE,
           element: <UserProfilePage />,
+        },
+        {
+          path: PATH.BADGE,
+          element: <BadgePage />,
         },
       ],
     },

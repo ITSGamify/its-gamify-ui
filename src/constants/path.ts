@@ -15,6 +15,7 @@ export const PATH = {
   LEADER_BOARD: "/leaderboard",
   CERTIFICATE: "/certificates",
   CERTIFICATE_DETAIL: "/certificates/:certificateId",
+  BADGE: "/badges",
   METRIC: "/metrics",
   PROFILE: "/profile",
   FORBIDDEN: "/403",

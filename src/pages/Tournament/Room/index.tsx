@@ -199,7 +199,7 @@ const RoomsPage = () => {
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
-                          mb: 2,
+                          mb: 1,
                         }}
                       >
                         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -208,15 +208,18 @@ const RoomsPage = () => {
                             sx={{
                               bgcolor: "primary.main",
                               mr: 2,
-                              width: 48,
-                              height: 48,
+                              width: 80,
+                              height: 80,
                             }}
                           >
                             {room.host_user.full_name[0].toUpperCase() || ""}
                           </Avatar>
                           <Box>
                             <Typography variant="subtitle1" fontWeight="medium">
-                              {room.host_user.full_name}
+                              {`${room.name || "Phòng chơi số 1"}`}
+                            </Typography>
+                            <Typography variant="subtitle2" fontWeight="medium">
+                              {`Chủ phòng: ${room.host_user.full_name}`}
                             </Typography>
                             <Box
                               sx={{

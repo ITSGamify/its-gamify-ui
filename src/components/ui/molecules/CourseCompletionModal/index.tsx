@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Rating,
   Stack,
   TextField,
@@ -103,31 +102,58 @@ const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ textAlign: "center" }}>
-        <CelebrationIcon sx={{ fontSize: 60, color: "success.main", mb: 1 }} />
-        <Typography variant="h4" fontWeight="bold" color="success.main">
-          Chúc mừng!
-        </Typography>
-      </DialogTitle>
-      <DialogContent sx={{ textAlign: "center" }}>
-        <Typography variant="h6" color="text.primary" gutterBottom>
-          Bạn đã hoàn thành khóa học.
-        </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Cảm ơn bạn đã nỗ lực và kiên trì. Hãy tiếp tục học hỏi!
-        </Typography>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      PaperProps={{
+        sx: {
+          height: "auto",
+          overflow: "hidden",
+          borderRadius: 2,
+        },
+      }}
+    >
+      <DialogContent
+        sx={{
+          textAlign: "center",
+          overflow: "hidden",
+          py: 3,
+          px: 3,
+        }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <CelebrationIcon
+            sx={{ fontSize: 48, color: "success.main", mb: 1 }}
+          />
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color="success.main"
+            sx={{ mb: 1 }}
+          >
+            Chúc mừng!
+          </Typography>
+          <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>
+            Bạn đã hoàn thành khóa học.
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Cảm ơn bạn đã nỗ lực và kiên trì. Hãy tiếp tục học hỏi!
+          </Typography>
+        </Box>
+
         <form onSubmit={handleSubmit(handleSubmitReview)}>
-          <Box sx={{ my: 3 }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
               Đánh giá khóa học
             </Typography>
-            <Stack spacing={2} alignItems="center">
+            <Stack spacing={0} alignItems="center">
               <Controller
                 name="rating"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <Box>
+                  <Box sx={{ textAlign: "center" }}>
                     <Rating
                       name={field.name}
                       value={field.value}
@@ -141,7 +167,7 @@ const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
                       <Typography
                         color="error"
                         variant="caption"
-                        sx={{ display: "block" }}
+                        sx={{ display: "block", mt: 0.5 }}
                       >
                         {fieldState.error.message}
                       </Typography>
@@ -156,40 +182,61 @@ const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
                   <TextField
                     {...field}
                     multiline
-                    rows={4}
+                    rows={3}
                     fullWidth
                     label="Viết review của bạn"
                     variant="outlined"
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        overflow: "hidden",
+                      },
+                    }}
                   />
                 )}
               />
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                disabled={isCreateLoading}
-              >
-                {isCreateLoading ? "Đang gửi..." : "Gửi đánh giá"}
-              </Button>
             </Stack>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={isCreateLoading}
+              sx={{ minWidth: 140, marginTop: "20px" }}
+            >
+              {isCreateLoading ? "Đang gửi..." : "Gửi đánh giá"}
+            </Button>
           </Box>
         </form>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<CelebrationIcon />}
-          onClick={handleViewCertificate}
+
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            px: 3,
+            padding: "0px",
+            gap: 1,
+            overflow: "hidden",
+          }}
         >
-          Xem chứng chỉ
-        </Button>
-        <Button variant="outlined" color="primary" onClick={handleGoHome}>
-          Về trang chủ
-        </Button>
-      </DialogActions>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<CelebrationIcon />}
+            onClick={handleViewCertificate}
+            sx={{ minWidth: 140 }}
+          >
+            Xem chứng chỉ
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleGoHome}
+            sx={{ minWidth: 120 }}
+          >
+            Về trang chủ
+          </Button>
+        </DialogActions>
+      </DialogContent>
     </Dialog>
   );
 };

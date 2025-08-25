@@ -21,6 +21,7 @@ interface Props {
 }
 
 export interface RoomModalForm {
+  name: string;
   question_count: number;
   time_per_question: number;
   bet_points: number;
@@ -39,32 +40,62 @@ export const useRoomModalForm = ({
 
   const roomModalFormSchema = useMemo(() => {
     return yup.object().shape({
+      name: yup
+        .string()
+        .trim()
+        .required("Vui lòng nhập tên phòng")
+        .min(3, "Tên phòng cần có ít nhất 3 ký tự")
+        .max(50, "Tên phòng không được quá 50 ký tự")
+        .test(
+          "no-whitespace-only",
+          "Tên phòng không thể chỉ có khoảng trắng",
+          (value) => {
+            if (!value) return false;
+            return value.trim().length > 0;
+          }
+        )
+        .test(
+          "no-multiple-spaces",
+          "Tên phòng không được có nhiều khoảng trắng liên tiếp",
+          (value) => {
+            if (!value) return true; // Let required() handle empty values
+            return !/\s{2,}/.test(value.trim());
+          }
+        )
+        .test(
+          "valid-characters",
+          "Tên phòng chỉ được chứa chữ cái, số và khoảng trắng",
+          (value) => {
+            if (!value) return true; // Let required() handle empty values
+            return /^[a-zA-ZÀ-ỹ0-9\s]+$/.test(value.trim());
+          }
+        ),
       question_count: yup
         .number()
-        .typeError("Số câu hỏi phải là số")
-        .min(1, "Số câu hỏi tối thiểu là 1")
-        .max(numOfQuestion || 20, `Số câu hỏi tối đa là ${numOfQuestion || 20}`)
-        .required("Số câu hỏi là bắt buộc"),
+        .typeError("Vui lòng nhập số câu hỏi hợp lệ")
+        .min(1, "Cần có ít nhất 1 câu hỏi")
+        .max(numOfQuestion || 20, `Tối đa ${numOfQuestion || 20} câu hỏi`)
+        .required("Vui lòng nhập số câu hỏi"),
       bet_points: yup
         .number()
-        .typeError("Số điểm cược phải là số")
-        .min(50, "Số điểm cược tối thiểu là 50")
-        .max(5000, "Số điểm cược tối đa là 5000")
-        .required("Số điểm cược là bắt buộc"),
+        .typeError("Vui lòng nhập số điểm cược hợp lệ")
+        .min(50, "Số điểm cược tối thiểu là 50 điểm")
+        .max(5000, "Số điểm cược tối đa là 5000 điểm")
+        .required("Vui lòng nhập số điểm cược"),
       time_per_question: yup
         .number()
-        .typeError("Thời gian cho mỗi câu hỏi phải là số")
-        .min(10, "Thời gian cho mỗi câu hỏi tối thiểu là 10 giây")
-        .max(60, "Thời gian cho mỗi câu hỏi tối đa là 60 giây")
-        .required("Thời gian cho mỗi câu hỏi là bắt buộc"),
+        .typeError("Vui lòng nhập thời gian hợp lệ")
+        .min(10, "Thời gian tối thiểu là 10 giây/câu")
+        .max(60, "Thời gian tối đa là 60 giây/câu")
+        .required("Vui lòng nhập thời gian cho mỗi câu hỏi"),
       max_players: yup
         .number()
-        .typeError("Số người chơi tối đa là số")
-        .min(2, "Số người chơi tối thiểu là 2 giây")
-        .max(10, "Số người chơi tối đa là 10 giây")
-        .required("Số người chơi là bắt buộc"),
-      challenge_id: yup.string().required("Challenge ID là bắt buộc"),
-      host_user_id: yup.string().required("Host user ID là bắt buộc"),
+        .typeError("Vui lòng nhập số người chơi hợp lệ")
+        .min(2, "Cần có ít nhất 2 người chơi")
+        .max(10, "Tối đa 10 người chơi")
+        .required("Vui lòng nhập số người chơi tối đa"),
+      challenge_id: yup.string().required("Vui lòng chọn thử thách"),
+      host_user_id: yup.string().required("Thông tin người tạo phòng bị thiếu"),
     });
   }, [numOfQuestion]);
 
@@ -73,6 +104,7 @@ export const useRoomModalForm = ({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
+      name: room?.name || "",
       question_count: room?.question_count || 1,
       time_per_question: room?.time_per_question || 60,
       bet_points: room?.bet_points || 100,
@@ -91,6 +123,7 @@ export const useRoomModalForm = ({
   const handleSave = useCallback(
     async (formData: RoomModalForm) => {
       const body = {
+        name: formData.name,
         question_count: formData.question_count,
         time_per_question: formData.time_per_question,
         bet_points: formData.bet_points,

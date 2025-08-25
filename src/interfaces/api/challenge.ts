@@ -18,6 +18,7 @@ export interface Challenge {
 
 export interface Room {
   id: string;
+  name: string;
   question_count: number;
   time_per_question: number;
   bet_points: number;

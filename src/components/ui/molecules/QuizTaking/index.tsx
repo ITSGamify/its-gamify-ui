@@ -108,7 +108,7 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
 
   // Timer countdown
   useEffect(() => {
-    if (timeLeft <= 0) {
+    if (timeLeft <= 0 && !isSubmitting) {
       handleSubmit();
       return;
     }
@@ -118,7 +118,7 @@ export const QuizTaking: React.FC<QuizTakingProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [handleSubmit, timeLeft]);
+  }, [handleSubmit, isSubmitting, timeLeft]);
 
   // Handle mở modal xác nhận
   const handleOpenConfirm = () => {

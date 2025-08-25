@@ -48,29 +48,60 @@ export const RoomModalForm = ({
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: 3, // Giảm padding từ 4 xuống 3 để thu nhỏ chiều dọc
+            p: 3,
             width: "100%",
-            maxWidth: 500, // Giảm maxWidth từ 600 xuống 500 để form gọn hơn
-            maxHeight: "80vh", // Thêm maxHeight để tránh tràn màn hình dọc
-            overflowY: "auto", // Cho phép scroll nếu nội dung quá dài
+            maxWidth: 500,
+            maxHeight: "100vh",
+            overflowY: "auto",
             borderRadius: 1,
           }}
         >
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Tạo Phòng Mới
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            gutterBottom
+            marginBottom={2}
+          >
+            {room ? "Cập nhật phòng chơi" : "Tạo Phòng Mới"}
           </Typography>
 
-          <Stack spacing={1}>
+          <Stack spacing={2}>
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Số Lượng Câu Hỏi
-              </Typography>
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    label="Tên phòng"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={!!error}
+                    helperText={error?.message}
+                    inputProps={{ min: 1, max: num_of_question || 20 }}
+                    sx={{ "& .MuiOutlinedInput-input": { py: 1.2 } }}
+                    required
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { fontSize: "0.875rem" },
+                      margin: "dense",
+                    }}
+                  />
+                )}
+              />
+            </Box>
+
+            <Box>
               <Controller
                 name="question_count"
                 control={control}
                 rules={{ required: true }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    label="Số Lượng Câu Hỏi"
                     type="number"
                     fullWidth
                     variant="outlined"
@@ -79,31 +110,27 @@ export const RoomModalForm = ({
                     error={!!error}
                     helperText={error?.message}
                     inputProps={{ min: 1, max: num_of_question || 20 }}
+                    sx={{ "& .MuiOutlinedInput-input": { py: 1.2 } }}
+                    required
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { fontSize: "0.875rem" },
+                      margin: "dense",
+                    }}
                     placeholder="Nhập số lượng câu hỏi"
                   />
                 )}
               />
-
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 0.5 }} // Giảm margin top từ 1 xuống 0.5 để tiết kiệm không gian
-              >
-                Tối thiểu: 1 | Tối đa: {num_of_question || 20}
-              </Typography>
             </Box>
 
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Thời Gian Mỗi Câu Hỏi (giây)
-              </Typography>
-
               <Controller
                 name="time_per_question"
                 control={control}
                 rules={{ required: true }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    label="Thời Gian Mỗi Câu Hỏi (giây)"
                     type="number"
                     fullWidth
                     name="time_per_question"
@@ -113,28 +140,25 @@ export const RoomModalForm = ({
                     helperText={error?.message}
                     inputProps={{ min: 10, max: 60 }}
                     placeholder="Nhập thời gian mỗi câu hỏi"
+                    sx={{ "& .MuiOutlinedInput-input": { py: 1.2 } }}
                     required
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { fontSize: "0.875rem" },
+                      margin: "dense",
+                    }}
                   />
                 )}
               />
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 0.5 }} // Giảm margin top
-              >
-                Tối thiểu: 10 giây | Tối đa: 60 giây
-              </Typography>
             </Box>
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Số Tiền Cược (Điểm)
-              </Typography>
               <Controller
                 name="bet_points"
                 control={control}
                 rules={{ required: true }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    label=" Số Tiền Cược (Điểm)"
                     type="number"
                     fullWidth
                     variant="outlined"
@@ -144,27 +168,25 @@ export const RoomModalForm = ({
                     helperText={error?.message}
                     inputProps={{ min: 50, max: 5000 }}
                     placeholder="Nhập số điểm cược"
+                    sx={{ "& .MuiOutlinedInput-input": { py: 1.2 } }}
+                    required
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { fontSize: "0.875rem" },
+                      margin: "dense",
+                    }}
                   />
                 )}
               />
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 0.5 }} // Giảm margin top
-              >
-                Tối thiểu: 50 điểm | Tối đa: 5.000 điểm
-              </Typography>
             </Box>
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Số người chơi tối đa
-              </Typography>
               <Controller
                 name="max_players"
                 control={control}
                 rules={{ required: true }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    label="Số người chơi tối đa"
                     type="number"
                     fullWidth
                     variant="outlined"
@@ -174,16 +196,17 @@ export const RoomModalForm = ({
                     helperText={error?.message}
                     inputProps={{ min: 2, max: 10 }}
                     placeholder="Nhập số lượng người chơi"
+                    size="small"
+                    sx={{ "& .MuiOutlinedInput-input": { py: 1.2 } }}
+                    required
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { fontSize: "0.875rem" },
+                      margin: "dense",
+                    }}
                   />
                 )}
               />
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 0.5 }} // Giảm margin top
-              >
-                Tối thiểu: 2 người | Tối đa: 10 người
-              </Typography>
             </Box>
             {userMetric && (
               <Card variant="outlined" sx={{ p: 1.5, bgcolor: "grey.50" }}>
@@ -191,7 +214,7 @@ export const RoomModalForm = ({
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    mb: 0.5, // Giảm margin bottom
+                    mb: 0, // Giảm margin bottom
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">

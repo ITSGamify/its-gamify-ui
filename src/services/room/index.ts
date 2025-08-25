@@ -3,6 +3,7 @@ import { createRoom, updateRoom, getRoomDetail, joinRoom } from "./request";
 import { QUERY_KEYS } from "@constants/query";
 
 export interface RoomRequestParams {
+  name: string;
   question_count: number;
   time_per_question: number;
   bet_points: number;

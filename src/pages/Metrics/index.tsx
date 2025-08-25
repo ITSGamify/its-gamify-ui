@@ -194,7 +194,6 @@ const MetricsPage: React.FC = () => {
                       <TableCell align="center">Khóa học tham gia</TableCell>
                       <TableCell align="center">Khóa học hoàn thành</TableCell>
                       <TableCell align="center">Thử thách tham gia</TableCell>
-                      <TableCell align="center">Thử thách đạt giải</TableCell>
                       <TableCell align="center">Điểm trong quý</TableCell>
                     </TableRow>
                   </TableHead>
@@ -246,9 +245,6 @@ const MetricsPage: React.FC = () => {
                           </TableCell>
                           <TableCell align="center">
                             {metric.challenge_participate_num}
-                          </TableCell>
-                          <TableCell align="center">
-                            {metric.challenge_award_num}
                           </TableCell>
                           <TableCell align="center">
                             {metric.point_in_quarter}

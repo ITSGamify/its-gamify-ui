@@ -43,6 +43,7 @@ export interface Course {
   image_files: StorageFile[] | null;
   course_results: CourseResult[];
   course_collections: CourseCollection[];
+  course_metric: CourseMetric;
 }
 
 export interface CourseCollection {
@@ -96,4 +97,19 @@ export interface CourseResult {
   is_passed: boolean;
   completed_date: string;
   course_number: string;
+}
+
+export interface CourseMetric {
+  course_id: string;
+  course: Course | null;
+  save_count: number;
+  completion_count: number;
+  review_count: number;
+  star_rating: number;
+  id: string;
+  created_date: string;
+  updated_date: string;
+  is_deleted: boolean;
+  created_by: string;
+  updated_by: string;
 }

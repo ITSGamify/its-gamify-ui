@@ -15,7 +15,6 @@ import {
   School,
   Person,
   CalendarToday,
-  Numbers,
   AccessTime,
   Grade,
 } from "@mui/icons-material";
@@ -121,7 +120,7 @@ const CertificateListItem: React.FC<CertificateListItemProps> = ({
               </Box>
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Numbers
                 sx={{ fontSize: 18, color: theme.palette.text.secondary }}
               />
@@ -137,7 +136,7 @@ const CertificateListItem: React.FC<CertificateListItemProps> = ({
                   #{certificate.course_number}
                 </Typography>
               </Box>
-            </Box>
+            </Box> */}
           </Stack>
 
           <Divider sx={{ my: 2 }} />
@@ -151,7 +150,7 @@ const CertificateListItem: React.FC<CertificateListItemProps> = ({
             {certificate.course.duration_in_hours && (
               <Chip
                 icon={<AccessTime sx={{ fontSize: 16 }} />}
-                label={certificate.course.duration_in_hours}
+                label={`${certificate.course.duration_in_hours} phút`}
                 size="small"
                 variant="outlined"
                 color="primary"

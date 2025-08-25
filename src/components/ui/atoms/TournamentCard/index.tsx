@@ -142,6 +142,9 @@ const TournamentCard = ({ challenge }: TournamentCardProps) => {
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
+            height: "40px", // Cố định chiều cao
+            minHeight: "40px", // Đảm bảo chiều cao tối thiểu
+            lineHeight: "20px", // Đảm bảo mỗi dòng cao 20px
           }}
         >
           {challenge.description}

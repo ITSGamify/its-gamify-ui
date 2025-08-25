@@ -47,15 +47,6 @@ const CategoryChip = styled(Chip)(() => ({
   height: "24px",
 }));
 
-// const LevelChip = styled(Chip)(({ theme }) => ({
-//   borderRadius: "16px",
-//   fontWeight: 600,
-//   fontSize: "0.75rem",
-//   height: "24px",
-//   backgroundColor: alpha(theme.palette.primary.main, 0.1),
-//   color: theme.palette.primary.main,
-// }));
-
 interface CourseCardProps {
   course: Course;
   isShowBtn?: boolean;
@@ -101,7 +92,7 @@ const CourseCard = ({
 
   return (
     <StyledCard onClick={handleCardClick} sx={{ cursor: "pointer" }}>
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", marginBottom: "10px" }}>
         <CardMedia
           component="img"
           height="200"
@@ -201,6 +192,9 @@ const CourseCard = ({
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
+            height: "40px",
+            minHeight: "40px",
+            lineHeight: "20px",
           }}
         >
           {course.short_description}
@@ -214,14 +208,15 @@ const CourseCard = ({
           }}
         >
           <Rating
-            value={3}
+            value={course.course_metric.star_rating}
             precision={0.1}
             readOnly
             size="small"
             sx={{ mr: 1 }}
           />
           <Typography variant="body2" color="text.secondary">
-            ({3}) • {145} đánh giá
+            ({course.course_metric.star_rating}) •{" "}
+            {course.course_metric.review_count} đánh giá
           </Typography>
         </Box>
 
@@ -241,7 +236,7 @@ const CourseCard = ({
           >
             <AccessTimeIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
             <Typography variant="body2" color="text.secondary">
-              {course.duration_in_hours} • {course.modules?.length} bài học
+              {course.duration_in_hours} phút • {course.modules?.length} bài học
             </Typography>
           </Box>
           {!isShowBtn && (

@@ -33,6 +33,7 @@ export const END_POINTS = {
     COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
     COURSE_COLLECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-collections`,
     COURSE_REVIEWS: `${BASE_KEYS.COURSES}/:courseId/course-reviews`,
+    COURSE_RESULT: `${BASE_KEYS.COURSES}/:courseId/course-result`,
   },
   PARTICIPATIONS: {
     BASE: BASE_KEYS.COURSE_PARTICIPATIONS,

@@ -8,6 +8,7 @@ import {
   joinCourse,
   upsertCourseCollection,
   getCourseReviews,
+  getCourseResultByCourseId,
 } from "./request";
 import { PaginationParams } from "@interfaces/dom/query";
 
@@ -73,5 +74,13 @@ export const useGetCourseReviews = (params: GetReviewParams) => {
     queryKey: [QUERY_KEYS.COURSE.COURSE_REVIEWS, params.courseId, params],
     queryFn: () => getCourseReviews(params),
     enabled: !!params && !!params.courseId,
+  });
+};
+
+export const useGetCourseResultByCourseId = (courseId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COURSE.COURSE_RESULT, courseId],
+    queryFn: () => getCourseResultByCourseId(courseId),
+    enabled: !!courseId,
   });
 };

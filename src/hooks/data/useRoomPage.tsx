@@ -2,6 +2,7 @@ import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
 import { Room } from "@interfaces/api/challenge";
 import { useGetChallengeDetail, useGetRooms } from "@services/challenge";
+import { useGetCourseResultByCourseId } from "@services/course";
 import { useGetChallengeQuestions } from "@services/question";
 import { useGetUserMetric } from "@services/user";
 import { getRoute } from "@utils/route";
@@ -41,6 +42,10 @@ export const useRoomPage = () => {
   const { data: roomRes, isFetching: isLoadingRooms } = useGetRooms(
     tournamentId || ""
   );
+
+  const { data: courseResult, isPending: isLoadingCoureResult } =
+    useGetCourseResultByCourseId(challengeDetail?.course_id || "");
+
   const handleCloseRoom = () => {
     setShowCreateRoom(false);
   };
@@ -86,18 +91,14 @@ export const useRoomPage = () => {
   };
 
   useEffect(() => {
-    if (challengeDetail && challengeDetail?.course.course_results.length == 0) {
+    if (!courseResult) {
       toast.warning(ToastContent, {
         data: { message: "Bạn chưa hoàn thành khóa học" },
       });
       const route = getRoute(PATH.TOURNAMENT);
       navigate(route);
     }
-  }, [
-    challengeDetail,
-    challengeDetail?.course.course_results.length,
-    navigate,
-  ]);
+  }, [challengeDetail, courseResult, navigate]);
 
   const getChallengeQuestionsReq = {
     page: 0,
@@ -118,7 +119,8 @@ export const useRoomPage = () => {
       isLoadingChallenge ||
       isLoadingUserMetric ||
       isLoadingRooms ||
-      isLoadingQuestion,
+      isLoadingQuestion ||
+      isLoadingCoureResult,
     handleCloseRoom,
     showCreateRoom,
     handleOpenRoom,

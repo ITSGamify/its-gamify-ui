@@ -67,7 +67,7 @@ const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <DialogActions>
         <Button onClick={handleClose}>Hủy</Button>
         <Button disabled={isJoining} onClick={handleJoin}>
-          {isJoining ? "Đang tham gia . . ." : "Tham gia"}
+          {isJoining ? "Đang tham gia..." : "Tham gia"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -115,7 +115,7 @@ export const BadgeListItem: React.FC<BadgeListItemProps> = ({
                   Ngày nhận
                 </Typography>
                 <Typography variant="body1" fontWeight={500}>
-                  {formatDateToVietnamese(badge.create_date)}
+                  {formatDateToVietnamese(badge.created_date)}
                 </Typography>
               </Box>
             </Box>

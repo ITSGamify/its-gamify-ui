@@ -18,6 +18,6 @@ export interface Badge {
   type: BadgeType;
   description: string;
   user_id: string;
-  create_date: string;
+  created_date: string;
   user: User;
 }

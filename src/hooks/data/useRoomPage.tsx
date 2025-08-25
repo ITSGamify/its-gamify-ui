@@ -91,14 +91,20 @@ export const useRoomPage = () => {
   };
 
   useEffect(() => {
-    if (!courseResult) {
+    if (!courseResult && !isLoadingCoureResult) {
       toast.warning(ToastContent, {
         data: { message: "Bạn chưa hoàn thành khóa học" },
       });
       const route = getRoute(PATH.TOURNAMENT);
       navigate(route);
     }
-  }, [challengeDetail, courseResult, navigate]);
+  }, [
+    challengeDetail,
+    courseResult,
+    isLoadingChallenge,
+    isLoadingCoureResult,
+    navigate,
+  ]);
 
   const getChallengeQuestionsReq = {
     page: 0,

@@ -11,8 +11,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  // Button,
   styled,
   Divider,
   Fade,
@@ -21,7 +19,6 @@ import {
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LockIcon from "@mui/icons-material/Lock";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { alpha, useTheme } from "@mui/material/styles";
 import {
   useGetCourseDetail,
@@ -140,11 +137,6 @@ const LearningProgress: React.FC = () => {
         sx={{ py: "1.2rem" }}
         title="Tiến độ học tập"
         titleTypographyProps={{ variant: "h6", fontWeight: 600 }}
-        action={
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
-        }
       />
 
       <CardContent sx={{ py: 0 }}>

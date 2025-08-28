@@ -145,73 +145,101 @@ export const useWaitingRoomPage = () => {
 
   const num_of_question = questionsData?.pagination.total_items_count || 0;
 
-  useEffect(() => {
-    let currentUrl = window.location.href;
+  const unloadingRef = useRef(false);
 
-    const route = getRoute(PATH.TOURNAMENT_MATCH) + "?roomId=" + roomId;
-    const cleanup = () => {
+  const cleanup = useCallback(() => {
+    if (unloadingRef.current) return; // Tránh gọi nhiều lần
+
+    unloadingRef.current = true;
+    console.log("Cleaning up - leaving room"); // Thêm log để debug
+
+    if (connection && roomId && profile?.user?.id) {
       connection
-        ?.invoke("OutRoom", roomId, profile?.user.id)
+        .invoke("OutRoom", roomId, profile.user.id)
         .then(() => {
           intial_join.current = true;
         })
         .catch((err) => console.error("Error out room:", err));
-    };
+    }
+  }, [connection, roomId, profile?.user?.id]);
 
+  useEffect(() => {
+    return () => {
+      if (!window.location.href.includes("/match")) {
+        cleanup();
+      }
+    };
+  }, [cleanup]);
+
+  useEffect(() => {
     const handleBeforeUnload = () => {
       cleanup();
     };
 
-    const handleUrlChange = () => {
-      if (currentUrl !== window.location.href) {
-        currentUrl = window.location.href;
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-        // Kiểm tra xem URL mới có phải là route đến waiting room không
-        const newUrl = window.location.href;
-        const waitingRoomUrl = new URL(route, window.location.origin).href;
-        console.log(route);
-        // Chỉ gọi cleanup nếu URL mới không phải là route đến waiting room
-        if (newUrl !== waitingRoomUrl && !newUrl.includes(route)) {
-          cleanup();
-        }
-      }
+    // Thêm sự kiện unload để đảm bảo cleanup được gọi
+    window.addEventListener("unload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("unload", handleBeforeUnload);
+    };
+  }, [cleanup]);
+
+  useEffect(() => {
+    // Sử dụng History API để phát hiện khi người dùng bấm nút back
+    const handlePopState = () => {
+      console.log("Pop state event triggered"); // Thêm log để debug
+      cleanup();
     };
 
-    // Override history methods
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [cleanup]);
+
+  useEffect(() => {
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
 
     history.pushState = function (...args) {
-      originalPushState.apply(history, args);
-      handleUrlChange();
+      const result = originalPushState.apply(this, args);
+
+      // Kiểm tra xem URL mới có phải là route đến match không
+      const newUrl = window.location.href;
+      const matchRoute = getRoute(PATH.TOURNAMENT_MATCH) + "?roomId=" + roomId;
+
+      if (!newUrl.includes(matchRoute)) {
+        console.log("Push state navigation detected"); // Thêm log để debug
+        cleanup();
+      }
+
+      return result;
     };
 
     history.replaceState = function (...args) {
-      originalReplaceState.apply(history, args);
-      handleUrlChange();
-    };
+      const result = originalReplaceState.apply(this, args);
 
-    // Event listeners
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handleUrlChange);
+      // Kiểm tra tương tự như pushState
+      const newUrl = window.location.href;
+      const matchRoute = getRoute(PATH.TOURNAMENT_MATCH) + "?roomId=" + roomId;
+
+      if (!newUrl.includes(matchRoute)) {
+        console.log("Replace state navigation detected"); // Thêm log để debug
+        cleanup();
+      }
+
+      return result;
+    };
 
     return () => {
-      // Restore original methods
       history.pushState = originalPushState;
       history.replaceState = originalReplaceState;
-
-      // Remove listeners
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handleUrlChange);
     };
-  }, [
-    connection,
-    profile?.user.id,
-    roomDetail,
-    roomDetail?.id,
-    roomDetail?.status,
-    roomId,
-  ]);
+  }, [cleanup, roomId]);
 
   return {
     isLoading: isLoadingUserMetric || isLoadingRoom || isLoadingQuestion,

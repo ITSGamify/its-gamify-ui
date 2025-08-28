@@ -219,12 +219,20 @@ const CourseOverviewPage: React.FC = () => {
                   sx={{ mr: 2, mb: 1 }}
                 />
 
-                <Box display="flex" alignItems="center" mr={3} mb={1}>
-                  <Rating value={5} precision={0.1} readOnly size="small" />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    ({5}) • {20} đánh giá
-                  </Typography>
-                </Box>
+                {course?.course_metric && (
+                  <Box display="flex" alignItems="center" mr={3} mb={1}>
+                    <Rating
+                      value={course?.course_metric.star_rating}
+                      precision={0.1}
+                      readOnly
+                      size="small"
+                    />
+                    <Typography variant="body2" color="text.secondary" ml={1}>
+                      ({course?.course_metric.star_rating}) •{" "}
+                      {course?.course_metric.review_count} đánh giá
+                    </Typography>
+                  </Box>
+                )}
 
                 <Box display="flex" alignItems="center" mr={3} mb={1}>
                   <AccessTimeIcon

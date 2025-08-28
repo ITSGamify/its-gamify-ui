@@ -96,7 +96,7 @@ export const useHomePage = () => {
         isLoading: isLoadingUserMetric,
       },
     ];
-  }, [userMetric]);
+  }, [isLoadingUserMetric, userMetric]);
 
   const handleViewAllCourses = () => {
     navigate(PATH.COURSES);

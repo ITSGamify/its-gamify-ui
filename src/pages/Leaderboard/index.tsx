@@ -256,7 +256,7 @@ const LeaderboardPage: React.FC = () => {
                   ) : (
                     sortedQuarters.map((q: Quarter) => (
                       <MenuItem key={q.id} value={q.id}>
-                        {q.name}, ({formatDateShort(q.start_date)} -{" "}
+                        {q.name}, {q.year} ({formatDateShort(q.start_date)} -{" "}
                         {formatDateShort(q.end_date)})
                       </MenuItem>
                     ))

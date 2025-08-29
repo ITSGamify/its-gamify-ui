@@ -263,9 +263,9 @@ const MatchHistoryPage: React.FC = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Ngày</TableCell>
-                      <TableCell>NGười chiến thắng</TableCell>
+                      <TableCell>Người chiến thắng</TableCell>
                       <TableCell>Xếp hạng</TableCell>
-                      <TableCell>Giải Đấu</TableCell>
+                      <TableCell>Thử thách</TableCell>
                       <TableCell>Kết Quả</TableCell>
                       <TableCell>Điểm cược</TableCell>
                     </TableRow>
@@ -327,9 +327,7 @@ const MatchHistoryPage: React.FC = () => {
                                   : "error.main"
                               }
                             >
-                              {`${match.status === "WIN" ? "" : "- "} ${
-                                match.points
-                              }`}
+                              {`${match.points}`}
                             </Typography>
                           </TableCell>
                         </TableRow>

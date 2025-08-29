@@ -1,5 +1,4 @@
-// src/App.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ToastProvider } from "@providers/ToastProvider";
@@ -11,6 +10,7 @@ import { useGlobal } from "@hooks/shared/useGlobal";
 import { ToastContainer, ToastContainerProps } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SignalRProvider } from "@providers/SignalRContext";
+import { RoomCleanupManager } from "@utils/roomCleanup";
 
 const toastConfig: ToastContainerProps = {
   limit: 5,
@@ -24,6 +24,13 @@ const toastConfig: ToastContainerProps = {
 const App: React.FC = () => {
   const { themeOptions } = useGlobal();
   const theme = createTheme(themeOptions);
+
+  useEffect(() => {
+    // Monitor sẽ tự động start khi có room data
+    return () => {
+      RoomCleanupManager.clearRoomData();
+    };
+  }, []);
 
   return (
     <QueryProvider>

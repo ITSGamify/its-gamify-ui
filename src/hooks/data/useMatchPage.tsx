@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import userSession from "@utils/user-session"; // Để lấy profile và xác định isHost
 import { useSignalR } from "@providers/SignalRContext";
 import { QuizQuestion } from "@interfaces/api/lesson";
-import { Room } from "@interfaces/api/challenge";
+import { Room, RoomUser } from "@interfaces/api/challenge";
 import { PATH } from "@constants/path";
 import { getRoute } from "@utils/route";
 
@@ -19,7 +19,7 @@ export const useMatchPage = () => {
   const [isAnswering, setIsAnswering] = useState(false);
   const [numOfCorrect, setNumOfCorrect] = useState(0);
   const [parsedRoom, setParsedRoom] = useState<Room | null>(null);
-  const [roomResult, setRoomResult] = useState<Room | null>(null);
+  const [roomResult, setRoomResult] = useState<RoomUser[] | null>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]); // State mới cho questions từ SignalR
 
   const { data: roomDetailFromApi, isFetching: isLoadingRoom } =
@@ -36,13 +36,18 @@ export const useMatchPage = () => {
   ];
   const currentQuestion = roomDetail?.current_question_index || 0;
 
+  connection?.on("GameEnded", (result: string) => {
+    const roomUser = JSON.parse(result) as RoomUser[];
+    console.log(result);
+    setNumOfCorrect(0);
+    setShowResult(true);
+    setRoomResult(roomUser);
+  });
+
   connection?.on("RoomUpdated", (message: string) => {
     const roomData = JSON.parse(message) as Room;
     setParsedRoom(roomData);
     if (roomData.status === "FINISHED") {
-      setNumOfCorrect(0);
-      setShowResult(true);
-      setRoomResult(roomData);
       setTimeLeft(roomData?.time_per_question || 60);
     }
 

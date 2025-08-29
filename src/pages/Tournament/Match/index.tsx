@@ -20,7 +20,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { useMatchPage } from "@hooks/data/useMatchPage";
-import { Room, RoomUser } from "@interfaces/api/challenge";
+import { RoomUser } from "@interfaces/api/challenge";
 import { LoginResponse } from "@interfaces/api/auth";
 import { deepOrange, grey, amber } from "@mui/material/colors";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -108,12 +108,12 @@ const PlayerList: React.FC<{
 
 const MatchResult: React.FC<{
   profile: LoginResponse;
-  roomDetail: Room;
+  roomUser: RoomUser[];
   navigate: NavigateFunction;
   handlePlayAgain: () => void;
-}> = React.memo(({ profile, roomDetail, navigate }) => {
+}> = React.memo(({ profile, roomUser, navigate }) => {
   // Lấy và sắp xếp RoomUser active theo current_score descending
-  const sortedPlayers = (roomDetail?.room_users || [])
+  const sortedPlayers = (roomUser || [])
     .filter((user: RoomUser) => !user.is_out_room)
     .sort((a: RoomUser, b: RoomUser) => b.current_score - a.current_score);
 
@@ -262,7 +262,7 @@ const MatchPage: React.FC = () => {
     return (
       <MatchResult
         profile={profile as LoginResponse}
-        roomDetail={roomResult}
+        roomUser={roomResult}
         navigate={navigate}
         handlePlayAgain={handlePlayAgain}
       />

@@ -20,7 +20,6 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import EditIcon from "@mui/icons-material/Edit";
-// import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import { RoomModalForm } from "@components/ui/molecules/RoomModalForm";
 import { useWaitingRoomPage } from "@hooks/data/useWaitingRoomPage";
 import { RoomUser } from "@interfaces/api/challenge";
@@ -75,7 +74,7 @@ const WaitingRoomPage: React.FC = () => {
             Phòng Chờ
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Chuẩn bị cho trận đấu quiz của bạn!
+            Chuẩn bị cho trận đấu của bạn!
           </Typography>
         </Box>
 
@@ -95,6 +94,14 @@ const WaitingRoomPage: React.FC = () => {
                   <EditIcon />
                 </IconButton>
               )}
+
+              {/* Thêm tên phòng */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  {`Phòng: ${roomDetail.name} - Điểm cược: ${roomDetail.bet_points}`}
+                </Typography>
+              </Box>
+
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Người chơi ({activePlayers.length}/{roomDetail.max_players})
               </Typography>

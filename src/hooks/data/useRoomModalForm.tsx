@@ -143,7 +143,7 @@ export const useRoomModalForm = ({
 
       if (room) {
         await updateRoom({ id: room.id, ...body }, { onSuccess });
-        await connection?.invoke("UpdateRoom", room.id);
+        await connection?.invoke("GetRoomDetail", room.id);
         if (onClose) onClose();
       } else {
         const res = await createRoom({ ...body }, { onSuccess });

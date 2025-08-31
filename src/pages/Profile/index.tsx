@@ -438,7 +438,7 @@ const UserProfilePage = () => {
                                   color: "success.main",
                                 },
                                 {
-                                  label: "Thử thách tham gia",
+                                  label: "Số trân đã đấu",
                                   value: metric.challenge_participate_num || 0,
                                   icon: (
                                     <ChallengeIcon

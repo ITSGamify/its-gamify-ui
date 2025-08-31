@@ -25,6 +25,7 @@ import {
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
   MilitaryTech as MilitaryTechIcon,
+  WarningAmber as WarningAmberIcon,
 } from "@mui/icons-material";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -378,22 +379,26 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
         ) : (
           <>
             {notifications.map((notification) => {
-              // Xác định icon dựa trên type
+              // Xác định icon và color dựa trên type
               let IconComponent;
-              switch (
-                notification.type // Giả sử notification có trường 'type'
-              ) {
+              let iconColor;
+
+              switch (notification.type) {
                 case "COURSE_COMPLETED":
                   IconComponent = CheckCircle;
+                  iconColor = notification.is_read ? "action" : "primary";
                   break;
                 case "POINTS_BONUS":
                   IconComponent = Star;
+                  iconColor = notification.is_read ? "action" : "primary";
                   break;
                 case "REMIND_COURSE":
-                  IconComponent = Notifications;
+                  IconComponent = WarningAmberIcon;
+                  iconColor = notification.is_read ? "action" : "warning";
                   break;
                 default:
-                  IconComponent = Notifications; // Icon mặc định nếu type không khớp
+                  IconComponent = Notifications;
+                  iconColor = notification.is_read ? "action" : "primary";
               }
 
               // Cắt ngắn title nếu quá dài
@@ -414,20 +419,31 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer }) => {
                     py: 1.5,
                     backgroundColor: notification.is_read
                       ? "inherit"
-                      : "action.hover", // Nền khác cho chưa đọc
+                      : "action.hover",
                   }}
                 >
                   <ListItemIcon>
                     <IconComponent
                       fontSize="small"
-                      color={notification.is_read ? "action" : "primary"} // Màu khác cho chưa đọc
+                      color={
+                        iconColor as
+                          | "inherit"
+                          | "action"
+                          | "primary"
+                          | "warning"
+                          | "disabled"
+                          | "secondary"
+                          | "error"
+                          | "info"
+                          | "success"
+                      }
                     />
                   </ListItemIcon>
                   <ListItemText>
                     <Typography
                       variant="body2"
                       sx={{
-                        fontWeight: notification.is_read ? "normal" : "bold", // Bold cho chưa đọc
+                        fontWeight: notification.is_read ? "normal" : "bold",
                       }}
                     >
                       {displayTitle}

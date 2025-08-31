@@ -109,19 +109,44 @@ const CourseCard = ({
             gap: 1,
           }}
         >
-          <CategoryChip
-            label={course.category?.name}
-            size="small"
-            // color="primary"
+          <Box
             sx={{
-              backgroundColor: theme.palette.primary.light,
-              color: "#fff",
-              fontWeight: 600,
-              fontSize: "0.75rem",
-              height: "24px",
-              borderRadius: "16px",
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
             }}
-          />
+          >
+            <CategoryChip
+              label={course.category?.name}
+              size="small"
+              // color="primary"
+              sx={{
+                backgroundColor: theme.palette.primary.light,
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                height: "24px",
+                borderRadius: "16px",
+              }}
+            />
+
+            {course.is_optional && (
+              <Chip
+                label="Không bắt buộc"
+                size="small"
+                sx={{
+                  backgroundColor: theme.palette.grey[600],
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "0.75rem",
+                  height: "24px",
+                  borderRadius: "16px",
+                  width: "fit-content",
+                }}
+              />
+            )}
+          </Box>
+
           {isJoined && !isCompleted && (
             <Chip
               label="Đang tham gia"

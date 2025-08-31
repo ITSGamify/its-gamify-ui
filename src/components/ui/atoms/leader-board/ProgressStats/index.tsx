@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, Button, Badge } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import userSession from "@utils/user-session";
+import { RoleEnum } from "@interfaces/api/user";
 
 interface ProgressStatsProps {
   completed: number;
@@ -14,6 +16,7 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({
   overdue,
   onRemind,
 }) => {
+  const profile = userSession.getUserProfile();
   return (
     <Box
       sx={{
@@ -35,16 +38,18 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({
           {overdue} quá hạn
         </Badge>
       </Box>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <Button
-          variant="outlined"
-          startIcon={<NotificationsIcon />}
-          onClick={onRemind}
-          sx={{ textTransform: "none" }}
-        >
-          Nhắc nhở
-        </Button>
-      </Box>
+      {profile?.user.role !== RoleEnum.LEADER && (
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<NotificationsIcon />}
+            onClick={onRemind}
+            sx={{ textTransform: "none" }}
+          >
+            Nhắc nhở
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

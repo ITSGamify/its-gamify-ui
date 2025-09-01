@@ -1,5 +1,5 @@
 import { useSignalR } from "@providers/SignalRContext";
-import { RoomCleanupManager } from "@utils/roomCleanup";
+import { RoomCleanupManager, RoomType } from "@utils/roomCleanup";
 import { useCallback, useEffect } from "react";
 
 export const useRoomCleanup = () => {
@@ -9,9 +9,12 @@ export const useRoomCleanup = () => {
     RoomCleanupManager.setConnection(connection);
   }, [connection]);
 
-  const setRoomForCleanup = useCallback((roomId: string, userId: string) => {
-    RoomCleanupManager.setRoomData(roomId, userId);
-  }, []);
+  const setRoomForCleanup = useCallback(
+    (roomId: string, userId: string, type: RoomType) => {
+      RoomCleanupManager.setRoomData(roomId, userId, type);
+    },
+    []
+  );
 
   const clearRoomCleanup = useCallback(() => {
     RoomCleanupManager.clearRoomData();

@@ -61,15 +61,20 @@ export const useWaitingRoomPage = () => {
         await connection.invoke("JoinRoom", roomId, profile.user.id);
 
         // Set room data for cleanup sau khi join thành công
-        RoomCleanupManager.setRoomData(roomId, profile.user.id);
+        RoomCleanupManager.setRoomData(roomId, profile.user.id, "Waiting");
       } catch {
         setErrorMessage("Lỗi khi tham gia phòng.");
-        intial_join.current = false; // Reset để có thể thử lại
+        intial_join.current = false;
+        navigate(
+          getRoute(PATH.TOURNAMENT_ROOM, {
+            tournamentId: roomDetail?.challenge_id,
+          })
+        );
       }
     };
 
     joinRoom();
-  }, [connection, profile, roomId, setErrorMessage]);
+  }, [connection, navigate, profile, roomDetail, roomId, setErrorMessage]);
 
   // Countdown và navigate to match
   const countdownTimerRef = useRef<number | null>(null);
@@ -90,7 +95,6 @@ export const useWaitingRoomPage = () => {
 
   // Countdown effect
   useEffect(() => {
-    console.log("roomDetail", roomDetail);
     const shouldStartCountdown =
       roomDetail &&
       roomDetail.status === "PLAYING" &&

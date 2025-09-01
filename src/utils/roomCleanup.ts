@@ -1,8 +1,12 @@
+// Thêm type để phân biệt loại phòng
+export type RoomType = "Waiting" | "Match";
+
 interface RoomCleanupData {
   roomId: string;
   userId: string;
   connectionId?: string;
   timestamp: number;
+  type: RoomType; // Thêm trường type
 }
 
 export class RoomCleanupManager {
@@ -23,11 +27,13 @@ export class RoomCleanupManager {
     }
   }
 
-  static setRoomData(roomId: string, userId: string) {
+  // Cập nhật method để thêm type
+  static setRoomData(roomId: string, userId: string, type: RoomType) {
     const data: RoomCleanupData = {
       roomId,
       userId,
       timestamp: Date.now(),
+      type, // Lưu type
     };
     sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
 
@@ -53,17 +59,34 @@ export class RoomCleanupManager {
   private static async performCleanup(data: RoomCleanupData) {
     try {
       if (this.connection && this.connection.state === "Connected") {
-        console.log(
-          "Performing cleanup via SignalR - leaving room:",
-          data.roomId
-        );
-        await this.connection.invoke("OutRoom", data.roomId, data.userId);
-        console.log("Cleanup performed successfully via SignalR");
+        // Phân loại xử lý dựa trên type
+        if (data.type === "Match") {
+          console.log(
+            "Performing cleanup via SignalR - leaving match:",
+            data.roomId
+          );
+          await this.connection.invoke(
+            "HandleMatchOut",
+            data.roomId,
+            data.userId
+          );
+          console.log("Match cleanup performed successfully via SignalR");
+        } else {
+          // 'Waiting'
+          console.log(
+            "Performing cleanup via SignalR - leaving waiting room:",
+            data.roomId
+          );
+          await this.connection.invoke("OutRoom", data.roomId, data.userId);
+          console.log(
+            "Waiting room cleanup performed successfully via SignalR"
+          );
+        }
       } else {
         console.warn("SignalR connection not available for cleanup");
       }
     } catch (error) {
-      console.error("SignalR cleanup failed:", error);
+      console.error(`SignalR ${data.type} cleanup failed:`, error);
     } finally {
       this.clearRoomData();
     }
@@ -76,19 +99,28 @@ export class RoomCleanupManager {
 
     if (!roomData) return false;
 
-    // Các route được phép (không cần cleanup)
-    const allowedPaths = [
-      "/match", // TOURNAMENT_MATCH
-      `/rooms/${roomData.roomId}`, // TOURNAMENT_WAITING_ROOM
-    ];
+    // Các route được phép (không cần cleanup) dựa trên type
+    let allowedPaths: string[];
+
+    if (roomData.type === "Match") {
+      allowedPaths = [
+        "/match", // TOURNAMENT_MATCH
+      ];
+    } else {
+      // 'Waiting'
+      allowedPaths = [
+        `/rooms/${roomData.roomId}`, // TOURNAMENT_WAITING_ROOM
+      ];
+    }
 
     // Kiểm tra path
     const isAllowedPath = allowedPaths.some((path) => {
       return currentPath === path || currentPath.startsWith(path);
     });
 
-    // Kiểm tra match route với query param
+    // Kiểm tra match route với query param (chỉ cho type Match)
     const isMatchRoute =
+      roomData.type === "Match" &&
       currentPath === "/match" &&
       currentSearch.includes(`roomId=${roomData.roomId}`);
 
@@ -96,7 +128,7 @@ export class RoomCleanupManager {
 
     if (shouldCleanup) {
       console.log(
-        "Should perform cleanup - current path:",
+        `Should perform ${roomData.type} cleanup - current path:`,
         currentPath,
         "current search:",
         currentSearch
@@ -133,20 +165,28 @@ export class RoomCleanupManager {
       if (document.visibilityState === "hidden") {
         const roomData = this.getRoomData();
         if (roomData && this.shouldPerformCleanup()) {
-          console.log("Page hidden - performing cleanup");
+          console.log(`Page hidden - performing ${roomData.type} cleanup`);
 
           // Thử SignalR trước
           if (this.connection && this.connection.state === "Connected") {
             try {
               // Không await vì page đang hidden
-              this.connection.invoke(
-                "OutRoom",
-                roomData.roomId,
-                roomData.userId
-              );
+              if (roomData.type === "Match") {
+                this.connection.invoke(
+                  "HandleMatchOut",
+                  roomData.roomId,
+                  roomData.userId
+                );
+              } else {
+                this.connection.invoke(
+                  "OutRoom",
+                  roomData.roomId,
+                  roomData.userId
+                );
+              }
             } catch (error) {
               console.error(
-                "SignalR cleanup on visibility change failed:",
+                `SignalR ${roomData.type} cleanup on visibility change failed:`,
                 error
               );
             }
@@ -157,31 +197,35 @@ export class RoomCleanupManager {
       }
     });
 
-    // Handle beforeunload as backup
+    // Handle beforeunload
     window.addEventListener("beforeunload", () => {
       const roomData = this.getRoomData();
       if (roomData && this.shouldPerformCleanup()) {
-        console.log("Before unload - performing cleanup");
+        console.log(`Before unload - performing ${roomData.type} cleanup`);
 
-        // Thử SignalR trước (synchronous)
+        // Thử SignalR (synchronous)
         if (this.connection && this.connection.state === "Connected") {
           try {
             // Không await vì beforeunload cần nhanh
-            this.connection.invoke("OutRoom", roomData.roomId, roomData.userId);
+            if (roomData.type === "Match") {
+              this.connection.invoke(
+                "HandleMatchOut",
+                roomData.roomId,
+                roomData.userId
+              );
+            } else {
+              this.connection.invoke(
+                "OutRoom",
+                roomData.roomId,
+                roomData.userId
+              );
+            }
           } catch (error) {
-            console.error("SignalR cleanup on beforeunload failed:", error);
+            console.error(
+              `SignalR ${roomData.type} cleanup on beforeunload failed:`,
+              error
+            );
           }
-        }
-
-        // Backup với sendBeacon
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(
-            "/api/out-room",
-            JSON.stringify({
-              roomId: roomData.roomId,
-              userId: roomData.userId,
-            })
-          );
         }
       }
     });
@@ -193,7 +237,7 @@ export class RoomCleanupManager {
         if (this.shouldPerformCleanup()) {
           const roomData = this.getRoomData();
           if (roomData) {
-            console.log("Popstate - performing cleanup");
+            console.log(`Popstate - performing ${roomData.type} cleanup`);
             this.performCleanup(roomData);
           }
         }

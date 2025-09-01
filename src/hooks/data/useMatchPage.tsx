@@ -57,7 +57,6 @@ export const useMatchPage = () => {
 
   connection?.on("GameEnded", (result: string) => {
     const roomUser = JSON.parse(result) as RoomUser[];
-    console.log(result);
     setShowResult(true);
     setRoomResult(roomUser);
   });
@@ -95,7 +94,7 @@ export const useMatchPage = () => {
           "SubmitAnswer",
           roomId,
           profile?.user.id,
-          currentQuestion,
+          true,
           0
         );
         return;
@@ -114,7 +113,7 @@ export const useMatchPage = () => {
         "SubmitAnswer",
         roomId,
         profile?.user.id,
-        currentQuestion,
+        false,
         points
       );
     },

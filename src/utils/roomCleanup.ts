@@ -160,43 +160,6 @@ export class RoomCleanupManager {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    // Handle page visibility change
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") {
-        const roomData = this.getRoomData();
-        if (roomData && this.shouldPerformCleanup()) {
-          console.log(`Page hidden - performing ${roomData.type} cleanup`);
-
-          // Thử SignalR trước
-          if (this.connection && this.connection.state === "Connected") {
-            try {
-              // Không await vì page đang hidden
-              if (roomData.type === "Match") {
-                this.connection.invoke(
-                  "HandleMatchOut",
-                  roomData.roomId,
-                  roomData.userId
-                );
-              } else {
-                this.connection.invoke(
-                  "OutRoom",
-                  roomData.roomId,
-                  roomData.userId
-                );
-              }
-            } catch (error) {
-              console.error(
-                `SignalR ${roomData.type} cleanup on visibility change failed:`,
-                error
-              );
-            }
-          }
-
-          this.clearRoomData();
-        }
-      }
-    });
-
     // Handle beforeunload
     window.addEventListener("beforeunload", () => {
       const roomData = this.getRoomData();

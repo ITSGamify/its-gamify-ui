@@ -82,7 +82,7 @@ const RoomsPage = () => {
     (sum, room) => sum + room.room_users.length,
     0
   );
-  const totalCapacity = rooms.length * 2;
+  const totalCapacity = rooms.reduce((sum, room) => sum + room.max_players, 0);
 
   return (
     <Container maxWidth="xl">

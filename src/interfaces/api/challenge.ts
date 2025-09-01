@@ -14,6 +14,7 @@ export interface Challenge {
   category: Category;
   thumbnail_image_id: string;
   course: Course;
+  rooms: Room[];
 }
 
 export interface Room {

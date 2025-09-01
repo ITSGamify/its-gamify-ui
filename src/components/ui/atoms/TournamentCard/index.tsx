@@ -11,7 +11,8 @@ import {
   useTheme,
   alpha,
 } from "@mui/material";
-import { PeopleOutlineOutlined as PeopleOutlineOutlinedIcon } from "@mui/icons-material";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { getRoute } from "@utils/route";
@@ -163,13 +164,9 @@ const TournamentCard = ({ challenge }: TournamentCardProps) => {
               alignItems: "center",
             }}
           >
-            <PeopleOutlineOutlinedIcon
-              fontSize="small"
-              color="action"
-              sx={{ mr: 0.5 }}
-            />
+            <MeetingRoomIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
             <Typography variant="body2" color="text.secondary">
-              {challenge.num_of_room}/{challenge.num_of_room} người
+              {challenge.rooms.length} phòng
             </Typography>
           </Box>
 

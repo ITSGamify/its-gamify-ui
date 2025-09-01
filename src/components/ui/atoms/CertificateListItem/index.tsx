@@ -80,9 +80,9 @@ const CertificateListItem: React.FC<CertificateListItemProps> = ({
               >
                 {certificate.course.title}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              {/* <Typography variant="body2" color="textSecondary">
                 its - gamify
-              </Typography>
+              </Typography> */}
             </Box>
           </Box>
 

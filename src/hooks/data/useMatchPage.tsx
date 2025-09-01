@@ -83,7 +83,8 @@ export const useMatchPage = () => {
 
   const handleAnswerSelect = useCallback(
     async (answerIndex: number) => {
-      if (isAnswering || !connection) return;
+      if (isAnswering || !connection || roomDetail?.status == "FINISHED")
+        return;
 
       const question = questions[currentQuestion];
       setIsAnswering(true);

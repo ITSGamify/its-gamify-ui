@@ -65,7 +65,7 @@ export const useWaitingRoomPage = () => {
       } catch {
         setErrorMessage("Lỗi khi tham gia phòng.");
         intial_join.current = false;
-        navigate(
+        return navigate(
           getRoute(PATH.TOURNAMENT_ROOM, {
             tournamentId: roomDetail?.challenge_id,
           })
@@ -75,6 +75,14 @@ export const useWaitingRoomPage = () => {
 
     joinRoom();
   }, [connection, navigate, profile, roomDetail, roomId, setErrorMessage]);
+
+  connection?.on("InValidJoin", () => {
+    return navigate(
+      getRoute(PATH.TOURNAMENT_ROOM, {
+        tournamentId: roomDetail?.challenge_id,
+      })
+    );
+  });
 
   // Countdown và navigate to match
   const countdownTimerRef = useRef<number | null>(null);

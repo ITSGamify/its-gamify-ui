@@ -205,7 +205,7 @@ const HomePage: React.FC = () => {
               variant="scrollable"
               scrollButtons="auto"
             >
-              <Tab value={ENROLLED} label="Đã tham gia" />
+              <Tab value={ENROLLED} label="Đang tham gia" />
               <Tab value={COMPLETED} label="Đã hoàn thành" />
               <Tab value={SAVED} label="Đã lưu" />
             </StyledTabs>

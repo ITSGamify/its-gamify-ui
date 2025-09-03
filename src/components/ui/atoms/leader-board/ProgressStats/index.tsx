@@ -38,7 +38,7 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({
           {overdue} quá hạn
         </Badge>
       </Box>
-      {profile?.user.role !== RoleEnum.LEADER && (
+      {profile?.user.role === RoleEnum.LEADER && (
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
             variant="outlined"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -153,6 +153,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
     data?.avatar_url || null
   );
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setAvatarPreview(data?.avatar_url || null);
@@ -180,6 +181,10 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
         setAvatarPreview(null);
       } finally {
         setIsUploading(false);
+        // Reset input file để có thể chọn lại cùng một file
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
     }
   };
@@ -187,6 +192,10 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
   const handleRemoveAvatar = (onChange: (id?: string | null) => void) => {
     onChange(null);
     setAvatarPreview(null);
+    // Reset input file khi xóa avatar
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -254,6 +263,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       )}
                     </Box>
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept="image/*"
                       id="avatar-upload"
@@ -428,7 +438,6 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
             </Grid>
           </Grid>
         </StyledDialogContent>
-
         <StyledDialogActions>
           <Button onClick={handleClose} color="inherit" variant="outlined">
             Hủy

@@ -26,6 +26,7 @@ import { PATH } from "@constants/path";
 import { Course } from "@interfaces/api/course";
 import { getRoute } from "@utils/route";
 import { useUpsertCourseCollection } from "@services/course";
+import { getClassifyInVietnamese } from "@utils/course";
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -130,6 +131,20 @@ const CourseCard = ({
               }}
             />
 
+            <Chip
+              label={getClassifyInVietnamese(course.classify)}
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.error.light,
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                height: "24px",
+                borderRadius: "16px",
+                width: "fit-content",
+              }}
+            />
+
             {course.is_optional && (
               <Chip
                 label="Không bắt buộc"
@@ -146,38 +161,45 @@ const CourseCard = ({
               />
             )}
           </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+            }}
+          >
+            {isJoined && !isCompleted && (
+              <Chip
+                label="Đang tham gia"
+                size="small"
+                sx={{
+                  backgroundColor: theme.palette.warning.main,
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "0.75rem",
+                  height: "24px",
+                  borderRadius: "16px",
+                  width: "fit-content",
+                }}
+              />
+            )}
 
-          {isJoined && !isCompleted && (
-            <Chip
-              label="Đang tham gia"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.warning.main,
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.75rem",
-                height: "24px",
-                borderRadius: "16px",
-                width: "fit-content",
-              }}
-            />
-          )}
-
-          {isCompleted && (
-            <Chip
-              label="Đã hoàn thành"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.success.main,
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.75rem",
-                height: "24px",
-                borderRadius: "16px",
-                width: "fit-content",
-              }}
-            />
-          )}
+            {isCompleted && (
+              <Chip
+                label="Đã hoàn thành"
+                size="small"
+                sx={{
+                  backgroundColor: theme.palette.success.main,
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "0.75rem",
+                  height: "24px",
+                  borderRadius: "16px",
+                  width: "fit-content",
+                }}
+              />
+            )}
+          </Box>
         </Box>
         <IconButton
           sx={{

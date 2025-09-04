@@ -320,8 +320,8 @@ const MetricsPage: React.FC = () => {
                       <EmployeeHeader
                         name={statistic?.name}
                         role={statistic.role}
-                        totalProgress={statistic.totalProgress}
-                        avatarInitials={statistic.avatarInitials}
+                        totalProgress={statistic.total_progress}
+                        avatarInitials={statistic.avatar_initials}
                       />
                       <ProgressStats
                         completed={statistic.completed}

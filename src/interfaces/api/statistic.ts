@@ -9,8 +9,8 @@ export interface CourseStat {
 export interface EmployeeStat {
   name: string; // Tên nhân viên, e.g., "Nguyễn Văn Minh"
   role: string; // Chức vụ, e.g., "Senior Developer"
-  totalProgress: number; // Tổng tiến độ (0-100), e.g., 75
-  avatarInitials: string; // Chữ cái viết tắt cho avatar, e.g., "NM"
+  total_progress: number; // Tổng tiến độ (0-100), e.g., 75
+  avatar_initials: string; // Chữ cái viết tắt cho avatar, e.g., "NM"
   completed: number; // Số khóa học hoàn thành, e.g., 2
   overdue: number; // Số khóa học quá hạn, e.g., 1
   courses: CourseStat[]; // Mảng các khóa học

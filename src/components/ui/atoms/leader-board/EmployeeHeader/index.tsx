@@ -14,6 +14,7 @@ const EmployeeHeader: React.FC<EmployeeHeaderProps> = ({
   totalProgress,
   avatarInitials,
 }) => {
+  console.log(totalProgress);
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
       <Avatar

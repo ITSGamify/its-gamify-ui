@@ -183,7 +183,7 @@ const ArticleLesson = ({
             }}
           >
             <StyledTab label="Mô tả" />
-            <StyledTab label="Đánh giá" />
+            {/* <StyledTab label="Đánh giá" /> */}
             {/* <StyledTab label="Thảo luận" />
             <StyledTab label="Tài nguyên" /> */}
           </Tabs>

@@ -320,7 +320,7 @@ const CourseOverviewPage: React.FC = () => {
                       </Typography>
                     </Box>
                     <Box>
-                      {course?.modules?.map((module, index) => {
+                      {course?.modules?.map((module) => {
                         const isExpanded = expandedModules[module.id] || false;
 
                         return (
@@ -342,7 +342,7 @@ const CourseOverviewPage: React.FC = () => {
                                     variant="subtitle1"
                                     fontWeight={600}
                                   >
-                                    Module {index + 1}: {module.title}
+                                    {module.title}
                                   </Typography>
                                   <Typography
                                     variant="body2"

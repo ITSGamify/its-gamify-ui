@@ -183,9 +183,6 @@ const ArticleLesson = ({
             }}
           >
             <StyledTab label="Mô tả" />
-            {/* <StyledTab label="Đánh giá" /> */}
-            {/* <StyledTab label="Thảo luận" />
-            <StyledTab label="Tài nguyên" /> */}
           </Tabs>
         </Box>
 
@@ -199,35 +196,6 @@ const ArticleLesson = ({
             {lesson.content ||
               "This training session offers a comprehensive introduction to the principles and methodologies of project management. Participants will gain an understanding of project management fundamentals, including project initiation, planning, execution, monitoring, and closure. Through interactive discussions and activities, attendees will explore key concepts such as project life cycles, project stakeholders, and the importance of effective project management in achieving organizational goals."}
           </Typography>
-        </CustomTabPanel>
-
-        <CustomTabPanel value={activeTab} index={1}>
-          <Typography variant="body1" color="text.secondary">
-            No reviews yet. Be the first to review this lesson!
-          </Typography>
-        </CustomTabPanel>
-
-        <CustomTabPanel value={activeTab} index={2}>
-          <Typography variant="body1" color="text.secondary">
-            Join the discussion about this lesson.
-          </Typography>
-        </CustomTabPanel>
-
-        <CustomTabPanel value={activeTab} index={3}>
-          <Typography variant="body1" color="text.secondary">
-            Additional resources for this lesson:
-          </Typography>
-          <Box component="ul" sx={{ pl: 2, mt: 1 }}>
-            <Typography component="li" variant="body1" color="text.secondary">
-              Project planning templates
-            </Typography>
-            <Typography component="li" variant="body1" color="text.secondary">
-              Scope management checklist
-            </Typography>
-            <Typography component="li" variant="body1" color="text.secondary">
-              Recommended readings
-            </Typography>
-          </Box>
         </CustomTabPanel>
       </Box>
       <NavigationContainer>
